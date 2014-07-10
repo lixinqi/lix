@@ -39,12 +39,6 @@
 
 %%
 
-NL
-		: NEWLINE
-		| SEP NL
-		| NL SEP
-		;
-
 OPENBRACE
 		: '{'
 		;
@@ -103,6 +97,10 @@ PrimaryExpr
 		| OPENPARAN MultiLineExpr CLOSEPARAN
 			{
 				$$ = makeExpr($MultiLineExpr);
+			}
+		| '[' ']'
+			{
+				$$ = [[], '{array}'];
 			}
 		| '[' ArrayLiteral ']'
 			{
@@ -201,9 +199,9 @@ DefStatement
 		;
 
 AssignStatement
-		: VAR ASSIGN_OPERATOR Expr NEWLINE
+		: Object ASSIGN_OPERATOR Expr NEWLINE
 			{
-				$$ = [[$VAR, '{atomic}'], '=', makeExpr($3)];
+				$$ = [$1, '=', makeExpr($3)];
 			}
 		;
 

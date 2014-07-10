@@ -1,2 +1,129 @@
 #!/usr/local/bin/node ./lix.js
 "Hello world" | add '\n"good' | print
+
+a := [10 20 30]
+
+a.[2] | print
+
+a.0 = 40
+
+a | print
+
+a := []
+
+a.0 = 9527
+
+a | print
+
+cons := (x y)->{
+	[x y]
+}
+
+car := (x)->{
+	x.0
+}
+
+cdr := (x)->{
+	x.1
+}
+
+3 cons 4 | print
+
+length := (x)->{
+	x.length
+}
+
+to := (start end)->{
+	[start end]
+}
+
+each := (range cb)->{
+	start := range.0
+	end := range.1
+	start lt range.1 | then ()->{
+		start cb
+		start add 1 | to end | each cb
+	}
+}
+
+foreach := (arr cb)->{
+	l := arr length
+	0 to l | each (i)->{
+		arr.[i] | cb i
+	}
+}
+
+mul := (x y)->{
+	ret := 0
+	0 to y | each ()->{
+		ret = ret add x
+	}
+	ret
+}
+
+square := (i)->{
+	i mul i
+}
+
+# 平方 := (i)->{
+# 	i 乘 i
+# }
+# 
+# 再 := (f0 f1)->{
+# 	(i)->{i | f0 | f1}
+# }
+# 
+# 再 := (pair)->{
+# 	(i)->{i | pair.0 | pair.1}
+# }
+# 
+# 四次方 := 平方 再 平方
+# 四次方 := [平方 平方] 再
+# 
+# 
+# [1 2 3 4 5] | 其中的每个 (值 键)->{
+# 	"索引：" | 加 键 | 打印到终端
+# 	"值：" | 加 值 | 打印到终端
+# 	"平方：" | 加 (值 平方) | 打印到终端
+# 	"" | 打印到终端
+# }
+
+# 0 到 5 | 其中每个 整数的平方 
+
+# obj := {
+# 	.url "www.baidu.com"
+# 	.data {
+# 		.answer (1 add 2)
+# 	}
+# 	.success (data)->{
+# 		data | console.log
+# 	}
+# 	.error (status)->{
+# 		status | console.log
+# 	}
+# }
+# 
+# obj.url
+
+
+To := (start end)->{
+	[ 1 2 3 4 5]
+}
+
+forEach := (range fn)->{
+	ret := []
+	range foreach (value index)->{
+		ret.[index] = (value fn)
+	}
+	ret
+}
+
+# 0 到 5 | 其中每个 整数的平方 | 打印到终端
+ 0 To 5 | forEach square | print
+
+# [1 2 3 4 5] | foreach (value index)->{
+# 	"index: " | add index | print
+# 	"value: " | add value | print
+# 	"square: " | add (value square) | print
+# 	"" | print
+# }

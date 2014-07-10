@@ -24,8 +24,15 @@ function generateSeq(expr, env, ctx) {
 	return ret;
 }
 
+function getVarName(expr) {
+	if (expr[1] === '{atomic}') {
+		return expr[0];
+	} else if (expr[1] === '{.}') {
+		return getVarName (expr[0]);
+	}
+}
+
 function generateField(expr, env, ctx) {
-	console.log(expr);
 	if (expr[1] === '{atomic}') {
 		var ret = '.' + expr[0];
 		return ctx(ret, 0, 1);
@@ -94,7 +101,7 @@ function generate (expr, env, ctx) {
 		var args = generateFuncArgs(expr[0], funcEnv);
 		var body = generate(expr[2], funcEnv, function(v, i, l) {
 			if (i + 1 == l) {
-				return 'return ' + v + ";";
+				return 'return ' + v;
 			}
 			return v;
 		});
@@ -110,12 +117,13 @@ function generate (expr, env, ctx) {
 		env[varname] = true;
 		return ret;
 	} else if (expr[1] === '=') {
-		var varname = expr[0][0];
+		var varname = getVarName(expr[0]);
 		if (env[varname] == undefined) {
 			console.log(varname);
 			var_not_defined;
 		}
-		var ret = "(" + varname + "=== undefined ? \n(function(){\nconsole.log('" + varname +" 变量没定义');\n})() : \n(" + varname + " = " + generate(expr[2], env, ctx0) + "\n))\n"
+		var fieldChain = generate(expr[0], env, ctx0);
+		var ret = "(" + fieldChain + " = " + generate(expr[2], env, ctx0) + ")";
 		return ctx(ret, 0, 1);
 	}
 
