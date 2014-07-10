@@ -27,7 +27,7 @@
 \s*"|"\s*   									{ return 'VBAR'; }
 \s*":="\s*  									{ return 'DEF'; }
 \s*"="\s*  										{ return 'ASSIGN_OPERATOR'; }
-"."\s?    										{ return '.'; }
+\.    										{ return '.'; }
 [_a-zA-Z][_a-zA-Z0-9]* 				{ return 'VAR'; }
 [0-9]+  											{ return 'NAT'; }
 \s+       										{ return 'SEP'; }
@@ -64,7 +64,33 @@ FUNC_ARGS
 				$$ = $FUNC_ARGS;
 			}
 		;
+
+Field
+		: VAR
+			{
+				$$ = [$1, '{atomic}'];
+			}
+		| '[' MultiLineExpr ']'
+			{
+				$$ = [makeExpr($2), '{index}'];
+			}
+		| NAT
+			{
+				$$ = [[$1, '{atomic}'], '{index}'];
+			}
+		;
 	
+Object
+		: VAR
+			{
+				$$ = [$1, '{atomic}'];
+			}
+		| Object '.' Field
+			{
+				$$ = [$1, '{.}', $3];
+			}
+		;
+
 PrimaryExpr
 		: OPENPARAN MultiLineExpr CLOSEPARAN FUNC_ARROW '{' FUNC_BODY '}'
 			{
@@ -82,10 +108,7 @@ PrimaryExpr
 			{
 				$$ = [$ArrayLiteral, '{array}'];
 			}
-		| VAR
-			{
-				$$ = [$VAR, '{atomic}'];
-			}
+		| Object
 		| NAT
 			{
 				$$ = [$NAT, '{atomic}'];

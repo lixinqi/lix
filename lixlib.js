@@ -24,6 +24,29 @@ function generateSeq(expr, env, ctx) {
 	return ret;
 }
 
+function generateField(expr, env, ctx) {
+	console.log(expr);
+	if (expr[1] === '{atomic}') {
+		var ret = '.' + expr[0];
+		return ctx(ret, 0, 1);
+	} else if (expr[1] === '{index}') {
+		var ret = '[' + generate(expr[0], env, ctx0) + ']';
+		return ctx(ret, 0, 1);
+	}
+}
+
+function generateFieldAccess(expr, env, ctx) {
+	if (expr[1] === '{atomic}') {
+		var ret = expr[0];
+		return ctx(ret, 0, 1);
+	} else if (expr[1] === '{.}') {
+		var field = generateField(expr[2], env, ctx);
+		var ret = generateFieldAccess(expr[0], env, ctx0) + field;
+		return ctx(ret, 0, 1);
+	}
+	die();
+}
+
 function generateArray(expr, env, ctx) {
 	var ret = "[";
 	var arr = expr[0];
@@ -64,6 +87,8 @@ function generate (expr, env, ctx) {
 		return ctx(generate(expr[0], env, ctx0), 0, 1);
 	} else if (expr[1] === '{atomic}') {
 		return ctx(expr[0], 0, 1);
+	} else if (expr[1] === '{.}') {
+		return ctx(generateFieldAccess(expr, env, ctx0));
 	} else if (expr[1] === '{func}') {
 		var funcEnv = env_new(env);
 		var args = generateFuncArgs(expr[0], funcEnv);

@@ -1,0 +1,13 @@
+#!/usr/local/bin/node ./lix.js
+a.a
+a.["a"]
+a.[a]
+a.0
+a.1
+a.[
+ 2 add 3
+ | sub 1
+ ]
+
+x.y.z
+x.0.12.3
