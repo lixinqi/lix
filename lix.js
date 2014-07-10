@@ -113,7 +113,7 @@ case 12:
 			
 break;
 case 13:
-				this.$ = [$NAT, '{atomic}'];
+				this.$ = [$$[$0], '{atomic}'];
 			
 break;
 case 14:

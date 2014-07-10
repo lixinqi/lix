@@ -1,1 +1,3 @@
-""
+#!/usr/local/bin/node ./lix.js
+a := "hello world"
+a | print
