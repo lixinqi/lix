@@ -1,0 +1,12 @@
+( 1 add 2 ) | print
+(
+1 add 2
+	| sub 1
+
+) | print
+
+[
+	1
+	"add"
+	2
+] | print

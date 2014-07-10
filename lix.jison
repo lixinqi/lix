@@ -66,21 +66,21 @@ FUNC_ARGS
 		;
 	
 PrimaryExpr
-		: OPENPARAN Expr CLOSEPARAN FUNC_ARROW '{' FUNC_BODY '}'
+		: OPENPARAN MultiLineExpr CLOSEPARAN FUNC_ARROW '{' FUNC_BODY '}'
 			{
-				$$ = [$Expr, '{func}', $FUNC_BODY];
+				$$ = [$MultiLineExpr, '{func}', $FUNC_BODY];
 			}
 		| OPENPARAN CLOSEPARAN FUNC_ARROW '{' FUNC_BODY '}'
 			{
 				$$ = [[], '{func}', $FUNC_BODY];
 			}
-		| OPENPARAN Expr CLOSEPARAN
+		| OPENPARAN MultiLineExpr CLOSEPARAN
 			{
-				$$ = makeExpr($Expr);
+				$$ = makeExpr($MultiLineExpr);
 			}
-		| '[' MultiLineArray ']'
+		| '[' ArrayLiteral ']'
 			{
-				$$ = [$MultiLineArray, '{array}'];
+				$$ = [$ArrayLiteral, '{array}'];
 			}
 		| VAR
 			{
@@ -96,21 +96,44 @@ PrimaryExpr
 			}
 		;
 
-MultiLineArray
+ArrayLiteral
 		: PrimaryExpr
 			{
 				$$ = [$PrimaryExpr];
 			}
-		| MultiLineArray SEP PrimaryExpr
+		| ArrayLiteral SEP PrimaryExpr
 			{
-				$MultiLineArray.push($PrimaryExpr);
-				$$ = $MultiLineArray;
+				$ArrayLiteral.push($PrimaryExpr);
+				$$ = $ArrayLiteral;
 			}
-		| MultiLineArray NEWLINE
-		| MultiLineArray NEWLINE PrimaryExpr
+		| ArrayLiteral NEWLINE
+		| ArrayLiteral NEWLINE PrimaryExpr
 			{
-				$MultiLineArray.push($PrimaryExpr);
-				$$ = $MultiLineArray;
+				$ArrayLiteral.push($PrimaryExpr);
+				$$ = $ArrayLiteral;
+			}
+		;
+
+MultiLineExpr
+		: PrimaryExpr
+			{
+				$$ = [$PrimaryExpr];
+			}
+		| MultiLineExpr SEP PrimaryExpr
+			{
+				$MultiLineExpr.push($PrimaryExpr);
+				$$ = $MultiLineExpr;
+			}
+		| MultiLineExpr NEWLINE
+		| MultiLineExpr NEWLINE PrimaryExpr
+			{
+				$MultiLineExpr.push($PrimaryExpr);
+				$$ = $MultiLineExpr;
+			}
+		| MultiLineExpr VBAR MultiLineExpr
+			{
+				$3.unshift(makeExpr($1));
+				$$ = $3;
 			}
 		;
 
