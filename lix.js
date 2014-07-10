@@ -639,36 +639,38 @@ var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
 case 0: return 28; 
 break;
-case 1: return 4; 
+case 1: return 'COMMENT'; 
 break;
-case 2: return 13; 
+case 2: return 4; 
 break;
-case 3: return 15; 
+case 3: return 13; 
 break;
-case 4: return 7; 
+case 4: return 15; 
 break;
-case 5: return 9; 
+case 5: return 7; 
 break;
-case 6: return 16; 
+case 6: return 9; 
 break;
-case 7: return 19; 
+case 7: return 16; 
 break;
-case 8: return 23; 
+case 8: return 19; 
 break;
-case 9: return 25; 
+case 9: return 23; 
 break;
-case 10: return '.'; 
+case 10: return 25; 
 break;
-case 11: return 11; 
+case 11: return '.'; 
 break;
-case 12: return 18; 
+case 12: return 11; 
 break;
-case 13: return 5; 
+case 13: return 18; 
+break;
+case 14: return 5; 
 break;
 }
 },
-rules: [/^(?:$)/,/^(?:\s*\n+\s*)/,/^(?:\(\s*)/,/^(?:\s*\))/,/^(?:\{[\n\s]*)/,/^(?:\s*\})/,/^(?:\s*->\s*)/,/^(?:\s*\|\s*)/,/^(?:\s*:=\s*)/,/^(?:\s*=\s*)/,/^(?:\.\s?)/,/^(?:[_a-zA-Z][_a-zA-Z0-9]*)/,/^(?:[0-9]+)/,/^(?:\s+)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13],"inclusive":true}}
+rules: [/^(?:$)/,/^(?:^#[^\n]*\n)/,/^(?:\s*\n+\s*)/,/^(?:\(\s*)/,/^(?:\s*\))/,/^(?:\{[\n\s]*)/,/^(?:\s*\})/,/^(?:\s*->\s*)/,/^(?:\s*\|\s*)/,/^(?:\s*:=\s*)/,/^(?:\s*=\s*)/,/^(?:\.\s?)/,/^(?:[_a-zA-Z][_a-zA-Z0-9]*)/,/^(?:[0-9]+)/,/^(?:\s+)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],"inclusive":true}}
 };
 return lexer;
 })();

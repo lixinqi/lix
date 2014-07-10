@@ -16,6 +16,7 @@
 %%
 
 <<EOF>>   { return 'EOF'; }
+^"#"[^\n]*\n			{ return 'COMMENT'; }
 \s*\n+\s*       { return 'NEWLINE'; }
 "("\s*       { return 'OPENPARAN'; }
 \s*")"       { return 'CLOSEPARAN'; }

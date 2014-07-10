@@ -8,13 +8,17 @@ function generateFuncArgs(args, env) {
 	return ret.join(", ");
 }
 
+var ctx0 = function (x) {
+	return x;
+};
+
 function generateSeq(expr, env, ctx) {
 //	var ret = "{\n";
 	var ret = "";
 	var seq = expr[0];
 	var length = 	seq.length;
 	for (var i = 0; i < length; i++) {
-		ret += ctx(generate(seq[i], env), i, length) + ";\n";
+		ret += ctx(generate(seq[i], env, ctx0), i, length) + ";\n";
 	}
 //	ret += "}";
 	return ret;
@@ -40,25 +44,18 @@ function env_new(env) {
 }
 
 function generate (expr, env, ctx) {
-//	console.log(expr);
-	ctx = (ctx || function (x) { return x; });
+//	ctx = (ctx || function (x) { return x; });
 	if (expr[1] === '{start}') {
-		return generate(expr[0], env);
+		return generate(expr[0], env, ctx);
 	} else if (expr[1] === '{seq}') {
 		return generateSeq(expr, env, ctx);
 	} else if (expr[1] === '{mono}') {
-		return ctx(generate(expr[0], env), 0, 1);
+		return ctx(generate(expr[0], env, ctx0), 0, 1);
 	} else if (expr[1] === '{atomic}') {
-//		var varname = expr[0];
-//		if (env[varname] == undefined) {
-//			console.log(varname);
-//			var_not_defined;
-//		}
 		return ctx(expr[0], 0, 1);
 	} else if (expr[1] === '{func}') {
 		var funcEnv = env_new(env);
 		var args = generateFuncArgs(expr[0], funcEnv);
-		var body = generate(expr[2], funcEnv);
 		var body = generate(expr[2], funcEnv, function(v, i, l) {
 			if (i + 1 == l) {
 				return 'return ' + v + ";";
@@ -69,7 +66,7 @@ function generate (expr, env, ctx) {
 		return ctx(ret, 0, 1);
 	} else if (expr[1] === ':=') {
 		var varname = expr[0][0];
-		var ret = 'var ' + varname + ' = ' + generate(expr[2], env);
+		var ret = 'var ' + varname + ' = ' + generate(expr[2], env, ctx);
 		env[varname] = true;
 		return ret;
 	} else if (expr[1] === '=') {
@@ -78,15 +75,15 @@ function generate (expr, env, ctx) {
 			console.log(varname);
 			var_not_defined;
 		}
-		var ret = "(" + varname + "=== undefined ? \n(function(){\nconsole.log('" + varname +" 变量没定义');\n})() : \n(" + varname + " = " + generate(expr[2], env) + "\n))\n"
+		var ret = "(" + varname + "=== undefined ? \n(function(){\nconsole.log('" + varname +" 变量没定义');\n})() : \n(" + varname + " = " + generate(expr[2], env, ctx0) + "\n))\n"
 		return ctx(ret, 0, 1);
 	}
 
-	var func = generate(expr[1], env);
-	var args = generate(expr[0], env);
+	var func = generate(expr[1], env, ctx0);
+	var args = generate(expr[0], env, ctx0);
 	for (var i = 2; i < expr.length; i++) {
 			args += ', ';
-			args += generate(expr[i], env);
+			args += generate(expr[i], env, ctx0);
 	}
 	var ret = func + '(' + args + ')';
 	return ctx(ret, 0, 1);
@@ -107,5 +104,5 @@ exports.compile = function (expr) {
 	].join("\n");
 
 	var env0 = env_new();
-	console.log(libs + "\n" + generate(expr, env0));
+	console.log(libs + "\n" + generate(expr, env0, ctx0));
 }
