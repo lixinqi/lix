@@ -1,0 +1,2 @@
+#!/usr/local/bin/node ./lix.js
+"Hello world" | add '\n"good' | print

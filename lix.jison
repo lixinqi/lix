@@ -14,21 +14,21 @@
 
 %lex
 %%
-<<EOF>>   									{ return 'EOF'; }
-\"(\\.|[^\\"])*\" 					{ return 'STRING_LITERAL'; }	
-\s*(("#".*)?\n+)+\s*       	{ return 'NEWLINE'; }
-"("\s*       								{ return 'OPENPARAN'; }
-\s*")"      								{ return 'CLOSEPARAN'; }
-"{"\s*       								{ return '{'; }
-\s*"}"       								{ return '}'; }
-\s*"->"\s*   								{ return 'FUNC_ARROW'; }
-\s*"|"\s*   								{ return 'VBAR'; }
-\s*":="\s*  								{ return 'DEF'; }
-\s*"="\s*  									{ return 'ASSIGN_OPERATOR'; }
-"."\s?    									{ return '.'; }
-[_a-zA-Z][_a-zA-Z0-9]* 			{ return 'VAR'; }
-[0-9]+  										{ return 'NAT'; }
-\s+       									{ return 'SEP'; }
+<<EOF>>   										{ return 'EOF'; }
+\'(\\.|[^\\'])*\'|\"(\\.|[^\\"])*\"			{ return 'STRING_LITERAL'; }	
+\s*(("#".*)?\n+)+\s*       		{ return 'NEWLINE'; }
+"("\s*       									{ return 'OPENPARAN'; }
+\s*")"      									{ return 'CLOSEPARAN'; }
+"{"\s*       									{ return '{'; }
+\s*"}"       									{ return '}'; }
+\s*"->"\s*   									{ return 'FUNC_ARROW'; }
+\s*"|"\s*   									{ return 'VBAR'; }
+\s*":="\s*  									{ return 'DEF'; }
+\s*"="\s*  										{ return 'ASSIGN_OPERATOR'; }
+"."\s?    										{ return '.'; }
+[_a-zA-Z][_a-zA-Z0-9]* 				{ return 'VAR'; }
+[0-9]+  											{ return 'NAT'; }
+\s+       										{ return 'SEP'; }
 /lex
 
 %left NEWLINE
@@ -74,7 +74,6 @@ PrimaryExpr
 			}
 		| OPENPARAN Expr CLOSEPARAN
 			{
-//				$$ = [$Expr, '{mono}'];
 				$$ = makeExpr($Expr);
 			}
 		| VAR
@@ -103,7 +102,6 @@ Expr
 			}
 		| Expr VBAR Expr
 			{
-//				console.log($3[0]);
 				$3.unshift(makeExpr($1));
 				$$ = $3;
 			}
@@ -153,15 +151,6 @@ Statement
 		| EmptyStatement
 		;
 
-Program
-		:
-		| SourceElements EOF
-			{
-				$$ = [$SourceElements, '{start}'];
-				lixlib.compile($$);
-			}
-    ;   
-
 SourceElements
     : Statement
 			{
@@ -171,6 +160,15 @@ SourceElements
 			{
 				$SourceElements[0].push($Statement);
 				$$ = $SourceElements;
+			}
+    ;   
+
+Program
+		:
+		| SourceElements EOF
+			{
+				$$ = [$SourceElements, '{start}'];
+				lixlib.compile($$);
 			}
     ;   
 
