@@ -1,8 +1,15 @@
+#!/usr/local/bin/lix
+
 inc := (i)->{ i add 2 | sub 1 }
+
 3 inc | inc | print
 
-cons := (x y)->{
+# good
+# nice
+cons := (x y)->{ # nice
+
 	(f)->{ x f y }
+
 }
 
 car := (f)->{

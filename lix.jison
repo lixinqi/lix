@@ -14,22 +14,21 @@
 
 %lex
 %%
-
-<<EOF>>   { return 'EOF'; }
-^"#"[^\n]*\n			{ return 'COMMENT'; }
-\s*\n+\s*       { return 'NEWLINE'; }
-"("\s*       { return 'OPENPARAN'; }
-\s*")"       { return 'CLOSEPARAN'; }
-"{"[\n\s]*       { return '{'; }
-\s*"}"       { return '}'; }
-\s*"->"\s*   		{ return 'FUNC_ARROW'; }
-\s*"|"\s*   		{ return 'VBAR'; }
-\s*":="\s*  { return 'DEF'; }
-\s*"="\s*  { return 'ASSIGN_OPERATOR'; }
-"."\s?    { return '.'; }
-[_a-zA-Z][_a-zA-Z0-9]* { return 'VAR'; }
-[0-9]+  	{ return 'NAT'; }
-\s+       { return 'SEP'; }
+<<EOF>>   									{ return 'EOF'; }
+\"(\\.|[^\\"])*\" 					{ return 'STRING_LITERAL'; }	
+\s*(("#".*)?\n+)+\s*       	{ return 'NEWLINE'; }
+"("\s*       								{ return 'OPENPARAN'; }
+\s*")"      								{ return 'CLOSEPARAN'; }
+"{"\s*       								{ return '{'; }
+\s*"}"       								{ return '}'; }
+\s*"->"\s*   								{ return 'FUNC_ARROW'; }
+\s*"|"\s*   								{ return 'VBAR'; }
+\s*":="\s*  								{ return 'DEF'; }
+\s*"="\s*  									{ return 'ASSIGN_OPERATOR'; }
+"."\s?    									{ return '.'; }
+[_a-zA-Z][_a-zA-Z0-9]* 			{ return 'VAR'; }
+[0-9]+  										{ return 'NAT'; }
+\s+       									{ return 'SEP'; }
 /lex
 
 %left NEWLINE
@@ -86,6 +85,10 @@ PrimaryExpr
 			{
 				$$ = [$NAT, '{atomic}'];
 			}
+		| STRING_LITERAL
+			{
+				$$ = [$STRING_LITERAL, '{atomic}'];
+			}
 		;
 
 Expr
@@ -136,15 +139,23 @@ AssignStatement
 			}
 		;
 
+EmptyStatement
+		: NEWLINE
+			{
+				$$ = [[], '{empty}'];
+			}
+		;
+
 Statement
 		: ExprStatement
 		| AssignStatement
 		| DefStatement
+		| EmptyStatement
 		;
 
 Program
 		:
-    | SourceElements EOF
+		| SourceElements EOF
 			{
 				$$ = [$SourceElements, '{start}'];
 				lixlib.compile($$);
@@ -154,13 +165,10 @@ Program
 SourceElements
     : Statement
 			{
-				$$ = [[$Statement], '{seq}'];
+					$$ = [[$Statement], '{seq}'];
 			}
     | SourceElements Statement
 			{
-				if ($SourceElements[1] !== '{seq}') {
-					$SourceElements = [[$SourceElements], '{seq}'];
-				}
 				$SourceElements[0].push($Statement);
 				$$ = $SourceElements;
 			}

@@ -64,6 +64,8 @@ function generate (expr, env, ctx) {
 		});
 		var ret = '(function (' + args + ') {\n' + body + '\n})';
 		return ctx(ret, 0, 1);
+	} else if (expr[1] === '{empty}') {
+		return ctx(0, 0, 1);
 	} else if (expr[1] === ':=') {
 		var varname = expr[0][0];
 		var ret = 'var ' + varname + ' = ' + generate(expr[2], env, ctx);
