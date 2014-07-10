@@ -24,6 +24,17 @@ function generateSeq(expr, env, ctx) {
 	return ret;
 }
 
+function generateArray(expr, env, ctx) {
+	var ret = "[";
+	var arr = expr[0];
+	var length = 	arr.length;
+	for (var i = 0; i < length; i++) {
+		ret += ctx(generate(arr[i], env, ctx0), i, length) + ",";
+	}
+	ret += "]";
+	return ret;
+}
+
 function env_new(env) {
 	env = (env || {
 		add: true,
@@ -64,7 +75,9 @@ function generate (expr, env, ctx) {
 		});
 		var ret = '(function (' + args + ') {\n' + body + '\n})';
 		return ctx(ret, 0, 1);
-	} else if (expr[1] === '{empty}') {
+	} else if (expr[1] === '{array}') {
+		return ctx(generateArray(expr, env, ctx0), 0, 1);
+	}else if (expr[1] === '{empty}') {
 		return ctx(0, 0, 1);
 	} else if (expr[1] === ':=') {
 		var varname = expr[0][0];

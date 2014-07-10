@@ -21,6 +21,8 @@
 \s*")"      									{ return 'CLOSEPARAN'; }
 "{"\s*       									{ return '{'; }
 \s*"}"       									{ return '}'; }
+"["\s*(("#".*)?\n+)*\s*  			{ return '['; }
+\s*(("#".*)?\n+)*\s*"]"       { return ']'; }
 \s*"->"\s*   									{ return 'FUNC_ARROW'; }
 \s*"|"\s*   									{ return 'VBAR'; }
 \s*":="\s*  									{ return 'DEF'; }
@@ -64,17 +66,21 @@ FUNC_ARGS
 		;
 	
 PrimaryExpr
-		: OPENPARAN Expr CLOSEPARAN FUNC_ARROW OPENBRACE FUNC_BODY CLOSEBRACE
+		: OPENPARAN Expr CLOSEPARAN FUNC_ARROW '{' FUNC_BODY '}'
 			{
 				$$ = [$Expr, '{func}', $FUNC_BODY];
 			}
-		| OPENPARAN CLOSEPARAN FUNC_ARROW OPENBRACE FUNC_BODY CLOSEBRACE
+		| OPENPARAN CLOSEPARAN FUNC_ARROW '{' FUNC_BODY '}'
 			{
 				$$ = [[], '{func}', $FUNC_BODY];
 			}
 		| OPENPARAN Expr CLOSEPARAN
 			{
 				$$ = makeExpr($Expr);
+			}
+		| '[' MultiLineArray ']'
+			{
+				$$ = [$MultiLineArray, '{array}'];
 			}
 		| VAR
 			{
@@ -87,6 +93,24 @@ PrimaryExpr
 		| STRING_LITERAL
 			{
 				$$ = [$STRING_LITERAL, '{atomic}'];
+			}
+		;
+
+MultiLineArray
+		: PrimaryExpr
+			{
+				$$ = [$PrimaryExpr];
+			}
+		| MultiLineArray SEP PrimaryExpr
+			{
+				$MultiLineArray.push($PrimaryExpr);
+				$$ = $MultiLineArray;
+			}
+		| MultiLineArray NEWLINE
+		| MultiLineArray NEWLINE PrimaryExpr
+			{
+				$MultiLineArray.push($PrimaryExpr);
+				$$ = $MultiLineArray;
 			}
 		;
 
