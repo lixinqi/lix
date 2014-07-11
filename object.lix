@@ -27,6 +27,86 @@ list := {
 	.length (i)->{
 		i.length
 	}
+
+	.append (l x)->{
+		l.[l.length] = x
+		l
+	}
+
 }
 
 [1 2 3 4 ] | list.length | print
+
+pipe := (i fn)->{
+	i fn
+	i
+}
+
+[0 1 2 3] | list.append 30 | pipe print | list.length | print
+
+A := (self name)->{
+	self.name = name
+	self
+}
+
+_new := (Class args)->{
+	obj := {}
+	obj Class args
+}
+
+A _new "good" | print
+
+obj := A _new "good"
+
+obj.name | print
+
+ext := (Class config)->{
+	newClassObj := {}
+	newClassObj config
+	newClass := ()->{
+		this
+	}
+	newClass.prototype = newClassObj
+	newClass
+}
+
+A := {} ext (pub)->{
+	pub._name = "lixinqi"
+	pub._age = 20
+
+	pub.construct = (self)->{
+		self
+	}
+
+	pub.name = (self value)->{
+		ret := self
+		value eq undefined | then ()->{
+			ret = self._name
+		} | not | then ()->{
+			self._name = value
+		}
+		ret
+	}
+	pub.age = (self)->{
+		self._age
+	}
+}
+
+instance := (Class args)->{
+	obj := Class _instance_
+	obj Class.prototype.construct
+	obj
+}
+
+go := (fn)->{
+	1 then fn
+}
+
+A | print
+
+obj := A instance
+
+obj | obj.name | print
+
+obj obj.name "nice" | obj.name | print
+

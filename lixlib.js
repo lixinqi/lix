@@ -104,6 +104,7 @@ function env_new(env) {
 		eq: true,
 		le: true,
 		lt: true,
+		_instance_: true,
 	});
 	var Env = function () {};
 	Env.prototype = env;
@@ -178,6 +179,7 @@ exports.compile = function (expr) {
 	"function eq(x, y) {\n return x === y; \n}",
 	"function le(x, y) {\n return x <= y; \n}",
 	"function lt(x, y) {\n return x < y; \n}",
+	"function _instance_(x) {\n return new x(); \n}",
 	].join("\n");
 
 	var env0 = env_new();

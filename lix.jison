@@ -17,14 +17,15 @@
 <<EOF>>   										{ return 'EOF'; }
 \'(\\.|[^\\'])*\'|\"(\\.|[^\\"])*\"			{ return 'STRING_LITERAL'; }	
 
+\s*(("#".*)?\n+)+\s*       		{ return 'NEWLINE'; }
+
 "("\s*       									{ return 'OPENPARAN'; }
 \s*")"      									{ return 'CLOSEPARAN'; }
 "{"\s*(("#".*)?\n+)*\s* 			{ return '{'; }
-\s*(("#".*)?\n+)*\s*"}"       { return '}'; }
+\s*"}"       									{ return '}'; }
 "["\s*(("#".*)?\n+)*\s*  			{ return '['; }
-\s*(("#".*)?\n+)*\s*"]"       { return ']'; }
+\s*"]"       									{ return ']'; }
 
-\s*(("#".*)?\n+)+\s*       		{ return 'NEWLINE'; }
 \s*"->"\s*   									{ return 'FUNC_ARROW'; }
 \s*"|"\s*   									{ return 'VBAR'; }
 \s*":="\s*  									{ return 'DEF'; }
@@ -127,6 +128,7 @@ PropertyList
 				$1.push($3);
 				$$ = $1;
 			}
+		| PropertyList NEWLINE
 		| PropertyList NEWLINE Property
 			{
 				$1.push($3);
