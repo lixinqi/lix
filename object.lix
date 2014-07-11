@@ -1,0 +1,32 @@
+#!/usr/local/bin/node ./lix.js
+a := {
+	.1 									'ok'
+	.a 									"good"
+	.b 									"nice"
+	.["hello world"] 		'good'
+	.[9527] 						'fine'
+}
+
+a | print
+a.1 | print 
+a.a | print
+a.b | print
+index := "hello world"
+index | add ": " | add a.[index] | print
+
+b := {}
+
+b print
+
+b.0 = 30
+b.1 = 28
+
+b print
+
+list := {
+	.length (i)->{
+		i.length
+	}
+}
+
+[1 2 3 4 ] | list.length | print

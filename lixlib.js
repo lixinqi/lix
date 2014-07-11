@@ -24,6 +24,33 @@ function generateSeq(expr, env, ctx) {
 	return ret;
 }
 
+function generatePropertyName(expr, env, ctx) {
+	if (expr[1] === '{atomic}') {
+		var ret = expr[0];
+		return ctx(ret, 0, 1);
+	} else if ((expr[1] === '{index}')) {
+		var ret = expr[0][0];
+		return ctx(ret, 0, 1);
+	}
+}
+
+function generateProperty(expr, env, ctx) {
+	var propertyName = generatePropertyName(expr[0], env, ctx);
+	var propertyValue = generate(expr[2], env, ctx0);
+	return propertyName + ": " + propertyValue;
+}
+
+function generateObjectLiteral(expr, env, ctx) {
+	var list = expr[0];
+	var length = 	list.length;
+	var collect = [];
+	for (var i = 0; i < length; i++) {
+		collect[i] = generateProperty(list[i], env, ctx0);
+	}
+	var ret = "{\n" + collect.join(",\n") + "\n}";
+	return ret;
+}
+
 function getVarName(expr) {
 	if (expr[1] === '{atomic}') {
 		return expr[0];
@@ -109,7 +136,9 @@ function generate (expr, env, ctx) {
 		return ctx(ret, 0, 1);
 	} else if (expr[1] === '{array}') {
 		return ctx(generateArray(expr, env, ctx0), 0, 1);
-	}else if (expr[1] === '{empty}') {
+	} else if (expr[1] === '{object}') {
+		return ctx(generateObjectLiteral(expr, env, ctx0));
+	} else if (expr[1] === '{empty}') {
 		return ctx(0, 0, 1);
 	} else if (expr[1] === ':=') {
 		var varname = expr[0][0];
