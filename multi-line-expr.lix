@@ -1,7 +1,9 @@
 ( 1 add 2 ) | print
 (
-1 add 2
+	1 add 2
 	| sub 1
+	|
+	add 3
 
 ) | print
 

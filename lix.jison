@@ -17,6 +17,10 @@
 <<EOF>>   										{ return 'EOF'; }
 \'(\\.|[^\\'])*\'|\"(\\.|[^\\"])*\"			{ return 'STRING_LITERAL'; }	
 
+\.    												{ return '.'; }
+\s+\.													{ return 'SEPDOT'; }
+\s*(("#".*)?\n+)+\s*\.				{ return 'NLDOT'; }
+
 \s*(("#".*)?\n+)+\s*       		{ return 'NEWLINE'; }
 
 "("\s*       									{ return 'OPENPARAN'; }
@@ -30,8 +34,6 @@
 \s*"|"\s*   									{ return 'VBAR'; }
 \s*":="\s*  									{ return 'DEF'; }
 \s*"="\s*  										{ return 'ASSIGN_OPERATOR'; }
-\.    												{ return '.'; }
-\s+\.													{ return 'SEPDOT'; }
 [_a-zA-Z][_a-zA-Z0-9]* 				{ return 'VAR'; }
 [0-9]+  											{ return 'NAT'; }
 \s+       										{ return 'SEP'; }
@@ -200,28 +202,21 @@ ArrayLiteral
 			}
 		;
 
-MultiLineExpr
+MultiLineBasicExpr
 		: PrimaryExpr
 			{
 				$$ = [$PrimaryExpr];
 			}
-		| MultiLineExpr SEP PrimaryExpr
+
+		| MultiLineBasicExpr NEWLINE
+
+		| MultiLineBasicExpr MultiLineSEP PrimaryExpr
 			{
-				$MultiLineExpr.push($PrimaryExpr);
-				$$ = $MultiLineExpr;
-			}
-		| MultiLineExpr NEWLINE
-		| MultiLineExpr NEWLINE PrimaryExpr
-			{
-				$MultiLineExpr.push($PrimaryExpr);
-				$$ = $MultiLineExpr;
-			}
-		| MultiLineExpr VBAR MultiLineExpr
-			{
-				$3.unshift(makeExpr($1));
-				$$ = $3;
+				$MultiLineBasicExpr.push($PrimaryExpr);
+				$$ = $MultiLineBasicExpr;
 			}
 		;
+
 
 BasicExpr
 		: PrimaryExpr
@@ -233,6 +228,67 @@ BasicExpr
 			{
 				$BasicExpr.push($PrimaryExpr);
 				$$ = $BasicExpr;
+			}
+		;
+
+MultiLineDOT
+		: NLDOT
+		| SEPDOT
+		;
+
+MultiLineDOTAfterVar
+		: '.'
+		| NLDOT
+		;
+
+MultiLineSEP
+		: SEP
+		| NEWLINE
+		;
+
+MultiLineExpr
+		: MultiLineBasicExpr
+
+		| PrimaryExpr MultiLineDOT Field
+			{
+				$$ = [[$PrimaryExpr, $Field], '{method}'];
+			}
+
+		| PrimaryExpr MultiLineDOT Field MultiLineSEP
+			{
+				$$ = [[$PrimaryExpr, $Field], '{method}'];
+			}
+
+		| PrimaryExpr MultiLineDOT Field MultiLineSEP MultiLineBasicExpr
+			{
+				$$ = [[$PrimaryExpr, $Field], '{method}'];
+				for (var i = 0; i < $MultiLineBasicExpr.length; i++) {
+					$$[0].push($MultiLineBasicExpr[i]);
+				}
+			}
+
+		| MultiLineExpr VBAR MultiLineBasicExpr
+			{
+				$3.unshift(makeExpr($1));
+				$$ = $3;
+			}
+
+		| MultiLineExpr VBAR MultiLineDOTAfterVar Field
+			{
+				$$ = [[makeExpr($MultiLineExpr), $Field], '{method}'];
+			}
+
+		| MultiLineExpr VBAR MultiLineDOTAfterVar Field MultiLineSEP
+			{
+				$$ = [[makeExpr($MultiLineExpr), $Field], '{method}'];
+			}
+
+		| MultiLineExpr VBAR MultiLineDOTAfterVar Field MultiLineSEP MultiLineBasicExpr
+			{
+				$$ = [[makeExpr($MultiLineExpr), $Field], '{method}'];
+				for (var i = 0; i < $MultiLineBasicExpr.length; i++) {
+					$$[0].push($MultiLineBasicExpr[i]);
+				}
 			}
 		;
 
