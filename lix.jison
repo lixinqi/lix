@@ -35,7 +35,7 @@
 \s*":="\s*  									{ return 'DEF'; }
 \s*"="\s*  										{ return 'ASSIGN_OPERATOR'; }
 [_a-zA-Z][_a-zA-Z0-9]* 				{ return 'VAR'; }
-[0-9]+  											{ return 'NAT'; }
+[+-]?[0-9]+("."[0-9]*)?([Ee][+-]?[0-9]+)?  		{ return 'NAT'; }
 \s+       										{ return 'SEP'; }
 /lex
 
