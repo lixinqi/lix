@@ -1,3 +1,14 @@
+function counterGenerator() {
+		var count = 0;
+		return function () {
+			var ret = count;
+			count = (count + 1);
+			return count;
+		};
+}
+
+var getCount = counterGenerator();
+
 function generateFuncArgs(args, env) {
 	var ret = [];
 	for (var i = 0; i < args.length; i++) {
@@ -113,18 +124,21 @@ function env_new(env) {
 }
 
 
-function generateMehtod(methodExpr, env, ctx) {
-	expr = methodExpr[0];
+function generateMethod(methodExpr, env, ctx) {
+	var expr = methodExpr[0];
 
 	var method = generateField(expr[1], env, ctx0);
 	var obj = generate(expr[0], env, ctx0);
-	var args = obj;
+	var localValName = '_val_' + getCount();
+	var args = localValName;
 	for (var i = 2; i < expr.length; i++) {
 			args += ', ';
 			args += generate(expr[i], env, ctx0);
 	}
-	method = obj + method;
-	return method + '(' + args + ')';
+	method = localValName + method;
+	ret = '(function (' +
+					localValName +') { return ' + method + '(' + args + '); })(' + obj + ')';
+	return ret;
 }
 
 function generate (expr, env, ctx) {
@@ -155,7 +169,7 @@ function generate (expr, env, ctx) {
 	} else if (expr[1] === '{object}') {
 		return ctx(generateObjectLiteral(expr, env, ctx0));
 	} else if (expr[1] === '{method}') {
-		return ctx(generateMehtod(expr, env, ctx0), 0, 1);
+		return ctx(generateMethod(expr, env, ctx0), 0, 1);
 	} else if (expr[1] === '{empty}') {
 		return ctx(0, 0, 1);
 	} else if (expr[1] === ':=') {

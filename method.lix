@@ -22,32 +22,31 @@ obj := {
 	._age 21
 }
 
-obj | .setAge 23 | .setName "fine" | print
+#obj | .setAge 23 | .setName "fine"
+#
+#obj .name | print
+#obj .age | print
 
-# obj | .setAge 43
-# obj .name | print
-# obj .age | print
-
-# (obj
-# 	| (i)->{
-# 			i | .name | print
-# 			i
-# 		}
-# 	| (i)->{
-# 			i | .age | print
-# 			i
-# 		}
-# 	| .setName "fine"  | .setAge 43 
-# 
-# 	| (i)->{
-# 			i | .name | print
-# 			i
-# 		}
-# 	| (i)->{
-# 			i | .age | print
-# 			i
-# 		}
-# )
+ (obj
+ 	| (i)->{
+ 			i | .name | print
+ 			i
+ 		}
+ 	| (i)->{
+ 			i | .age | print
+ 			i
+ 		}
+ 	| .setName "fine"  | .setAge 43 
+ 
+ 	| (i)->{
+ 			i | .name | print
+ 			i
+ 		}
+ 	| (i)->{
+ 			i | .age | print
+ 			i
+ 		}
+ )
 
 # obj .['name'] | print
 # 
