@@ -10,11 +10,10 @@ obj := {
 
 obj .self | .name | print
 
-self := (obj)->{obj}
-name := (obj)->{obj .name}
+self := (obj)->{ obj }
+name := (obj)->{ obj .name }
 
-(
-	obj .self | .name) | print
+obj .self | .name | print
 
 (
 	obj self
@@ -28,3 +27,4 @@ name := (obj)->{obj .name}
 		}
 	| .name
 ) | print
+

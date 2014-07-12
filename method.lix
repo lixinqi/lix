@@ -1,22 +1,76 @@
 #!/usr/local/bin/node ./lix.js
 
 obj := {
-	.name (self value)->{
-		ret := self
-		value eq undefined | then ()->{
-			ret = self._name
-		} | not | then ()->{
-			self._name = value
-		}
-		ret
+
+	.name (self)->{
+		self._name
 	}
+	.setName (self value)->{
+		self._name = value
+		self
+	}
+
+	.age (self)->{
+		self._age
+	}
+	.setAge (self value)->{
+		self._age = value
+		self
+	}
+
 	._name "good"
+	._age 21
 }
 
-obj .name | print
+obj | .setAge 23 | .setName "fine" | print
 
-obj | .name | print
+# obj | .setAge 43
+# obj .name | print
+# obj .age | print
 
-obj .name "你好"
+# (obj
+# 	| (i)->{
+# 			i | .name | print
+# 			i
+# 		}
+# 	| (i)->{
+# 			i | .age | print
+# 			i
+# 		}
+# 	| .setName "fine"  | .setAge 43 
+# 
+# 	| (i)->{
+# 			i | .name | print
+# 			i
+# 		}
+# 	| (i)->{
+# 			i | .age | print
+# 			i
+# 		}
+# )
 
-obj | .name | print
+# obj .['name'] | print
+# 
+# obj | .name | print
+# 
+# obj .name "你好"
+# 
+# obj | .name | print
+# 
+# arr := [
+# 	(self)->{
+# 		self.1 | print
+# 		self
+# 	}
+# 	"good"
+# ]
+# 
+# arr .[0] | print
+# 
+# arr := [
+# 	print
+# 	"good"
+# 	"nice"
+# ]
+# 
+# arr .[0]

@@ -45,14 +45,6 @@
 
 %%
 
-OPENBRACE
-		: '{'
-		;
-
-CLOSEBRACE
-		: '}'
-		;
-
 FUNC_ARGS
 		: VAR
 			{
