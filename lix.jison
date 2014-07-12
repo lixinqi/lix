@@ -237,25 +237,37 @@ BasicExpr
 		;
 
 Expr
-		: PrimaryExpr
+		: BasicExpr
+
+		| PrimaryExpr SEPDOT Field
 			{
-				$$ = [$PrimaryExpr];
+				$$ = [[$PrimaryExpr, $Field], '{method}'];
 			}
 
-		| PrimaryExpr SEPDOT Field SEP Expr
+		| PrimaryExpr SEPDOT Field SEP BasicExpr
 			{
-				$$ = [$PrimaryExpr];
+				$$ = [[$PrimaryExpr, $Field], '{method}'];
+				for (var i = 0; i < $BasicExpr.length; i++) {
+					$$[0].push($BasicExpr[i]);
+				}
 			}
 
-		| Expr SEP PrimaryExpr
-			{
-				$Expr.push($PrimaryExpr);
-				$$ = $Expr;
-			}
-		| Expr VBAR Expr
+		| Expr VBAR BasicExpr
 			{
 				$3.unshift(makeExpr($1));
 				$$ = $3;
+			}
+
+		| Expr VBAR '.' Field
+			{
+				$$ = [[makeExpr($Expr), $Field], '{method}'];
+			}
+		| Expr VBAR '.' Field SEP BasicExpr
+			{
+				$$ = [[makeExpr($Expr), $Field], '{method}'];
+				for (var i = 0; i < $BasicExpr.length; i++) {
+					$$[0].push($BasicExpr[i]);
+				}
 			}
 		;
 

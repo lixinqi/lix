@@ -112,6 +112,21 @@ function env_new(env) {
 	return env;
 }
 
+
+function generateMehtod(methodExpr, env, ctx) {
+	expr = methodExpr[0];
+
+	var method = generateField(expr[1], env, ctx0);
+	var obj = generate(expr[0], env, ctx0);
+	var args = obj;
+	for (var i = 2; i < expr.length; i++) {
+			args += ', ';
+			args += generate(expr[i], env, ctx0);
+	}
+	method = obj + method;
+	return method + '(' + args + ')';
+}
+
 function generate (expr, env, ctx) {
 //	ctx = (ctx || function (x) { return x; });
 	if (expr[1] === '{start}') {
@@ -139,6 +154,8 @@ function generate (expr, env, ctx) {
 		return ctx(generateArray(expr, env, ctx0), 0, 1);
 	} else if (expr[1] === '{object}') {
 		return ctx(generateObjectLiteral(expr, env, ctx0));
+	} else if (expr[1] === '{method}') {
+		return ctx(generateMehtod(expr, env, ctx0), 0, 1);
 	} else if (expr[1] === '{empty}') {
 		return ctx(0, 0, 1);
 	} else if (expr[1] === ':=') {

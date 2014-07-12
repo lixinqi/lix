@@ -108,4 +108,5 @@ obj := A instance
 
 obj | obj.name | print
 
-obj obj.name "nice" | obj.name | print
+# obj obj.name "nice" | obj.name | print
+# obj .name "nice" | .name | print

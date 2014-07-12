@@ -1,0 +1,22 @@
+#!/usr/local/bin/node ./lix.js
+
+obj := {
+	.name (self value)->{
+		ret := self
+		value eq undefined | then ()->{
+			ret = self._name
+		} | not | then ()->{
+			self._name = value
+		}
+		ret
+	}
+	._name "good"
+}
+
+obj .name | print
+
+obj | .name | print
+
+obj .name "你好"
+
+obj | .name | print
