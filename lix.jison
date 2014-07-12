@@ -31,6 +31,7 @@
 \s*":="\s*  									{ return 'DEF'; }
 \s*"="\s*  										{ return 'ASSIGN_OPERATOR'; }
 \.    												{ return '.'; }
+\s+\.													{ return 'SEPDOT'; }
 [_a-zA-Z][_a-zA-Z0-9]* 				{ return 'VAR'; }
 [0-9]+  											{ return 'NAT'; }
 \s+       										{ return 'SEP'; }
@@ -108,31 +109,36 @@ Object
 		;
 
 Property
-		: '.' PropertyField SEP PrimaryExpr
+		: PropertyField SEP PrimaryExpr
 			{
-				$$ = [$2, '{property}', makeExpr($4)];
+				$$ = [$1, '{property}', makeExpr($3)];
 			}
-		| '.' PropertyField NEWLINE PrimaryExpr
+		| PropertyField NEWLINE PrimaryExpr
 			{
-				$$ = [$2, '{property}', makeExpr($4)];
+				$$ = [$1, '{property}', makeExpr($3)];
 			}
 		;
 
 PropertyList
-		: Property
+		: '.' Property
 			{
-				$$ = [$1];
+				$$ = [$Property];
 			}
-		| PropertyList SEP Property
+		| PropertyList SEPDOT Property
 			{
-				$1.push($3);
-				$$ = $1;
+				$PropertyList.push($Property);
+				$$ = $PropertyList;
+			}
+		| PropertyList SEP '.' Property
+			{
+				$PropertyList.push($Property);
+				$$ = $PropertyList;
 			}
 		| PropertyList NEWLINE
-		| PropertyList NEWLINE Property
+		| PropertyList NEWLINE '.' Property
 			{
-				$1.push($3);
-				$$ = $1;
+				$PropertyList.push($Property);
+				$$ = $PropertyList;
 			}
 		;
 
@@ -217,11 +223,30 @@ MultiLineExpr
 			}
 		;
 
+BasicExpr
+		: PrimaryExpr
+			{
+				$$ = [$PrimaryExpr];
+			}
+
+		| BasicExpr SEP PrimaryExpr
+			{
+				$BasicExpr.push($PrimaryExpr);
+				$$ = $BasicExpr;
+			}
+		;
+
 Expr
 		: PrimaryExpr
 			{
 				$$ = [$PrimaryExpr];
 			}
+
+		| PrimaryExpr SEPDOT Field SEP Expr
+			{
+				$$ = [$PrimaryExpr];
+			}
+
 		| Expr SEP PrimaryExpr
 			{
 				$Expr.push($PrimaryExpr);
