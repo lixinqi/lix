@@ -53,16 +53,8 @@ foreach := (arr cb)->{
 	}
 }
 
-mul := (x y)->{
-	ret := 0
-	0 to y | each ()->{
-		ret = ret + x
-	}
-	ret
-}
-
 square := (i)->{
-	i mul i
+	i * i
 }
 
 # 平方 := (i)->{
@@ -127,7 +119,18 @@ forEach := (range fn)->{
 # 整数的平方 := 平方
 
 # 0 到 5 | 其中每个 整数的平方 | 打印到终端
- 0 To 5 | forEach square | print
+
+# 0 To 5 | forEach square | print
+
+到 := To
+
+其中每个 := forEach
+
+整数的平方 := square
+
+打印到终端 := print
+
+0 到 5 | 其中每个 整数的平方 | 打印到终端
 
 # [1 2 3 4 5] | foreach (value index)->{
 # 	"index: " | + index | print
@@ -143,6 +146,6 @@ compose := (f0 f1)->{
 forth := square compose square
 
 # 2 | 四次方 | 打印
-2 | forth | print
+# 2 | forth | print
 # 2 | 平方 | 平方 | 打印
-2 | square | square | print
+# 2 | square | square | print

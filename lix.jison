@@ -34,7 +34,7 @@
 \s*"|"\s*   									{ return 'VBAR'; }
 \s*":="\s*  									{ return 'DEF'; }
 \s*"="\s*  										{ return 'ASSIGN_OPERATOR'; }
-[_a-zA-Z][_a-zA-Z0-9]* 				{ return 'VAR'; }
+[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'VAR'; }
 "+"														{ return 'VAR'; }
 "*"														{ return 'VAR'; }
 "-"														{ return 'VAR'; }
