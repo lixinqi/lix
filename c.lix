@@ -40,7 +40,7 @@ to := (start end)->{
 each := (range cb)->{
 	start := range.0
 	end := range.1
-	start lt range.1 | then ()->{
+	start lt end | then ()->{
 		start cb
 		start + 1 | to end | each cb
 	}
@@ -102,9 +102,27 @@ To := (start end)->{
 	[ 1 2 3 4 5]
 }
 
+计数器发生器 := (counter)->{
+	()->{
+		ret := counter
+		counter = counter + 1
+		ret
+	}
+}
+
+走起 := (fn)->{
+	0 fn
+}
+
+当前值 := (fn)->{
+	0 fn
+}
+
 forEach := (range fn)->{
 	ret := []
-	range foreach (value index)->{
+	计数器 := 0 计数器发生器
+	range each (value)->{
+		index := 计数器 当前值
 		ret.[index] = (value fn)
 	}
 	ret
@@ -122,7 +140,7 @@ forEach := (range fn)->{
 
 # 0 To 5 | forEach square | print
 
-到 := To
+到 := to
 
 其中每个 := forEach
 
@@ -130,7 +148,9 @@ forEach := (range fn)->{
 
 打印到终端 := print
 
-0 到 5 | 其中每个 整数的平方 | 打印到终端
+# 0 到 5 | 其中每个 整数的平方 | 打印到终端
+
+6 到 10 | 其中每个 整数的平方 | 打印到终端
 
 # [1 2 3 4 5] | foreach (value index)->{
 # 	"index: " | + index | print
