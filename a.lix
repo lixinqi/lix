@@ -1,6 +1,6 @@
 #!/usr/local/bin/lix
 
-inc := (i)->{ i add 2 | sub 1 }
+inc := (i)->{ i + 2 | - 1 }
 
 3 inc | inc | print
 
@@ -34,7 +34,7 @@ seqPrint := (self)->{
 	(i)->{
 		i print
 		i gt 0 | then ()->{
-			i sub 1 | self
+			i - 1 | self
 		}
 	}
 } | Y

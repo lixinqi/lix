@@ -83,11 +83,11 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
-				this.$ = [[$$[$0], '{atomic}']];
+				this.$ = [[$$[$0], '{atomic}', '{var}']];
 			
 break;
 case 2:
-				$$[$0-2].push([$$[$0], '{atomic}']);
+				$$[$0-2].push([$$[$0], '{atomic}', '{var}']);
 				this.$ = $$[$0-2];
 			
 break;
@@ -120,7 +120,7 @@ case 9:
 			
 break;
 case 10:
-				this.$ = [$$[$0], '{atomic}'];
+				this.$ = [$$[$0], '{atomic}', '{var}'];
 			
 break;
 case 11:
@@ -293,7 +293,7 @@ case 61:
 			
 break;
 case 62:
-				this.$ = [[$$[$0-3], '{atomic}'], ':=', makeExpr($$[$0-1])];
+				this.$ = [[$$[$0-3], '{atomic}', '{var}'], ':=', makeExpr($$[$0-1])];
 			
 break;
 case 63:
@@ -805,21 +805,21 @@ case 3: return 19;
 break;
 case 4: return 31; 
 break;
-case 5: return 17; 
+case 5: return 22; 
 break;
-case 6: return 20; 
+case 6: return 17; 
 break;
-case 7: return 21; 
+case 7: return 20; 
 break;
-case 8: return 23; 
+case 8: return 21; 
 break;
-case 9: return 25; 
+case 9: return 23; 
 break;
-case 10: return 7; 
+case 10: return 25; 
 break;
-case 11: return 9; 
+case 11: return 7; 
 break;
-case 12: return 22; 
+case 12: return 9; 
 break;
 case 13: return 33; 
 break;
@@ -829,14 +829,24 @@ case 15: return 40;
 break;
 case 16: return 4; 
 break;
-case 17: return 10; 
+case 17: return 4; 
 break;
-case 18: return 5; 
+case 18: return 4; 
+break;
+case 19: return 4; 
+break;
+case 20: return 4; 
+break;
+case 21: return 4; 
+break;
+case 22: return 10; 
+break;
+case 23: return 5; 
 break;
 }
 },
-rules: [/^(?:$)/,/^(?:'(\\.|[^\\'])*'|"(\\.|[^\\"])*")/,/^(?:\.)/,/^(?:\s+\.)/,/^(?:\s*((#.*)?\n+)+\s*\.)/,/^(?:\s*((#.*)?\n+)+\s*)/,/^(?:\(\s*)/,/^(?:\s*\))/,/^(?:\{\s*((#.*)?\n+)*\s*)/,/^(?:\s*\})/,/^(?:\[\s*((#.*)?\n+)*\s*)/,/^(?:\s*\])/,/^(?:\s*->\s*)/,/^(?:\s*\|\s*)/,/^(?:\s*:=\s*)/,/^(?:\s*=\s*)/,/^(?:[_a-zA-Z][_a-zA-Z0-9]*)/,/^(?:[+-]?[0-9]+(\.[0-9]*)?([Ee][+-]?[0-9]+)?)/,/^(?:\s+)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18],"inclusive":true}}
+rules: [/^(?:$)/,/^(?:'(\\.|[^\\'])*'|"(\\.|[^\\"])*")/,/^(?:\.)/,/^(?:\s+\.)/,/^(?:\s*((#.*)?\n+)+\s*\.)/,/^(?:\s*((#.*)?\n+)*\s*->\s*((#.*)?\n+)*\s*)/,/^(?:\s*((#.*)?\n+)+\s*)/,/^(?:\(\s*)/,/^(?:\s*\))/,/^(?:\{\s*((#.*)?\n+)*\s*)/,/^(?:\s*\})/,/^(?:\[\s*((#.*)?\n+)*\s*)/,/^(?:\s*\])/,/^(?:\s*\|\s*)/,/^(?:\s*:=\s*)/,/^(?:\s*=\s*)/,/^(?:[_a-zA-Z][_a-zA-Z0-9]*)/,/^(?:\+)/,/^(?:\*)/,/^(?:-)/,/^(?:\/)/,/^(?:%)/,/^(?:[+-]?[0-9]+(\.[0-9]*)?([Ee][+-]?[0-9]+)?)/,/^(?:\s+)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],"inclusive":true}}
 };
 return lexer;
 })();

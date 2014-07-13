@@ -1,5 +1,5 @@
 #!/usr/local/bin/node ./lix.js
-"Hello world" | add '\n"good' | print
+"Hello world" | + '\n"good' | print
 
 a := [10 20 30]
 
@@ -42,7 +42,7 @@ each := (range cb)->{
 	end := range.1
 	start lt range.1 | then ()->{
 		start cb
-		start add 1 | to end | each cb
+		start + 1 | to end | each cb
 	}
 }
 
@@ -56,7 +56,7 @@ foreach := (arr cb)->{
 mul := (x y)->{
 	ret := 0
 	0 to y | each ()->{
-		ret = ret add x
+		ret = ret + x
 	}
 	ret
 }
@@ -93,7 +93,7 @@ square := (i)->{
 # obj := {
 # 	.url "www.baidu.com"
 # 	.data {
-# 		.answer (1 add 2)
+# 		.answer (1 + 2)
 # 	}
 # 	.success (data)->{
 # 		data | console.log
@@ -118,12 +118,31 @@ forEach := (range fn)->{
 	ret
 }
 
+# 再 := (f0 f1)->{
+#
+# }
+
+# 四次方 := 平方 再 平方
+
+# 整数的平方 := 平方
+
 # 0 到 5 | 其中每个 整数的平方 | 打印到终端
  0 To 5 | forEach square | print
 
 # [1 2 3 4 5] | foreach (value index)->{
-# 	"index: " | add index | print
-# 	"value: " | add value | print
-# 	"square: " | add (value square) | print
+# 	"index: " | + index | print
+# 	"value: " | + value | print
+# 	"square: " | + (value square) | print
 # 	"" | print
 # }
+
+compose := (f0 f1)->{
+	(i)->{ i | f0 | f1}
+}
+
+forth := square compose square
+
+# 2 | 四次方 | 打印
+2 | forth | print
+# 2 | 平方 | 平方 | 打印
+2 | square | square | print

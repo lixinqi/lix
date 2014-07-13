@@ -20,6 +20,7 @@
 \.    												{ return '.'; }
 \s+\.													{ return 'SEPDOT'; }
 \s*(("#".*)?\n+)+\s*\.				{ return 'NLDOT'; }
+\s*(("#".*)?\n+)*\s*"->"\s*(("#".*)?\n+)*\s*   { return 'FUNC_ARROW'; }
 
 \s*(("#".*)?\n+)+\s*       		{ return 'NEWLINE'; }
 
@@ -30,11 +31,15 @@
 "["\s*(("#".*)?\n+)*\s*  			{ return '['; }
 \s*"]"       									{ return ']'; }
 
-\s*"->"\s*   									{ return 'FUNC_ARROW'; }
 \s*"|"\s*   									{ return 'VBAR'; }
 \s*":="\s*  									{ return 'DEF'; }
 \s*"="\s*  										{ return 'ASSIGN_OPERATOR'; }
 [_a-zA-Z][_a-zA-Z0-9]* 				{ return 'VAR'; }
+"+"														{ return 'VAR'; }
+"*"														{ return 'VAR'; }
+"-"														{ return 'VAR'; }
+"/"														{ return 'VAR'; }
+"%"														{ return 'VAR'; }
 [+-]?[0-9]+("."[0-9]*)?([Ee][+-]?[0-9]+)?  		{ return 'NAT'; }
 \s+       										{ return 'SEP'; }
 /lex
@@ -48,11 +53,11 @@
 FUNC_ARGS
 		: VAR
 			{
-				$$ = [[$VAR, '{atomic}']];
+				$$ = [[$VAR, '{atomic}', '{var}']];
 			}
 		| FUNC_ARGS SEP VAR
 			{
-				$FUNC_ARGS.push([$VAR, '{atomic}']);
+				$FUNC_ARGS.push([$VAR, '{atomic}', '{var}']);
 				$$ = $FUNC_ARGS;
 			}
 		;
@@ -94,7 +99,7 @@ Field
 Object
 		: VAR
 			{
-				$$ = [$1, '{atomic}'];
+				$$ = [$1, '{atomic}', '{var}'];
 			}
 		| Object '.' Field
 			{
@@ -338,7 +343,7 @@ ExprStatement
 DefStatement
 		: VAR DEF Expr NEWLINE
 			{
-				$$ = [[$VAR, '{atomic}'], ':=', makeExpr($3)];
+				$$ = [[$VAR, '{atomic}', '{var}'], ':=', makeExpr($3)];
 			}
 		;
 

@@ -47,7 +47,7 @@ ifGt0 := (i block)->{
 printStep2 := (i)->{
 	i print
 	i ifGt0 ()->{
-		i sub 2 | printStep2
+		i - 2 | printStep2
 	}
 }
 
@@ -55,7 +55,7 @@ printStep2 := (self)->{
 	(i)->{
 		i print
 		i ifGt0 ()->{
-			i sub 2 | self
+			i - 2 | self
 		}
 	}
 } Y
@@ -84,7 +84,7 @@ each := (range fn)->{
 	end := range cdr
 	start le end | then ()->{
 		start fn
-		start = start add 1
+		start = start + 1
 		start to end | each fn
 	}
 }
@@ -93,7 +93,7 @@ each := (range fn)->{
 mul := (x y)->{
 	ret := 0
 	1 to y | each ()->{
-		ret = ret add x
+		ret = ret + x
 	}
 	ret
 }
@@ -109,7 +109,7 @@ isOdd := (i)->{
 	i eq 0 | ifTrue ()->{
 		ret = 0
 	} ()->{
-		ret = i sub 1 | isEven
+		ret = i - 1 | isEven
 	}
 	ret
 }
@@ -119,7 +119,7 @@ isEven := (i)->{
 	i eq 0 | ifTrue ()->{
 		ret = 1
 	} ()->{
-		ret = i sub 1 | isOdd
+		ret = i - 1 | isOdd
 	}
 	ret
 }
@@ -127,7 +127,7 @@ isEven := (i)->{
 yu := cons
 
 pingfanghe := (x)->{
-	(x car | square) add (x cdr | square)
+	(x car | square) + (x cdr | square)
 }
 
 3 yu 4 | pingfanghe | puts

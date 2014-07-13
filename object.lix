@@ -9,10 +9,13 @@ a := {
 
 a | print
 a.1 | print 
+a.[1] | print 
+a.["1"] | print 
 a.a | print
+a.["a"] | print
 a.b | print
 index := "hello world"
-index | add ": " | add a.[index] | print
+index | + ": " | + a.[index] | print
 
 b := {}
 
@@ -110,3 +113,6 @@ obj | obj.name | print
 
 # obj obj.name "nice" | obj.name | print
 # obj .name "nice" | .name | print
+
+
+

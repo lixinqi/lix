@@ -3,7 +3,7 @@ function counterGenerator() {
 		return function () {
 			var ret = count;
 			count = (count + 1);
-			return count;
+			return ret;
 		};
 }
 
@@ -35,12 +35,30 @@ function generateSeq(expr, env, ctx) {
 	return ret;
 }
 
+var operateFuncName = {
+	"+": '__add__',
+	"-": '__sub__',
+	"*": '__mul__',
+	"/": '__div__',
+	"%": '__mod__',
+};
+
+function generateAtomic(expr, env, ctx) {
+	if (expr[2] === '{var}') {
+		if (operateFuncName[expr[0]]) {
+			return operateFuncName[expr[0]];
+		}
+		return transformVarName(expr[0]);
+	}
+	return expr[0];
+}
+
 function generatePropertyName(expr, env, ctx) {
 	if (expr[1] === '{atomic}') {
-		var ret = expr[0];
+		var ret = generateAtomic(expr, env, ctx);
 		return ctx(ret, 0, 1);
 	} else if ((expr[1] === '{index}')) {
-		var ret = expr[0][0];
+		var ret = generateAtomic(expr[0]);
 		return ctx(ret, 0, 1);
 	}
 }
@@ -62,9 +80,13 @@ function generateObjectLiteral(expr, env, ctx) {
 	return ret;
 }
 
+var transformVarName = function (name) {
+	return name;
+}
+
 function getVarName(expr) {
 	if (expr[1] === '{atomic}') {
-		return expr[0];
+		return generateAtomic(expr);
 	} else if (expr[1] === '{.}') {
 		return getVarName (expr[0]);
 	}
@@ -72,7 +94,7 @@ function getVarName(expr) {
 
 function generateField(expr, env, ctx) {
 	if (expr[1] === '{atomic}') {
-		var ret = '.' + expr[0];
+		var ret = '.' + generateAtomic(expr);
 		return ctx(ret, 0, 1);
 	} else if (expr[1] === '{index}') {
 		var ret = '[' + generate(expr[0], env, ctx0) + ']';
@@ -82,7 +104,7 @@ function generateField(expr, env, ctx) {
 
 function generateFieldAccess(expr, env, ctx) {
 	if (expr[1] === '{atomic}') {
-		var ret = expr[0];
+		var ret = generateAtomic(expr);
 		return ctx(ret, 0, 1);
 	} else if (expr[1] === '{.}') {
 		var field = generateField(expr[2], env, ctx);
@@ -105,8 +127,6 @@ function generateArray(expr, env, ctx) {
 
 function env_new(env) {
 	env = (env || {
-		add: true,
-		sub: true,
 		print: true,
 		then: true,
 		not: true,
@@ -116,6 +136,11 @@ function env_new(env) {
 		le: true,
 		lt: true,
 		_instance_: true,
+		__add__: true,
+		__sub__: true,
+		__mul__: true,
+		__div__: true,
+		__mod__: true,
 	});
 	var Env = function () {};
 	Env.prototype = env;
@@ -137,7 +162,7 @@ function generateMethod(methodExpr, env, ctx) {
 	}
 	method = localValName + method;
 	ret = '(function (' +
-					localValName +') { return ' + method + '(' + args + '); })(' + obj + ')';
+					localValName +") {\nreturn " + method + '(' + args + ');\n})(' + obj + ')';
 	return ret;
 }
 
@@ -150,7 +175,7 @@ function generate (expr, env, ctx) {
 	} else if (expr[1] === '{mono}') {
 		return ctx(generate(expr[0], env, ctx0), 0, 1);
 	} else if (expr[1] === '{atomic}') {
-		return ctx(expr[0], 0, 1);
+		return ctx(generateAtomic(expr), 0, 1);
 	} else if (expr[1] === '{.}') {
 		return ctx(generateFieldAccess(expr, env, ctx0));
 	} else if (expr[1] === '{func}') {
@@ -200,8 +225,6 @@ function generate (expr, env, ctx) {
 
 exports.compile = function (expr) {
 	var libs = [
-	"function add(x, y) {\n return x + y;\n}",
-	"function sub(x, y) {\n return x - y; \n}",
 	"function print(x) {\n return console.log(x); \n}",
 	"function then(x, fn) {\n if (x) { fn(); } else { } return x; \n}",
 	"function not(x) {\n return !x \n}",
@@ -211,6 +234,11 @@ exports.compile = function (expr) {
 	"function le(x, y) {\n return x <= y; \n}",
 	"function lt(x, y) {\n return x < y; \n}",
 	"function _instance_(x) {\n return new x(); \n}",
+	"function __add__(x, y) {\n return x + y;\n}",
+	"function __sub__(x, y) {\n return x - y;\n}",
+	"function __mul__(x, y) {\n return x * y;\n}",
+	"function __div__(x, y) {\n return x / y;\n}",
+	"function __mod__(x, y) {\n return x % y;\n}",
 	].join("\n");
 
 	var env0 = env_new();

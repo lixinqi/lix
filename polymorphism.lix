@@ -8,7 +8,7 @@ each := (range cb)->{
 	end := range.1
 	start lt range.1 | then ()->{
 		start cb
-		start add 1 | to end | each cb
+		start + 1 | to end | each cb
 	}
 }
 
@@ -54,8 +54,7 @@ objList foreach (i index)->{
 }
 
 objList foreach (i index)->{
-	newName := i .name | add index
-	i .setName newName
+	i .setName (i .name | + index)
 }
 
 objList foreach (i index)->{
