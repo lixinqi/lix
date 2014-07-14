@@ -24,6 +24,8 @@
 
 \s*(("#".*)?\n+)+\s*       		{ return 'NEWLINE'; }
 
+\s*"|"\s*   									{ return 'VBAR'; }
+
 "("\s*       									{ return 'OPENPARAN'; }
 \s*")"      									{ return 'CLOSEPARAN'; }
 "{"\s*(("#".*)?\n+)*\s* 			{ return '{'; }
@@ -31,22 +33,34 @@
 "["\s*(("#".*)?\n+)*\s*  			{ return '['; }
 \s*"]"       									{ return ']'; }
 
-\s*"|"\s*   									{ return 'VBAR'; }
-\s*":="\s*  									{ return 'DEF'; }
-\s*"="\s*  										{ return 'ASSIGN_OPERATOR'; }
+
+
+'if'													{ return 'IF' }
+'else'												{ return 'ELSE' }
+
 [\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'VAR'; }
 "+"														{ return 'VAR'; }
 "*"														{ return 'VAR'; }
 "-"														{ return 'VAR'; }
 "/"														{ return 'VAR'; }
 "%"														{ return 'VAR'; }
+">="													{ return 'VAR'; }
+">"														{ return 'VAR'; }
+"=="													{ return 'VAR'; }
+"<="													{ return 'VAR'; }
+"<"														{ return 'VAR'; }
 [+-]?[0-9]+("."[0-9]*)?([Ee][+-]?[0-9]+)?  		{ return 'NAT'; }
+
+\s+":="\s+  									{ return 'DEF'; }
+\s+"="\s+  										{ return 'ASSIGN_OPERATOR'; }
+
 \s+       										{ return 'SEP'; }
 /lex
 
 %left NEWLINE
 %left VBAR
 %left SEP
+%left ASSIGN_OPERATOR
 
 %%
 
@@ -354,6 +368,35 @@ AssignStatement
 			}
 		;
 
+OptSEP
+		:
+		| SEP
+		;
+
+IfCaseStatement
+		: OptSEP PrimaryExpr OptSEP '{' NullableSourceElements '}'
+			{
+				$$ = [[makeExpr($PrimaryExpr), $NullableSourceElements]];
+			}
+		| IfCaseStatement OptSEP PrimaryExpr OptSEP '{' NullableSourceElements '}'
+			{
+				$1.push([makeExpr($PrimaryExpr), $NullableSourceElements]);
+				$$ = $1
+			}
+		;
+
+IfStatement
+		: IF IfCaseStatement NEWLINE
+			{
+				$$ = [$IfCaseStatement, 'if'];
+			}
+		| IF IfCaseStatement OptSEP ELSE OptSEP '{' NullableSourceElements '}' NEWLINE
+			{
+				$IfCaseStatement.push(['else', $NullableSourceElements]);
+				$$ = [$IfCaseStatement, 'if'];
+			}
+		;
+
 EmptyStatement
 		: NEWLINE
 			{
@@ -361,11 +404,21 @@ EmptyStatement
 			}
 		;
 
+
 Statement
 		: ExprStatement
 		| AssignStatement
 		| DefStatement
+		| IfStatement
 		| EmptyStatement
+		;
+
+NullableSourceElements
+		:
+			{
+				$$ = [[], '{seq}'];
+			}
+		| SourceElements
 		;
 
 SourceElements

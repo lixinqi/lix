@@ -1,9 +1,20 @@
 #!/usr/local/bin/node ./lix.js
+打印到终端 := print
+对象o := {
+	.名字 ()->{
+		"李新奇"
+	}
+}
+
+人物p := 对象o
+
+人物p | .名字 | 打印到终端
+人物p .名字 | 打印到终端
+
 问候语 := "你好"
 
 问候语 | print 
 
-打印到终端 := print
 
 再 := (f0 f1)->{
 	(i)->{ i | f0 | f1 }
@@ -21,13 +32,175 @@
 
 2 | 平方 | 平方 | 打印到终端
 
-对象o := {
-	.名字 ()->{
-		"李新奇"
+
+_小名 := {
+	.good "nice"
+	.fine "ok"
+}
+
+小名 := (人物 新名称)->{
+	ret := 0
+	新名称 | then ()->{
+		_小名.[人物] = 新名称
+#		人物 _小名 新名称
+	} | not | then ()->{
+		ret = _小名.[人物]
+#		ret = 人物 _小名
+	}
+	ret
+}
+
+"good" | 小名 | 打印到终端
+"fine" | 小名 | 打印到终端
+
+_成绩 := [
+	98
+	97
+	95
+	91
+
+	88
+
+	86
+]
+
+成绩 := (index)->{
+	ret := 0
+	index isFunction | then ()->{
+		filter := index
+		ret = _成绩 filter
+	} | not | then ()->{
+		ret = _成绩.[index]
+	}
+	ret
+}
+
+到 := (x y)->{
+	[x y]
+}
+
+
+
+to := (start end)->{
+	[start end]
+}
+
+each := (range cb)->{
+	start := range.0
+	end := range.1
+	start < end | then ()->{
+		start cb
+		start + 1 | to end | each cb
 	}
 }
 
-人物p := 对象o
+foreach := (arr cb)->{
+	l := arr.length
+	0 to l | each (i)->{
+		arr.[i] | cb i
+	}
+}
 
-人物p | .名字 | 打印到终端
 
+集合化 := (i)->{
+	ret := []
+	i isArray | then ()->{
+		ret = i
+	} | not | then ()->{
+		ret = [i]
+	}
+	ret
+}
+
+counterGenerator := (counter)->{
+	()->{
+		ret := counter
+		counter = counter + 1
+		ret
+	}
+}
+
+call := (fn)->{0 fn}
+
+map := (arr cb)->{
+	ret := []
+	arr = (arr 集合化)
+	getCount := (0 counterGenerator)
+	arr foreach (i)->{
+		ret.[getCount call] = (i cb)
+	}
+	ret
+}
+
+字段 := (name)->{
+	(i)->{ i.[name] }
+}
+
+# obj := { .age 30 .name "李新奇" }
+# 
+# obj | ('age' 字段) | print
+# obj | ('name' 字段) | print
+
+姓名 := (i)->{
+	i map ('name' 字段)
+}
+
+成绩 := (i)->{
+	i map ('score' 字段)
+}
+
+第 := (arr index)->{
+	arr.[index - 1]
+}
+
+前 := (arr index)->{
+	arr .slice index
+}
+
+push := (arr value)->{
+	arr.[arr.length] = value
+	arr
+}
+
+位于 := (arr range)->{
+	ret := []
+	[(range.0 - 1) (range.1)] each (i)->{
+		ret push arr.[i]
+	}
+	ret
+}
+
+名 := (i)->{i}
+
+_101班 := [
+	{
+		.name "二傻"
+		.score 100
+	}
+	{
+		.name "狗胜"
+		.score 97
+	}
+	{
+		.name "大锤"
+		.score 93
+	}
+	{
+		.name "小美"
+		.score 88
+	}
+	{
+		.name "钢蛋"
+		.score 86
+	}
+]
+
+_101班 | 第 (1 名) | 姓名 | print
+
+_101班 | 第 (1 名) | 成绩 | print
+
+_101班 | 前 (3 名) | 姓名 | print
+
+_101班 | 前 (3 名) | 成绩 | print
+
+_101班 | 位于 (2 到 5 | 名) | 姓名 | print

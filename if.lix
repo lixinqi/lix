@@ -1,0 +1,19 @@
+#!/usr/local/bin/node ./lix.js
+
+if (0 >= 1) {
+	'case 0' | print
+} (2 >= 3) {
+	'case 1' | print
+} else {
+	'case else' | print
+}
+
+if 1 {
+	'good' | print
+}
+
+'nice' | print
+
+if (1 == 1) {
+	'ok' | print
+}

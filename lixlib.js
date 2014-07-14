@@ -29,10 +29,38 @@ function generateSeq(expr, env, ctx) {
 	var seq = expr[0];
 	var length = 	seq.length;
 	for (var i = 0; i < length; i++) {
+		var seqCtx = function (v, c, l) {
+			ctx(v, i, length - 1);
+		};
+//		ret += generate(seq[i], env, seqCtx) + ";\n";
 		ret += ctx(generate(seq[i], env, ctx0), i, length) + ";\n";
 	}
 //	ret += "}";
 	return ret;
+}
+
+function generateIf(expr, env, ctx) {
+	var cases = expr[0];
+	var ret = [];
+	var retVar = '__if_retval__' + getCount();
+	var ifCtx = function (v, c, l) {
+				if (c === l) {
+					return retVar + ' = ' + v;
+				} else {
+					return v;
+				}
+			};
+	for (var i = 0; i < cases.length; i++) {
+		if (cases[i][0] === 'else') {
+			var elsecase =	'{\n' + generate(cases[i][1], env, ifCtx) + '\n}'; 
+			ret.push(elsecase);
+		} else {
+			var ifcase =	'if (' + generate(cases[i][0], env, ctx0) + ') {\n'
+						+ generate(cases[i][1], env, ifCtx) + '\n}'; 
+			ret.push(ifcase);
+		}
+	}
+	return 'var ' + retVar + ';\n' + ret.join(' else ') + ctx(retVar);
 }
 
 var operateFuncName = {
@@ -41,6 +69,11 @@ var operateFuncName = {
 	"*": '__mul__',
 	"/": '__div__',
 	"%": '__mod__',
+	">=": '__ge__',
+	">": '__gt__',
+	"==": '__eq__',
+	"<": '__lt__',
+	"<=": '__le__',
 };
 
 function generateAtomic(expr, env, ctx) {
@@ -130,17 +163,19 @@ function env_new(env) {
 		print: true,
 		then: true,
 		not: true,
-		gt: true,
-		ge: true,
-		eq: true,
-		le: true,
-		lt: true,
 		_instance_: true,
+		__gt__: true,
+		__ge__: true,
+		__eq__: true,
+		__le__: true,
+		__lt__: true,
 		__add__: true,
 		__sub__: true,
 		__mul__: true,
 		__div__: true,
 		__mod__: true,
+		isFunction: true,
+		isArray: true,
 	});
 	var Env = function () {};
 	Env.prototype = env;
@@ -211,6 +246,8 @@ function generate (expr, env, ctx) {
 		var fieldChain = generate(expr[0], env, ctx0);
 		var ret = "(" + fieldChain + " = " + generate(expr[2], env, ctx0) + ")";
 		return ctx(ret, 0, 1);
+	} else if (expr[1] === 'if') {
+		return generateIf(expr, env, ctx);
 	}
 
 	var func = generate(expr[1], env, ctx0);
@@ -239,6 +276,13 @@ exports.compile = function (expr) {
 	"function __mul__(x, y) {\n return x * y;\n}",
 	"function __div__(x, y) {\n return x / y;\n}",
 	"function __mod__(x, y) {\n return x % y;\n}",
+	"function __gt__(x, y) {\n return x > y;\n}",
+	"function __ge__(x, y) {\n return x >= y;\n}",
+	"function __eq__(x, y) {\n return x === y;\n}",
+	"function __le__(x, y) {\n return x <= y;\n}",
+	"function __lt__(x, y) {\n return x < y;\n}",
+	"function isFunction(x) {\n return typeof x === 'function';\n}",
+	"function isArray(x) {\n return x instanceof Array;\n}",
 	].join("\n");
 
 	var env0 = env_new();
