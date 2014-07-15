@@ -158,7 +158,6 @@ function generateArray(expr, env, ctx) {
 function env_new(env) {
 	env = (env || {
 		print: true,
-		then: true,
 		not: true,
 		_instance_: true,
 		__gt__: true,
@@ -227,7 +226,7 @@ function generate (expr, env, ctx) {
 		return ctx(0);
 	} else if (expr[1] === ':=') {
 		var varname = expr[0][0];
-		var ret = 'var ' + varname + ' = ' + generate(expr[2], env, ctx0) + ';' + ctx(varname);
+		var ret = 'var ' + varname + ' = ' + generate(expr[2], env, ctx0) + ';\n' + ctx(varname);
 		env[varname] = true;
 		return ret;
 	} else if (expr[1] === '=') {
@@ -256,13 +255,7 @@ function generate (expr, env, ctx) {
 exports.compile = function (expr) {
 	var libs = [
 	"function print(x) {\n return console.log(x); \n}",
-	"function then(x, fn) {\n if (x) { fn(); } else { } return x; \n}",
-	"function not(x) {\n return !x \n}",
-	"function gt(x, y) {\n return x > y; \n}",
-	"function ge(x, y) {\n return x >= y; \n}",
-	"function eq(x, y) {\n return x === y; \n}",
-	"function le(x, y) {\n return x <= y; \n}",
-	"function lt(x, y) {\n return x < y; \n}",
+	"function not(x) {\n return !x;\n}",
 	"function _instance_(x) {\n return new x(); \n}",
 	"function __add__(x, y) {\n return x + y;\n}",
 	"function __sub__(x, y) {\n return x - y;\n}",

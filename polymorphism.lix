@@ -6,7 +6,7 @@ to := (start end)->{
 each := (range cb)->{
 	start := range.0
 	end := range.1
-	start lt range.1 | then ()->{
+	if (start < range.1) {
 		start cb
 		start + 1 | to end | each cb
 	}

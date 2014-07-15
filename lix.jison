@@ -38,6 +38,7 @@
 'if'													{ return 'IF' }
 'else'												{ return 'ELSE' }
 
+[+-]?[0-9]+("."[0-9]*)?([Ee][+-]?[0-9]+)?  		{ return 'NAT'; }
 [\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'VAR'; }
 "+"														{ return 'VAR'; }
 "*"														{ return 'VAR'; }
@@ -49,7 +50,6 @@
 "=="													{ return 'VAR'; }
 "<="													{ return 'VAR'; }
 "<"														{ return 'VAR'; }
-[+-]?[0-9]+("."[0-9]*)?([Ee][+-]?[0-9]+)?  		{ return 'NAT'; }
 
 \s+":="\s+  									{ return 'DEF'; }
 \s+"="\s+  										{ return 'ASSIGN_OPERATOR'; }
