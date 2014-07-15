@@ -1,0 +1,14 @@
+#!/usr/local/bin/node ./lix.js
+call := (fn)->{
+	0 fn
+}
+
+()->{
+	["Hello world"]
+} | call | print
+
+()->{
+	{
+		.hi "Hello world"
+	}
+} | call | print

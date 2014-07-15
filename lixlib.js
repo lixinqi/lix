@@ -24,18 +24,16 @@ var ctx0 = function (x) {
 };
 
 function generateSeq(expr, env, ctx) {
-//	var ret = "{\n";
 	var ret = "";
 	var seq = expr[0];
 	var length = 	seq.length;
 	for (var i = 0; i < length; i++) {
-		var seqCtx = function (v, c, l) {
-			ctx(v, i, length - 1);
-		};
-//		ret += generate(seq[i], env, seqCtx) + ";\n";
-		ret += ctx(generate(seq[i], env, ctx0), i, length) + ";\n";
+		var seqCtx = ctx0;
+		if (i === length - 1) {
+			seqCtx = ctx;
+		}
+		ret += generate(seq[i], env, seqCtx) + ";\n";
 	}
-//	ret += "}";
 	return ret;
 }
 
@@ -43,24 +41,22 @@ function generateIf(expr, env, ctx) {
 	var cases = expr[0];
 	var ret = [];
 	var retVar = '__if_retval__' + getCount();
-	var ifCtx = function (v, c, l) {
-				if (c === l) {
-					return retVar + ' = ' + v;
-				} else {
-					return v;
-				}
-			};
+	var ifCtx = ctx;
+//	var ifCtx = function (v) {
+//				return retVar + ' = ' + v;
+//			};
 	for (var i = 0; i < cases.length; i++) {
 		if (cases[i][0] === 'else') {
-			var elsecase =	'{\n' + generate(cases[i][1], env, ifCtx) + '\n}'; 
+			var elsecase =	'{\n' + generateSeq(cases[i][1], env, ifCtx) + '\n}'; 
 			ret.push(elsecase);
 		} else {
 			var ifcase =	'if (' + generate(cases[i][0], env, ctx0) + ') {\n'
-						+ generate(cases[i][1], env, ifCtx) + '\n}'; 
+						+ generateSeq(cases[i][1], env, ifCtx) + '\n}'; 
 			ret.push(ifcase);
 		}
 	}
-	return 'var ' + retVar + ';\n' + ret.join(' else ') + ctx(retVar);
+//	return 'var ' + retVar + ';\n' + ret.join(' else ') + ctx(retVar);
+	return ret.join(' else ');
 }
 
 var operateFuncName = {
@@ -77,27 +73,29 @@ var operateFuncName = {
 };
 
 function generateAtomic(expr, env, ctx) {
+	var ret = expr[0];
 	if (expr[2] === '{var}') {
 		if (operateFuncName[expr[0]]) {
-			return operateFuncName[expr[0]];
+			ret = operateFuncName[expr[0]];
+		} else {
+			ret = transformVarName(expr[0]);
 		}
-		return transformVarName(expr[0]);
 	}
-	return expr[0];
+	return ctx(ret);
 }
 
 function generatePropertyName(expr, env, ctx) {
 	if (expr[1] === '{atomic}') {
 		var ret = generateAtomic(expr, env, ctx);
-		return ctx(ret, 0, 1);
+		return ctx(ret);
 	} else if ((expr[1] === '{index}')) {
-		var ret = generateAtomic(expr[0]);
-		return ctx(ret, 0, 1);
+		var ret = generateAtomic(expr[0], env, ctx0);
+		return ctx(ret);
 	}
 }
 
 function generateProperty(expr, env, ctx) {
-	var propertyName = generatePropertyName(expr[0], env, ctx);
+	var propertyName = generatePropertyName(expr[0], env, ctx0);
 	var propertyValue = generate(expr[2], env, ctx0);
 	return propertyName + ": " + propertyValue;
 }
@@ -110,7 +108,7 @@ function generateObjectLiteral(expr, env, ctx) {
 		collect[i] = generateProperty(list[i], env, ctx0);
 	}
 	var ret = "{\n" + collect.join(",\n") + "\n}";
-	return ret;
+	return ctx(ret);
 }
 
 var transformVarName = function (name) {
@@ -119,7 +117,7 @@ var transformVarName = function (name) {
 
 function getVarName(expr) {
 	if (expr[1] === '{atomic}') {
-		return generateAtomic(expr);
+		return generateAtomic(expr, {}, ctx0);
 	} else if (expr[1] === '{.}') {
 		return getVarName (expr[0]);
 	}
@@ -127,24 +125,23 @@ function getVarName(expr) {
 
 function generateField(expr, env, ctx) {
 	if (expr[1] === '{atomic}') {
-		var ret = '.' + generateAtomic(expr);
-		return ctx(ret, 0, 1);
+		var ret = '.' + generateAtomic(expr, env, ctx0);
+		return ret;
 	} else if (expr[1] === '{index}') {
 		var ret = '[' + generate(expr[0], env, ctx0) + ']';
-		return ctx(ret, 0, 1);
+		return ret;
 	}
 }
 
 function generateFieldAccess(expr, env, ctx) {
 	if (expr[1] === '{atomic}') {
-		var ret = generateAtomic(expr);
-		return ctx(ret, 0, 1);
+		var ret = generateAtomic(expr, env, ctx0);
+		return ctx(ret);
 	} else if (expr[1] === '{.}') {
-		var field = generateField(expr[2], env, ctx);
+		var field = generateField(expr[2], env, ctx0);
 		var ret = generateFieldAccess(expr[0], env, ctx0) + field;
-		return ctx(ret, 0, 1);
+		return ctx(ret);
 	}
-	die();
 }
 
 function generateArray(expr, env, ctx) {
@@ -152,10 +149,10 @@ function generateArray(expr, env, ctx) {
 	var arr = expr[0];
 	var length = 	arr.length;
 	for (var i = 0; i < length; i++) {
-		ret += ctx(generate(arr[i], env, ctx0), i, length) + ",";
+		ret += generate(arr[i], env, ctx0) + ",";
 	}
 	ret += "]";
-	return ret;
+	return ctx(ret);
 }
 
 function env_new(env) {
@@ -198,43 +195,39 @@ function generateMethod(methodExpr, env, ctx) {
 	method = localValName + method;
 	ret = '(function (' +
 					localValName +") {\nreturn " + method + '(' + args + ');\n})(' + obj + ')';
-	return ret;
+	return ctx(ret);
 }
 
 function generate (expr, env, ctx) {
-//	ctx = (ctx || function (x) { return x; });
 	if (expr[1] === '{start}') {
 		return generate(expr[0], env, ctx);
 	} else if (expr[1] === '{seq}') {
 		return generateSeq(expr, env, ctx);
 	} else if (expr[1] === '{mono}') {
-		return ctx(generate(expr[0], env, ctx0), 0, 1);
+		return generate(expr[0], env, ctx);
 	} else if (expr[1] === '{atomic}') {
-		return ctx(generateAtomic(expr), 0, 1);
+		return generateAtomic(expr, env, ctx);
 	} else if (expr[1] === '{.}') {
-		return ctx(generateFieldAccess(expr, env, ctx0));
+		return generateFieldAccess(expr, env, ctx);
 	} else if (expr[1] === '{func}') {
 		var funcEnv = env_new(env);
 		var args = generateFuncArgs(expr[0], funcEnv);
-		var body = generate(expr[2], funcEnv, function(v, i, l) {
-			if (i + 1 == l) {
+		var body = generate(expr[2], funcEnv, function(v) {
 				return 'return ' + v;
-			}
-			return v;
 		});
 		var ret = '(function (' + args + ') {\n' + body + '\n})';
-		return ctx(ret, 0, 1);
+		return ctx(ret);
 	} else if (expr[1] === '{array}') {
-		return ctx(generateArray(expr, env, ctx0), 0, 1);
+		return generateArray(expr, env, ctx);
 	} else if (expr[1] === '{object}') {
-		return ctx(generateObjectLiteral(expr, env, ctx0));
+		return generateObjectLiteral(expr, env, ctx);
 	} else if (expr[1] === '{method}') {
-		return ctx(generateMethod(expr, env, ctx0), 0, 1);
+		return generateMethod(expr, env, ctx);
 	} else if (expr[1] === '{empty}') {
-		return ctx(0, 0, 1);
+		return ctx(0);
 	} else if (expr[1] === ':=') {
 		var varname = expr[0][0];
-		var ret = 'var ' + varname + ' = ' + generate(expr[2], env, ctx);
+		var ret = 'var ' + varname + ' = ' + generate(expr[2], env, ctx0) + ';' + ctx(varname);
 		env[varname] = true;
 		return ret;
 	} else if (expr[1] === '=') {
@@ -245,7 +238,7 @@ function generate (expr, env, ctx) {
 		}
 		var fieldChain = generate(expr[0], env, ctx0);
 		var ret = "(" + fieldChain + " = " + generate(expr[2], env, ctx0) + ")";
-		return ctx(ret, 0, 1);
+		return ctx(ret);
 	} else if (expr[1] === 'if') {
 		return generateIf(expr, env, ctx);
 	}
@@ -257,7 +250,7 @@ function generate (expr, env, ctx) {
 			args += generate(expr[i], env, ctx0);
 	}
 	var ret = func + '(' + args + ')';
-	return ctx(ret, 0, 1);
+	return ctx(ret);
 }
 
 exports.compile = function (expr) {
