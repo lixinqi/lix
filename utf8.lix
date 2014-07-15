@@ -88,10 +88,11 @@ to := (start end)->{
 each := (range cb)->{
 	start := range.0
 	end := range.1
-	start < end | then ()->{
+	if (start < end) {
 		start cb
 		start + 1 | to end | each cb
 	}
+	0
 }
 
 foreach := (arr cb)->{
@@ -104,9 +105,9 @@ foreach := (arr cb)->{
 
 集合化 := (i)->{
 	ret := []
-	i isArray | then ()->{
+	if (i isArray) {
 		ret = i
-	} | not | then ()->{
+	} else {
 		ret = [i]
 	}
 	ret
