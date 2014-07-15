@@ -82,7 +82,7 @@ to := (x y)->{
 each := (range fn)->{
 	start := range car
 	end := range cdr
-	start le end | then ()->{
+	if (start <= end) {
 		start fn
 		start = start + 1
 		start to end | each fn
@@ -105,23 +105,19 @@ square := (i)->{
 }
 
 isOdd := (i)->{
-	ret := 0
-	i eq 0 | ifTrue ()->{
-		ret = 0
-	} ()->{
-		ret = i - 1 | isEven
+	if (i == 0) {
+		0
+	} else {
+		i - 1 | isEven
 	}
-	ret
 }
 
 isEven := (i)->{
-	ret := 0
-	i eq 0 | ifTrue ()->{
-		ret = 1
-	} ()->{
-		ret = i - 1 | isOdd
+	if (i == 0) {
+		1
+	} else {
+		i - 1 | isOdd
 	}
-	ret
 }
 
 yu := cons
@@ -135,7 +131,7 @@ pingfanghe := (x)->{
 i := 0
 
 i to 9 | each (i)->{
-	i isEven | then ()->{
+	if (i isEven) {
 		i print
 	}
 }

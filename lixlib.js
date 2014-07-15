@@ -46,12 +46,15 @@ function generateIf(expr, env, ctx) {
 //				return retVar + ' = ' + v;
 //			};
 	for (var i = 0; i < cases.length; i++) {
-		if (cases[i][0] === 'else') {
-			var elsecase =	'{\n' + generateSeq(cases[i][1], env, ifCtx) + '\n}'; 
+//		console.log(cases[i]);
+		if (cases[i][1] === 'else') {
+			var elsecase =	'{\n' + generate(cases[i][0], env, ifCtx) + '\n}'; 
 			ret.push(elsecase);
+		} else if (cases[i][1] === 'if') {
+			ret.push(generateIf(cases[i], env, ctx0));
 		} else {
 			var ifcase =	'if (' + generate(cases[i][0], env, ctx0) + ') {\n'
-						+ generateSeq(cases[i][1], env, ifCtx) + '\n}'; 
+						+ generate(cases[i][1], env, ifCtx) + '\n}'; 
 			ret.push(ifcase);
 		}
 	}

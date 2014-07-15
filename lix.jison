@@ -385,16 +385,25 @@ IfCaseStatement
 			}
 		;
 
+IfStatementNoNL
+		: IF IfCaseStatement
+			{
+				$$ = [$IfCaseStatement, 'if'];
+			}
+		| IF IfCaseStatement OptSEP ELSE OptSEP '{' NullableSourceElements '}'
+			{
+				$IfCaseStatement.push([$NullableSourceElements, 'else']);
+				$$ = [$IfCaseStatement, 'if'];
+			}
+		| IF IfCaseStatement OptSEP ELSE OptSEP IfStatementNoNL
+			{
+				$IfCaseStatement.push($IfStatementNoNL);
+				$$ = [$IfCaseStatement, 'if'];
+			}
+		;
+
 IfStatement
-		: IF IfCaseStatement NEWLINE
-			{
-				$$ = [$IfCaseStatement, 'if'];
-			}
-		| IF IfCaseStatement OptSEP ELSE OptSEP '{' NullableSourceElements '}' NEWLINE
-			{
-				$IfCaseStatement.push(['else', $NullableSourceElements]);
-				$$ = [$IfCaseStatement, 'if'];
-			}
+		: IfStatementNoNL NEWLINE
 		;
 
 EmptyStatement

@@ -40,7 +40,7 @@ to := (start end)->{
 each := (range cb)->{
 	start := range.0
 	end := range.1
-	start lt end | then ()->{
+	if (start < end) {
 		start cb
 		start + 1 | to end | each cb
 	}
