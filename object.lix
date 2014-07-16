@@ -82,13 +82,11 @@ A := {} ext (pub)->{
 	}
 
 	pub.name = (self value)->{
-		ret := self
-		value eq undefined | then ()->{
-			ret = self._name
-		} | not | then ()->{
+		if (value == undefined) {
+			self._name
+		} else {
 			self._name = value
 		}
-		ret
 	}
 	pub.age = (self)->{
 		self._age
@@ -102,7 +100,7 @@ instance := (Class args)->{
 }
 
 go := (fn)->{
-	1 then fn
+	0 fn
 }
 
 A | print

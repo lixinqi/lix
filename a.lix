@@ -33,7 +33,7 @@ Y := (f)->{
 seqPrint := (self)->{
 	(i)->{
 		i print
-		i gt 0 | then ()->{
+		if (i > 0) {
 			i - 1 | self
 		}
 	}

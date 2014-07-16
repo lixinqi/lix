@@ -39,15 +39,11 @@ _小名 := {
 }
 
 小名 := (人物 新名称)->{
-	ret := 0
-	新名称 | then ()->{
+	if (新名称) {
 		_小名.[人物] = 新名称
-#		人物 _小名 新名称
-	} | not | then ()->{
-		ret = _小名.[人物]
-#		ret = 人物 _小名
+	} else {
+		_小名.[人物]
 	}
-	ret
 }
 
 "good" | 小名 | 打印到终端
@@ -65,14 +61,11 @@ _成绩 := [
 ]
 
 成绩 := (index)->{
-	ret := 0
-	index isFunction | then ()->{
-		filter := index
-		ret = _成绩 filter
-	} | not | then ()->{
-		ret = _成绩.[index]
+	if (index isFunction) {
+		_成绩 index
+	} else {
+		_成绩.[index]
 	}
-	ret
 }
 
 到 := (x y)->{
