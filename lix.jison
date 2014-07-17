@@ -37,8 +37,10 @@
 
 
 
-'if'													{ return 'IF' }
-'else'												{ return 'ELSE' }
+'if'													{ return 'IF'; }
+'else'												{ return 'ELSE'; }
+'true'												{ return 'TRUE'; }
+'false'												{ return 'FALSE'; }
 \s+"and"\s+										{ return 'AND'; }
 \s+"or"\s+										{ return 'OR'; }
 
@@ -192,6 +194,14 @@ PrimaryExpr
 		| NAT
 			{
 				$$ = [$NAT, '{atomic}'];
+			}
+		| FALSE
+			{
+				$$ = [$FALSE, '{atomic}'];
+			}
+		| TRUE
+			{
+				$$ = [$TRUE, '{atomic}'];
 			}
 		| STRING_LITERAL
 			{
