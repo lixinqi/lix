@@ -21,6 +21,8 @@
 \s+\.													{ return 'SEPDOT'; }
 \s*(("#".*)?\n+)+\s*\.				{ return 'NLDOT'; }
 \s*(("#".*)?\n+)*\s*"->"\s*(("#".*)?\n+)*\s*   { return 'FUNC_ARROW'; }
+\s*(("#".*)?\n+)+\s*"and"\s*(("#".*)?\n+)*\s*	{ return 'NLAND'; }
+\s*(("#".*)?\n+)+\s*"or"\s*(("#".*)?\n+)*\s*	{ return 'NLOR'; }
 
 \s*(("#".*)?\n+)+\s*       		{ return 'NEWLINE'; }
 
@@ -37,6 +39,8 @@
 
 'if'													{ return 'IF' }
 'else'												{ return 'ELSE' }
+\s+"and"\s+										{ return 'AND'; }
+\s+"or"\s+										{ return 'OR'; }
 
 [+-]?[0-9]+("."[0-9]*)?([Ee][+-]?[0-9]+)?  		{ return 'NAT'; }
 [\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'VAR'; }
@@ -257,8 +261,28 @@ MultiLineSEP
 		| NEWLINE
 		;
 
+MultiLineOR
+		: OR
+		| NLOR
+		;
+
+MultiLineAND
+		: AND
+		| NLAND
+		;
+
 MultiLineExpr
 		: MultiLineBasicExpr
+
+		| PrimaryExpr MultiLineAND PrimaryExpr
+			{
+				$$ = [makeExpr($1), 'and', makeExpr($3)];
+			}
+
+		| PrimaryExpr MultiLineOR PrimaryExpr
+			{
+				$$ = [makeExpr($1), 'or', makeExpr($3)];
+			}
 
 		| PrimaryExpr MultiLineDOT Field
 			{
@@ -305,6 +329,16 @@ MultiLineExpr
 
 Expr
 		: BasicExpr
+
+		| PrimaryExpr AND PrimaryExpr
+			{
+				$$ = [makeExpr($1), 'and', makeExpr($3)];
+			}
+
+		| PrimaryExpr OR PrimaryExpr
+			{
+				$$ = [makeExpr($1), 'or', makeExpr($3)];
+			}
 
 		| PrimaryExpr SEPDOT Field
 			{

@@ -37,6 +37,24 @@ function generateSeq(expr, env, ctx) {
 	return ret;
 }
 
+function generateOr(expr, env, ctx) {
+	var ret = "(";
+	ret += generate(expr[0], env, ctx0);
+	ret += " || ";
+	ret += generate(expr[2], env, ctx0);
+	ret += ")";
+	return ctx(ret);
+}
+
+function generateAnd(expr, env, ctx) {
+	var ret = "(";
+	ret += generate(expr[0], env, ctx0);
+	ret += " && ";
+	ret += generate(expr[2], env, ctx0);
+	ret += ")";
+	return ctx(ret);
+}
+
 function generateIf(expr, env, ctx) {
 	var cases = expr[0];
 	var ret = [];
@@ -243,6 +261,10 @@ function generate (expr, env, ctx) {
 		return ctx(ret);
 	} else if (expr[1] === 'if') {
 		return generateIf(expr, env, ctx);
+	} else if (expr[1] === 'and') {
+		return generateAnd(expr, env, ctx);
+	} else if (expr[1] === 'or') {
+		return generateOr(expr, env, ctx);
 	}
 
 	var func = generate(expr[1], env, ctx0);
