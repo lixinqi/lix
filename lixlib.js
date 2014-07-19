@@ -193,6 +193,7 @@ function env_new(env) {
 		__mod__: true,
 		isFunction: true,
 		isArray: true,
+		foreach: true,
 	});
 	var Env = function () {};
 	Env.prototype = env;
@@ -294,6 +295,7 @@ exports.compile = function (expr) {
 	"function __lt__(x, y) {\n return x < y;\n}",
 	"function isFunction(x) {\n return typeof x === 'function';\n}",
 	"function isArray(x) {\n return x instanceof Array;\n}",
+	"function foreach(arr, cb) {\n for (var i in arr) { cb(arr[i], i); };\n}",
 	].join("\n");
 
 	var env0 = env_new();

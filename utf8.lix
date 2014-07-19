@@ -8,12 +8,12 @@
 
 人物p := 对象o
 
-人物p | .名字 | 打印到终端
-人物p .名字 | 打印到终端
+# 人物p | .名字 | 打印到终端
+# 人物p .名字 | 打印到终端
 
-问候语 := "你好"
+问候语g := "你好"
 
-问候语 | print 
+# 问候语 | print 
 
 
 再 := (f0 f1)->{
@@ -26,11 +26,11 @@
 
 四次方 := 平方 再 平方
 
-2 四次方 | 打印到终端
-
-2 (平方 再 平方) | 打印到终端
-
-2 | 平方 | 平方 | 打印到终端
+# 2 四次方 | 打印到终端
+# 
+# 2 (平方 再 平方) | 打印到终端
+# 
+# 2 | 平方 | 平方 | 打印到终端
 
 
 _小名 := {
@@ -46,8 +46,8 @@ _小名 := {
 	}
 }
 
-"good" | 小名 | 打印到终端
-"fine" | 小名 | 打印到终端
+# "good" | 小名 | 打印到终端
+# "fine" | 小名 | 打印到终端
 
 _成绩 := [
 	98
@@ -88,13 +88,31 @@ each := (range cb)->{
 	0
 }
 
-foreach := (arr cb)->{
+区间每个 := each
+
+eachUntilFalse := (range cb)->{
+	start := range.0
+	end := range.1
+	ret := true
+	if (start < end) {
+		ret = (start cb)
+		if (ret) {
+			 ret := start + 1 | to end | eachUntilFalse cb
+		}
+	}
+	ret
+}
+
+直到返回假地迭代每个 := (arr cb)->{
 	l := arr.length
-	0 to l | each (i)->{
+	0 to l | eachUntilFalse (i)->{
 		arr.[i] | cb i
 	}
 }
 
+直到返回真地迭代每个 := (arr cb)->{
+	arr 直到返回假地迭代每个 (i)->{ i | cb | not } | not
+}
 
 集合化 := (i)->{
 	ret := []
@@ -127,7 +145,16 @@ map := (arr cb)->{
 }
 
 字段 := (name)->{
-	(i)->{ i.[name] }
+	(i value)->{
+		ret := 0
+		if (value == undefined) {
+			ret := i.[name]
+		} else {
+			i.[name] == value
+			ret = i
+		}
+		ret 
+	}
 }
 
 # obj := { .age 30 .name "李新奇" }
@@ -168,33 +195,340 @@ push := (arr value)->{
 
 _101班 := [
 	{
+		.id 	1
 		.name "二傻"
 		.score 100
+		.height 170
+		.gendar 0
 	}
 	{
+		.id 	2
 		.name "狗胜"
 		.score 97
+		.height 180
+		.gendar 0
 	}
 	{
+		.id 	3
+		.name "狗胜"
+		.height 175
+		.score 95
+		.gendar 0
+	}
+	{
+		.id 	4
 		.name "大锤"
 		.score 93
+		.height 169
+		.gendar 0
 	}
 	{
+		.id 	5
 		.name "小美"
 		.score 88
+		.height 160
+		.gendar 1
 	}
 	{
+		.id 	6
 		.name "钢蛋"
-		.score 86
+		.score 88
+		.height 177
+		.gendar 1
+	}
+	{
+		.id 	7
+		.name "王大锤"
+		.score 60
+		.height 178
+		.gendar 0
+	}
+	{
+		.id 	8
+		.name "王大锤"
+		.score 60
+		.height 172
+		.gendar 1
 	}
 ]
 
-_101班 | 第 (1 名) | 姓名 | print
+# _101班 | 第 (1 名) | 姓名 | print
+# 
+# _101班 | 第 (1 名) | 成绩 | print
+# 
+# _101班 | 前 (3 名) | 姓名 | print
+# 
+# _101班 | 前 (3 名) | 成绩 | print
+# 
+# _101班 | 位于 (2 到 5 | 名) | 姓名 | print
 
-_101班 | 第 (1 名) | 成绩 | print
+成绩 := ("score" 字段)
 
-_101班 | 前 (3 名) | 姓名 | print
+相同 := (attr)->{
+	(arr)->{
+		重复组 := []
+		arr foreach (x)->{
+			ret := {}
+			x foreach (i)->{
+				attribute := i attr
+				if (ret.[attribute] == undefined) {
+					ret.[attribute] = []
+				}
+				ret.[attribute] push i
+			}
+			ret foreach (i)->{
+				if (i.length > 1) {
+					重复组 push i
+				}
+			}
+		}
+		重复组
+	}
+}
 
-_101班 | 前 (3 名) | 成绩 | print
+每个 := foreach
+名字 := ('name' 字段)
 
-_101班 | 位于 (2 到 5 | 名) | 姓名 | print
+所有 := (x select)->{
+	ret := []
+	x foreach (i)->{
+		if (i select) {
+			ret push i
+		}
+	}
+	[ret]
+}
+
+同学 := ()->{true}
+
+女同学 := (x)->{
+	x.gendar == 1
+}
+
+男同学 := (x)->{
+	x.gendar == 0
+}
+
+平均 := (arr attr)->{
+	total := 0
+	count := 0
+	arr foreach (x)->{
+		x foreach (i)->{
+			total = total + (i attr)
+			count = count + 1
+		}
+	}
+	ret := 0
+	if (count > 0) {
+		ret = total / count
+	}
+	ret
+}
+
+
+# '---' print
+# _101班 | 所有同学 | (成绩 相同) | 每个 (组)->{
+# 	组 | print
+# }
+# 
+# '---' print
+# 
+# _101班  | 所有同学 | (名字 相同) | (成绩 相同) | 每个 (组)->{
+# 	组 | print
+# }
+# '---' print
+
+# _101班 | 所有 同学 | (名字 相同) | (成绩 相同) | 每个 (组)->{
+# 	组 | print
+# }
+
+# _101班 | 所有 同学 | (成绩 相同) | (名字 相同) | 每个 (组)->{
+# 	组 | print
+# }
+
+# _101班 | 所有 同学 | 平均 成绩 | print
+
+身高 := ('height' 字段)
+
+# _101班 | 所有 同学 | 平均 身高 | print
+
+所有 := (arr attr)->{
+	ret := []
+	arr foreach (i)->{
+		if (i attr) {
+			ret push i
+		}
+	}
+	ret
+}
+
+平均 := (arr attr)->{
+	total := 0
+	count := 0
+	arr foreach (i)->{
+		total = total + (i attr)
+		count = count + 1
+	}
+	ret := 0
+	if (count > 0) {
+		ret = total / count
+	}
+	ret
+}
+
+并且 := (attr0 attr1)->{
+	(i)->{ (i attr0) and (i attr1) }
+}
+
+大于 := (attr x)->{
+	(i)->{ (i attr) > x }
+}
+
+大于等于 := (attr x)->{
+	(i)->{ (i attr) >= x }
+}
+
+等于 := (attr x)->{
+	(i)->{ (i attr) == x }
+}
+
+小于等于 := (attr x)->{
+	(i)->{ (i attr) <= x }
+}
+
+小于 := (attr x)->{
+	(i)->{ (i attr) < x }
+}
+
+介于 := (attr range)->{
+	(attr 大于 range.0) 并且 (attr 小于 range.1)
+}
+
+性别 := ('gendar' 字段)
+
+# 男的 := (i)->{ i.gendar == 0 }
+# 女的 := (i)->{ i.gendar == 1 }
+
+男的 := 性别 等于 0
+女的 := 性别 等于 1
+# # 女的 := .性别 等于 1
+
+# _101班 | 所有 女同学 | 平均 身高 | print
+# _101班 | 所有 男同学 | 平均 身高 | print
+
+# _101班 | 所有 男同学 | 所有 ((成绩 大于 80) 并且 (成绩 小于 95)) | print
+# # _101班 | 所有 男同学 | 所有 (成绩 介于 (80 到 90)) | print
+
+成绩良好的 := 成绩 大于等于 85
+# # 成绩良好的 := .成绩 大于等于 85
+
+# # 成绩良好的女的 := 成绩良好的 并且 女的
+
+#_101班 | 所有 (成绩 介于 (60 到 99)) | 所有 女的 | print
+# _101班 | 所有 成绩良好的 | 所有 女的 | print
+# _101班 | 所有 女的 | print
+
+若其 := (obj test cb)->{
+	if (obj test) {
+		0 cb
+	}
+}
+
+自身 := (i)->{i}
+
+
+存在 := (attr judge value)->{
+	(arr)->{
+		arr 直到返回假地迭代每个 (i)->{
+			i (attr judge value) | not
+		} | not
+	}
+}
+
+都 := (attr judge value)->{
+	(arr)->{
+		arr 直到返回假地迭代每个 (i)->{
+			i (attr judge value)
+		}
+	}
+}
+
+## _101班 (.成绩 都 大于 60) | print
+# _101班 (成绩 都 大于 60) | print
+# 
+# _101班 (成绩 存在 大于 99) | print
+# 
+# _101班 若其 (成绩 存在 大于 60) ()->{
+# 	'Yes'
+# }
+
+#_101班 (成绩 存在 等于 60) | print
+
+#_101班 | (成绩 存在 介于 [20 70]) | print
+
+
+第一个 := (arr passed)->{
+	ret := arr 所有 passed
+	ret.0
+}
+
+排名以 := (arr attr)->{
+	arr sort (a b)->{ (a attr) < (b attr) }
+}
+
+sort := (arr cmp)->{
+	if (cmp not) {
+		cmp = (a b)->{ a < b }
+	}
+	swap := (a i j)->{
+		tmp := a.[j]
+		a.[j] = a.[i]
+		a.[i] = tmp
+	}
+	0 to arr.length | each (i)->{
+		i to arr.length | each (j)->{
+			if (arr.[j] cmp arr.[i]) {
+				arr swap i j
+			}
+		}
+	}
+	arr
+}
+
+之后 := (i)->{i}
+
+
+胶于 := (sep)->{
+	(attr0 attr1)->{
+		(i)->{
+			i attr0 | + sep | + (i attr1)
+		}
+	}
+}
+
+胶以 := (range sep)->{
+	range .join sep 
+}
+
+胶合 := (sep attr0 attr1)->{
+	attr0 (sep 胶于) attr1
+}
+
+姓名和成绩 := ', ' 胶合 姓名 成绩
+# 姓名和成绩 := ', ' 胶合 .姓名 .成绩
+
+# # _101班 排名以 .成绩 | print
+
+# _101班 排名以 成绩 | print
+#_101班 排名以 成绩 | 之后 | 第一个 (成绩 介于 [95 100]) | 姓名和成绩 | print
+
+# # _101班 排名以 .成绩 | 之后 | 第一个 (.成绩 介于 [95 100]) | 姓名和成绩 | print
+
+首个同学_其成绩介于 := (arr range)->{
+	arr 排名以 成绩 | 之后 | 第一个 (成绩 介于 range)
+}
+
+_101班 | 首个同学_其成绩介于 (90 到 100) | 姓名和成绩 | print
+
+_101班 | 首个同学_其成绩介于 (90 到 100) | 姓名和成绩 | print
+
