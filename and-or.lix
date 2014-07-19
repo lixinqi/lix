@@ -20,3 +20,24 @@ d print
 1 and ("ok" print)
 0 or ("good" print)
 1 or ("fine" print)
+
+1 | and 0 | print
+1 | or 0 | print
+
+1 | and 0 | or 1 | print
+
+(	1
+	and
+	0
+) | print
+
+(	1
+	or
+	0
+) | print
+
+( 1 | and 0
+		|
+		or
+		1
+) | print

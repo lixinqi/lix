@@ -81,3 +81,13 @@ obj := {
 namePrint := .name compose print
 
 obj | namePrint
+
+obj .name "oh yeah"
+
+obj | namePrint
+
+obj .name ()->{ "function changed" }
+
+obj | namePrint
+
+obj .name "oh yeah"

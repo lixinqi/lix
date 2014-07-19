@@ -41,6 +41,8 @@
 'else'												{ return 'ELSE'; }
 'true'												{ return 'TRUE'; }
 'false'												{ return 'FALSE'; }
+"and"\s*											{ return 'AND'; }
+"or"\s*												{ return 'OR'; }
 \s+"and"\s+										{ return 'AND'; }
 \s+"or"\s+										{ return 'OR'; }
 
@@ -226,38 +228,14 @@ ArrayLiteral
 			}
 		;
 
-MultiLineBasicExpr
-		: PrimaryExpr
-			{
-				$$ = [$PrimaryExpr];
-			}
-
-		| MultiLineBasicExpr NEWLINE
-
-		| MultiLineBasicExpr MultiLineSEP PrimaryExpr
-			{
-				$MultiLineBasicExpr.push($PrimaryExpr);
-				$$ = $MultiLineBasicExpr;
-			}
-		;
-
-
-BasicExpr
-		: PrimaryExpr
-			{
-				$$ = [$PrimaryExpr];
-			}
-
-		| BasicExpr SEP PrimaryExpr
-			{
-				$BasicExpr.push($PrimaryExpr);
-				$$ = $BasicExpr;
-			}
-		;
-
 MultiLineSEP
 		: SEP
 		| NEWLINE
+		;
+
+OptMultiLineSEP
+		:
+		| MultiLineSEP
 		;
 
 MultiLineOR
@@ -271,7 +249,18 @@ MultiLineAND
 		;
 
 MultiLineExpr
-		: MultiLineBasicExpr
+		: PrimaryExpr
+			{
+				$$ = [$PrimaryExpr];
+			}
+
+		| MultiLineExpr NEWLINE
+
+		| MultiLineExpr MultiLineSEP PrimaryExpr
+			{
+				$MultiLineExpr.push($PrimaryExpr);
+				$$ = $MultiLineExpr;
+			}
 
 		| PrimaryExpr MultiLineAND PrimaryExpr
 			{
@@ -283,7 +272,17 @@ MultiLineExpr
 				$$ = [makeExpr($1), 'or', makeExpr($3)];
 			}
 
-		| MultiLineExpr VBAR MultiLineBasicExpr
+		| MultiLineExpr VBAR MultiLineAND OptMultiLineSEP PrimaryExpr
+			{
+				$$ = [makeExpr($1), 'and', makeExpr($5)];
+			}
+
+		| MultiLineExpr VBAR MultiLineOR OptMultiLineSEP PrimaryExpr
+			{
+				$$ = [makeExpr($1), 'or', makeExpr($5)];
+			}
+
+		| MultiLineExpr VBAR MultiLineExpr
 			{
 				$3.unshift(makeExpr($1));
 				$$ = $3;
@@ -292,7 +291,16 @@ MultiLineExpr
 		;
 
 Expr
-		: BasicExpr
+		: PrimaryExpr
+			{
+				$$ = [$PrimaryExpr];
+			}
+
+		| Expr SEP PrimaryExpr
+			{
+				$Expr.push($PrimaryExpr);
+				$$ = $Expr;
+			}
 
 		| PrimaryExpr AND PrimaryExpr
 			{
@@ -304,8 +312,17 @@ Expr
 				$$ = [makeExpr($1), 'or', makeExpr($3)];
 			}
 
+		| Expr VBAR AND PrimaryExpr
+			{
+				$$ = [makeExpr($1), 'and', makeExpr($4)];
+			}
 
-		| Expr VBAR BasicExpr
+		| Expr VBAR OR PrimaryExpr
+			{
+				$$ = [makeExpr($1), 'or', makeExpr($4)];
+			}
+
+		| Expr VBAR Expr
 			{
 				$3.unshift(makeExpr($1));
 				$$ = $3;
