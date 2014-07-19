@@ -58,6 +58,7 @@ arr := [
 		self
 	}
 ]
+
  
 arr | .[2] | .[0] | print
 # 
@@ -68,3 +69,15 @@ arr | .[2] | .[0] | print
 # ]
 # 
 # arr .[0]
+
+compose := (f0 f1)->{
+	(i)->{ i | f0 | f1 }
+}
+
+obj := {
+	.name "nice name"
+}
+
+namePrint := .name compose print
+
+obj | namePrint

@@ -1,4 +1,6 @@
 /* Lambda calculus grammar by Zach Carter */
+/*\s+\.													{ return 'SEPDOT'; }*/
+/*\s*(("#".*)?\n+)+\s*\.				{ return 'NLDOT'; }*/
 
 %start Program
 
@@ -18,8 +20,6 @@
 \'(\\.|[^\\'])*\'|\"(\\.|[^\\"])*\"			{ return 'STRING_LITERAL'; }	
 
 \.    												{ return '.'; }
-\s+\.													{ return 'SEPDOT'; }
-\s*(("#".*)?\n+)+\s*\.				{ return 'NLDOT'; }
 \s*(("#".*)?\n+)*\s*"->"\s*(("#".*)?\n+)*\s*   { return 'FUNC_ARROW'; }
 \s*(("#".*)?\n+)+\s*"and"\s*(("#".*)?\n+)*\s*	{ return 'NLAND'; }
 \s*(("#".*)?\n+)+\s*"or"\s*(("#".*)?\n+)*\s*	{ return 'NLOR'; }
@@ -143,11 +143,6 @@ PropertyList
 			{
 				$$ = [$Property];
 			}
-		| PropertyList SEPDOT Property
-			{
-				$PropertyList.push($Property);
-				$$ = $PropertyList;
-			}
 		| PropertyList SEP '.' Property
 			{
 				$PropertyList.push($Property);
@@ -189,6 +184,10 @@ PrimaryExpr
 		| '[' ArrayLiteral ']'
 			{
 				$$ = [$ArrayLiteral, '{array}'];
+			}
+		| '.' PropertyField
+			{
+				$$ = [$2, '{method}']
 			}
 		| Object
 		| NAT
@@ -256,16 +255,6 @@ BasicExpr
 			}
 		;
 
-MultiLineDOT
-		: NLDOT
-		| SEPDOT
-		;
-
-MultiLineDOTAfterVar
-		: '.'
-		| NLDOT
-		;
-
 MultiLineSEP
 		: SEP
 		| NEWLINE
@@ -294,47 +283,12 @@ MultiLineExpr
 				$$ = [makeExpr($1), 'or', makeExpr($3)];
 			}
 
-		| PrimaryExpr MultiLineDOT Field
-			{
-				$$ = [[$PrimaryExpr, $Field], '{method}'];
-			}
-
-		| PrimaryExpr MultiLineDOT Field MultiLineSEP
-			{
-				$$ = [[$PrimaryExpr, $Field], '{method}'];
-			}
-
-		| PrimaryExpr MultiLineDOT Field MultiLineSEP MultiLineBasicExpr
-			{
-				$$ = [[$PrimaryExpr, $Field], '{method}'];
-				for (var i = 0; i < $MultiLineBasicExpr.length; i++) {
-					$$[0].push($MultiLineBasicExpr[i]);
-				}
-			}
-
 		| MultiLineExpr VBAR MultiLineBasicExpr
 			{
 				$3.unshift(makeExpr($1));
 				$$ = $3;
 			}
 
-		| MultiLineExpr VBAR MultiLineDOTAfterVar Field
-			{
-				$$ = [[makeExpr($MultiLineExpr), $Field], '{method}'];
-			}
-
-		| MultiLineExpr VBAR MultiLineDOTAfterVar Field MultiLineSEP
-			{
-				$$ = [[makeExpr($MultiLineExpr), $Field], '{method}'];
-			}
-
-		| MultiLineExpr VBAR MultiLineDOTAfterVar Field MultiLineSEP MultiLineBasicExpr
-			{
-				$$ = [[makeExpr($MultiLineExpr), $Field], '{method}'];
-				for (var i = 0; i < $MultiLineBasicExpr.length; i++) {
-					$$[0].push($MultiLineBasicExpr[i]);
-				}
-			}
 		;
 
 Expr
@@ -350,18 +304,6 @@ Expr
 				$$ = [makeExpr($1), 'or', makeExpr($3)];
 			}
 
-		| PrimaryExpr SEPDOT Field
-			{
-				$$ = [[$PrimaryExpr, $Field], '{method}'];
-			}
-
-		| PrimaryExpr SEPDOT Field SEP BasicExpr
-			{
-				$$ = [[$PrimaryExpr, $Field], '{method}'];
-				for (var i = 0; i < $BasicExpr.length; i++) {
-					$$[0].push($BasicExpr[i]);
-				}
-			}
 
 		| Expr VBAR BasicExpr
 			{
@@ -369,17 +311,6 @@ Expr
 				$$ = $3;
 			}
 
-		| Expr VBAR '.' Field
-			{
-				$$ = [[makeExpr($Expr), $Field], '{method}'];
-			}
-		| Expr VBAR '.' Field SEP BasicExpr
-			{
-				$$ = [[makeExpr($Expr), $Field], '{method}'];
-				for (var i = 0; i < $BasicExpr.length; i++) {
-					$$[0].push($BasicExpr[i]);
-				}
-			}
 		;
 
 FUNC_BODY

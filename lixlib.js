@@ -202,20 +202,21 @@ function env_new(env) {
 }
 
 
-function generateMethod(methodExpr, env, ctx) {
-	var expr = methodExpr[0];
-
-	var method = generateField(expr[1], env, ctx0);
-	var obj = generate(expr[0], env, ctx0);
-	var localValName = '_val_' + getCount();
-	var args = localValName;
-	for (var i = 2; i < expr.length; i++) {
-			args += ', ';
-			args += generate(expr[i], env, ctx0);
-	}
-	method = localValName + method;
-	ret = '(function (' +
-					localValName +") {\nreturn " + method + '(' + args + ');\n})(' + obj + ')';
+function generateMethod(expr, env, ctx) {
+	var method = generateField(expr[0], env, ctx0);
+	var localVarName = '_var_' + getCount();
+	var localValueName = '_val_' + getCount();
+	method = localVarName + method;
+	ret = '(function (' + localVarName + ", " + localValueName + ") {\n" +
+			"if (typeof " + method + " === 'function') {\n" +
+				"return " + method + '.apply(this, arguments);\n' +
+			"}\n" +
+			"if (" + localValueName + " === undefined) {\n" +
+				"return " + method + ';\n' +
+			"}\n" +
+			method +" = " + localValueName + ";\n" +
+			"return " + localVarName + ';\n' +
+		'})';
 	return ctx(ret);
 }
 
