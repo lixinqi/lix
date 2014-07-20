@@ -1,0 +1,16 @@
+push := (arr i)->{
+	arr.[arr.length] = i
+}
+
+map := (arr cb)->{
+	ret := []
+	arr foreach (i index)->{
+		ret push (i cb index)
+	}
+	ret
+}
+
+a := [1 2 3 4]
+a .push 5 | print
+a | map (i)->{ i * i } | .join ", " | print
+

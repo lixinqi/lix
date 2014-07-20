@@ -176,32 +176,6 @@ function generateArray(expr, env, ctx) {
 	return ctx(ret);
 }
 
-function env_new(env) {
-	env = (env || {
-		print: true,
-		not: true,
-		_instance_: true,
-		__gt__: true,
-		__ge__: true,
-		__eq__: true,
-		__le__: true,
-		__lt__: true,
-		__add__: true,
-		__sub__: true,
-		__mul__: true,
-		__div__: true,
-		__mod__: true,
-		isFunction: true,
-		isArray: true,
-		foreach: true,
-		call: true,
-		apply: true,
-	});
-	var Env = function () {};
-	Env.prototype = env;
-	var env = new Env();
-	return env;
-}
 
 
 function generateMethod(expr, env, ctx) {
@@ -211,6 +185,7 @@ function generateMethod(expr, env, ctx) {
 	method = localVarName + method;
 	ret = '(function (' + localVarName + ", " + localValueName + ") {\n" +
 			"if (typeof " + method + " === 'function') {\n" +
+				"arguments = Array.prototype.slice.call(arguments, 1, arguments.length);" +
 				"return " + method + ".apply(" + localVarName + ", arguments);\n" +
 			"} else if (" + method + " !== undefined) {\n" +
 				"if (" + localValueName + " === undefined) {\n" +
@@ -221,6 +196,20 @@ function generateMethod(expr, env, ctx) {
 			"return " + localVarName + ';\n' +
 		'})';
 	return ctx(ret);
+}
+
+function generateWhile(expr, env, ctx) {
+	var cond = generate(expr[0], env, ctx0);
+	var seq = generate(expr[2], env, ctx0);
+	var ret = 'while (' +  cond + ') {\n' +
+			seq +
+			"}\n" +
+			ctx('null');
+	return ret;
+}
+
+function generateBreak(expr, env, ctx) {
+	return 'break';
 }
 
 function generate (expr, env, ctx) {
@@ -270,6 +259,10 @@ function generate (expr, env, ctx) {
 		return generateAnd(expr, env, ctx);
 	} else if (expr[1] === 'or') {
 		return generateOr(expr, env, ctx);
+	} else if (expr[1] === 'while') {
+		return generateWhile(expr, env, ctx);
+	} else if (expr[1] === 'break') {
+		return generateBreak(expr, env, ctx);
 	}
 
 	var func = generate(expr[1], env, ctx0);
@@ -280,6 +273,34 @@ function generate (expr, env, ctx) {
 	}
 	var ret = func + '(' + args + ')';
 	return ctx(ret);
+}
+
+function env_new(env) {
+	env = (env || {
+		print: true,
+		not: true,
+		_instance_: true,
+		__gt__: true,
+		__ge__: true,
+		__eq__: true,
+		__le__: true,
+		__lt__: true,
+		__add__: true,
+		__sub__: true,
+		__mul__: true,
+		__div__: true,
+		__mod__: true,
+		isFunction: true,
+		isArray: true,
+		foreach: true,
+		call: true,
+		apply: true,
+		exports: true,
+	});
+	var Env = function () {};
+	Env.prototype = env;
+	var env = new Env();
+	return env;
 }
 
 exports.compile = function (expr) {
