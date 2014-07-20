@@ -194,6 +194,8 @@ function env_new(env) {
 		isFunction: true,
 		isArray: true,
 		foreach: true,
+		call: true,
+		apply: true,
 	});
 	var Env = function () {};
 	Env.prototype = env;
@@ -209,12 +211,13 @@ function generateMethod(expr, env, ctx) {
 	method = localVarName + method;
 	ret = '(function (' + localVarName + ", " + localValueName + ") {\n" +
 			"if (typeof " + method + " === 'function') {\n" +
-				"return " + method + '.apply(this, arguments);\n' +
-			"}\n" +
-			"if (" + localValueName + " === undefined) {\n" +
-				"return " + method + ';\n' +
-			"}\n" +
-			method +" = " + localValueName + ";\n" +
+				"return " + method + ".apply(" + localVarName + ", arguments);\n" +
+			"} else if (" + method + " !== undefined) {\n" +
+				"if (" + localValueName + " === undefined) {\n" +
+					"return " + method + ';\n' +
+				"}\n" +
+				method +" = " + localValueName + ";\n" +
+			"}" +
 			"return " + localVarName + ';\n' +
 		'})';
 	return ctx(ret);
@@ -297,6 +300,8 @@ exports.compile = function (expr) {
 	"function isFunction(x) {\n return typeof x === 'function';\n}",
 	"function isArray(x) {\n return x instanceof Array;\n}",
 	"function foreach(arr, cb) {\n for (var i in arr) { cb(arr[i], i); };\n}",
+	"function call(fn) {\n var collect = []; for (var i in arguments) { collect.push(arguments[i]); }; collect.shift(); return fn.apply(fn, collect); \n}",
+	"function apply(fn) {\n return fn.apply(fn, arguments[1]); \n}",
 	].join("\n");
 
 	var env0 = env_new();
