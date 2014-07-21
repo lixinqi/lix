@@ -53,11 +53,11 @@ generateSeq := (expr env ctx)->{
 }
 
 generateOr := (expr env ctx)->{
-	['(' (expr.0 generate env ctx0) " || " (expr.2 generate env ctx0) ')'] join
+	['(' (expr.0 generate env ctx0) " || " (expr.2 generate env ctx0) ')'] | join | ctx
 }
 
 generateAnd := (expr env ctx)->{
-	['(' (expr.0 generate env ctx0) " && " (expr.2 generate env ctx0) ')'] join
+	['(' (expr.0 generate env ctx0) " && " (expr.2 generate env ctx0) ')'] | join | ctx
 }
 
 generateIf := (expr env ctx)->{

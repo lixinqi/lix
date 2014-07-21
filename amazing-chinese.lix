@@ -68,8 +68,6 @@
 	arr 直到返回假地迭代每个 (i)->{ i | cb | not } | not
 }
 
-call := (fn)->{0 fn}
-
 push := (arr value)->{
 	arr.[arr.length] = value
 	arr
@@ -109,7 +107,7 @@ push := (arr value)->{
 若其 := (obj test cb else_cb)->{
 	if (obj test) {
 		0 cb
-	} else {
+	} (else_cb typeof | == 'function') {
 		else_cb call
 	}
 }

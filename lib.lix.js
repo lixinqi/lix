@@ -158,12 +158,12 @@ return generate(item, env, seqCtx(index));
 });
 generateSeq;
 var generateOr = (function (expr, env, ctx) {
-return join(['(',generate(expr[0], env, ctx0)," || ",generate(expr[2], env, ctx0),')',]);
+return ctx(join(['(',generate(expr[0], env, ctx0)," || ",generate(expr[2], env, ctx0),')',]));
 
 });
 generateOr;
 var generateAnd = (function (expr, env, ctx) {
-return join(['(',generate(expr[0], env, ctx0)," && ",generate(expr[2], env, ctx0),')',]);
+return ctx(join(['(',generate(expr[0], env, ctx0)," && ",generate(expr[2], env, ctx0),')',]));
 
 });
 generateAnd;
