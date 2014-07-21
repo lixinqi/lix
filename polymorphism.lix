@@ -22,6 +22,7 @@ foreach := (arr cb)->{
 objList := [
 	{
 		.name (self)->{
+			self print
 			self._name
 		}
 		.setName (self name)->{
@@ -50,14 +51,15 @@ objList := [
 ]
 
 objList foreach (i index)->{
+	i i.name
 	i .name | print
 }
 
-objList foreach (i index)->{
-	i .setName (i .name | + index)
-}
-
-objList foreach (i index)->{
-	i .name | print
-}
+# objList foreach (i index)->{
+# 	i .setName (i .name | + index)
+# }
+# 
+# objList foreach (i index)->{
+# 	i .name | print
+# }
 

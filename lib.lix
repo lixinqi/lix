@@ -1,11 +1,5 @@
 #!/usr/local/bin/node ./lix.js
-join := (arr)->{
-	ret := ""
-	arr foreach (i)->{
-		ret = ret + i
-	}
-	ret
-}
+join := (arr)->{ arr .join "" }
 
 map := (arr cb)->{
 	ret := []
@@ -26,7 +20,7 @@ counterGenerator := ()->{
 
 getCount := counterGenerator call
 
-getUniqVarName := ()->{ '_uniq_val_' + (getCount call) }
+getUniqVarName := ()->{ '_uniq_var_' + (getCount call) }
 
 generateFuncArgs := (args env ctx)->{
 	args map (i)->{
@@ -162,9 +156,12 @@ generateMethod := (expr env ctx)->{
 	localVarName := getUniqVarName call
 	localValueName := getUniqVarName call
 	method := localVarName + (expr.0 generateField env ctx0)
-	['(function (' localVarName ", " localValueName ") {\n"
+	tmpVar := (getUniqVarName call)
+	["(function () {"
+		'var ' tmpVar ' = function (' localVarName ", " localValueName ") {\n"
 			"if (typeof " method " === 'function') {\n"
-				"arguments = Array.prototype.slice.call(arguments, 1, arguments.length);"
+				"arguments = Array.prototype.slice.call("
+					"arguments, (" method ".__lix_func__ ? 0 : 1), arguments.length);"
 				"return " method ".apply(" localVarName ", arguments);\n"
 			"} else if (" method " !== undefined) {\n"
 				"if (" localValueName " === undefined) {\n"
@@ -173,7 +170,10 @@ generateMethod := (expr env ctx)->{
 				method " = " localValueName ";\n"
 			"}"
 			"return " localVarName ';\n'
-		'})'] | join | ctx
+		'};'
+		tmpVar '.__lix_func__ = true;'
+		'return ' tmpVar ';'
+	'})()'] | join | ctx
 }
 
 
@@ -220,7 +220,12 @@ generateFunc := (expr env ctx)->{
 	body := expr.2 generate funcEnv (v)->{
 		'return ' + v
 	}
-	['(function (' args ') {\n' body '\n})'] | join | ctx
+	tmpVar := (getUniqVarName call)
+	['(function () {'
+		'var ' tmpVar ' = function (' args ') {' body '};'
+		tmpVar '.__lix_func__ = true;'
+		'return ' tmpVar ';'
+	'})()'] | join | ctx
 }
 
 generateExpr := (expr env ctx)->{
@@ -274,56 +279,37 @@ generate := (expr env ctx)->{
 	expr (expr.1 generateOp) env ctx
 }
 
-env_new := (env)->{
-	env = env or {
-		.print true
-		.not true
-		._instance_ true
-		.__gt__ true
-		.__ge__ true
-		.__eq__ true
-		.__le__ true
-		.__lt__ true
-		.__add__ true
-		.__sub__ true
-		.__mul__ true
-		.__div__ true
-		.__mod__ true
-		.isFunction true
-		.isArray true
-		.foreach true
-		.call true
-		.apply true
-		.exports true
-	}
+env0 := {
+	.exports 				true
+	.print 					"function print(x) {\n return console.log(x); \n}"
+	.not 						"function not(x) {\n return !x;\n}"
+	._instance_ 		"function _instance_(x) {\n return new x(); \n}"
+	.__add__ 				"function __add__(x, y) {\n return x + y;\n}"
+	.__sub__ 				"function __sub__(x, y) {\n return x - y;\n}"
+	.__mul__ 				"function __mul__(x, y) {\n return x * y;\n}"
+	.__div__ 				"function __div__(x, y) {\n return x / y;\n}"
+	.__mod__ 				"function __mod__(x, y) {\n return x % y;\n}"
+	.__gt__ 				"function __gt__(x, y) {\n return x > y;\n}"
+	.__ge__ 				"function __ge__(x, y) {\n return x >= y;\n}"
+	.__eq__ 				"function __eq__(x, y) {\n return x == y;\n}"
+	.__ne__ 				"function __ne__(x, y) {\n return x != y;\n}"
+	.__le__ 				"function __le__(x, y) {\n return x <= y;\n}"
+	.__lt__ 				"function __lt__(x, y) {\n return x < y;\n}"
+	.isFunction 		"function isFunction(x) {\n return typeof x === 'function';\n}"
+	.isArray 				"function isArray(x) {\n return x instanceof Array;\n}"
+	.foreach 				"function foreach(arr, cb) {\n for (var i in arr) { cb(arr[i], i); };\n}"
+	.call 					"function call(fn) {\n var collect = []; for (var i in arguments) { collect.push(arguments[i]); }; collect.shift(); return fn.apply(fn, collect); \n}"
+	.apply 					"function apply(fn) {\n return fn.apply(fn, arguments[1]); \n}"
+}
 
+env_new := (env)->{
+	env = env or env0
 	Env := ()->{}
 	Env.prototype = env
 	Env _instance_
 }
 
 exports.compile = (expr)->{
-	libs := [
-		"function print(x) {\n return console.log(x); \n}"
-		"function not(x) {\n return !x;\n}"
-		"function _instance_(x) {\n return new x(); \n}"
-		"function __add__(x, y) {\n return x + y;\n}"
-		"function __sub__(x, y) {\n return x - y;\n}"
-		"function __mul__(x, y) {\n return x * y;\n}"
-		"function __div__(x, y) {\n return x / y;\n}"
-		"function __mod__(x, y) {\n return x % y;\n}"
-		"function __gt__(x, y) {\n return x > y;\n}"
-		"function __ge__(x, y) {\n return x >= y;\n}"
-		"function __eq__(x, y) {\n return x == y;\n}"
-		"function __ne__(x, y) {\n return x != y;\n}"
-		"function __le__(x, y) {\n return x <= y;\n}"
-		"function __lt__(x, y) {\n return x < y;\n}"
-		"function isFunction(x) {\n return typeof x === 'function';\n}"
-		"function isArray(x) {\n return x instanceof Array;\n}"
-		"function foreach(arr, cb) {\n for (var i in arr) { cb(arr[i], i); };\n}"
-		"function call(fn) {\n var collect = []; for (var i in arguments) { collect.push(arguments[i]); }; collect.shift(); return fn.apply(fn, collect); \n}"
-		"function apply(fn) {\n return fn.apply(fn, arguments[1]); \n}"
-	] .join "\n"
-
+	libs := env0 | map (i)->{i} | .join "\n"
 	[libs "\n" (expr generate (env_new call) ctx0)] join | console.log
 }
