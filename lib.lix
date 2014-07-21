@@ -76,16 +76,17 @@ generateIf := (expr env ctx)->{
 }
 
 operateFuncName := {
-	.["+"] '__add__'
-	.["-"] '__sub__'
-	.["*"] '__mul__'
-	.["/"] '__div__'
-	.["%"] '__mod__'
-	.[">="] '__ge__'
-	.[">"] '__gt__'
-	.["=="] '__eq__'
-	.["<"] '__lt__'
-	.["<="] '__le__'
+	.["+"] 				'__add__'
+	.["-"] 				'__sub__'
+	.["*"] 				'__mul__'
+	.["/"] 				'__div__'
+	.["%"] 				'__mod__'
+	.[">="] 			'__ge__'
+	.[">"] 				'__gt__'
+	.["=="] 			'__eq__'
+	.["!="] 			'__ne__'
+	.["<"] 				'__lt__'
+	.["<="] 			'__le__'
 }
 
 generateAtomic := (expr env ctx)->{
@@ -111,7 +112,7 @@ generatePropertyName := (expr env ctx)->{
 generateProperty := (expr env ctx)->{
 	propertyName := expr.0 generatePropertyName env ctx0
 	propertyValue := expr.2 generate env ctx0
-	propertyName | + ": " | + propertyValue
+	[propertyName ": " propertyValue] | join
 }
 
 generateObjectLiteral := (expr env ctx)->{
@@ -241,44 +242,36 @@ generateMono := (expr env ctx)->{
 	expr.0 generate env ctx
 }
 
-generate := (expr env ctx)->{
-	if (expr.1 == '{start}') {
-		expr generateStart env ctx
-	} (expr.1 == '{seq}') {
-		expr generateSeq env ctx
-	} (expr.1 == '{mono}') {
-		expr generateMono env ctx
-	} (expr.1 == '{atomic}') {
-		expr generateAtomic env ctx
-	} (expr.1 == '{.}') {
-		expr generateFieldAccess env ctx
-	} (expr.1 == '{func}') {
-		expr generateFunc env ctx
-	} (expr.1 == '{array}') {
-		expr generateArray env ctx
-	} (expr.1 == '{object}') {
-		expr generateObjectLiteral env ctx
-	} (expr.1 == '{method}') {
-		expr generateMethod env ctx
-	} (expr.1 == '{empty}') {
-		expr generateEmpty env ctx
-	} (expr.1 == ':=') {
-		expr generateDef env ctx
-	} (expr.1 == '=') {
-		expr generateAssign env ctx
-	} (expr.1 == 'if') {
-		expr generateIf env ctx
-	} (expr.1 == 'and') {
-		expr generateAnd env ctx
-	} (expr.1 == 'or') {
-		expr generateOr env ctx
-	} (expr.1 == 'while') {
-		expr generateWhile env ctx
-	} (expr.1 == 'break') {
-		expr generateBreak env ctx
+generateOpTable := {
+	.['{start}'] 				generateStart
+	.['{seq}'] 					generateSeq
+	.['{mono}'] 				generateMono
+	.['{atomic}']				generateAtomic
+	.['{.}'] 						generateFieldAccess
+	.['{func}'] 				generateFunc
+	.['{array}'] 				generateArray
+	.['{object}'] 			generateObjectLiteral
+	.['{method}'] 			generateMethod
+	.['{empty}'] 				generateEmpty
+	.[':=']							generateDef
+	.['='] 							generateAssign
+	.['if']							generateIf
+	.['and']						generateAnd
+	.['or'] 						generateOr
+	.['while']					generateWhile
+	.['break'] 					generateBreak
+}
+
+generateOp := (hint)->{
+	if (generateOpTable.[hint]) {
+		generateOpTable.[hint]
 	} else {
-		expr generateExpr env ctx
+		generateExpr
 	}
+}
+
+generate := (expr env ctx)->{
+	expr (expr.1 generateOp) env ctx
 }
 
 env_new := (env)->{
@@ -322,6 +315,7 @@ exports.compile = (expr)->{
 		"function __gt__(x, y) {\n return x > y;\n}"
 		"function __ge__(x, y) {\n return x >= y;\n}"
 		"function __eq__(x, y) {\n return x == y;\n}"
+		"function __ne__(x, y) {\n return x != y;\n}"
 		"function __le__(x, y) {\n return x <= y;\n}"
 		"function __lt__(x, y) {\n return x < y;\n}"
 		"function isFunction(x) {\n return typeof x === 'function';\n}"

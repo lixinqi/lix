@@ -59,6 +59,7 @@
 ">="													{ return 'VAR'; }
 ">"														{ return 'VAR'; }
 "=="													{ return 'VAR'; }
+"!="													{ return 'VAR'; }
 "<="													{ return 'VAR'; }
 "<"														{ return 'VAR'; }
 
