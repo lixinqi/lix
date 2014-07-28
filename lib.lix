@@ -281,6 +281,8 @@ generate := (expr env ctx)->{
 
 env0 := {
 	.exports 				true
+	.require 				true
+	.print 					"function print(x) {\n return console.log(x); \n}"
 	.print 					"function print(x) {\n return console.log(x); \n}"
 	.not 						"function not(x) {\n return !x;\n}"
 	._instance_ 		"function _instance_(x) {\n return new x(); \n}"
@@ -295,6 +297,9 @@ env0 := {
 	.__ne__ 				"function __ne__(x, y) {\n return x != y;\n}"
 	.__le__ 				"function __le__(x, y) {\n return x <= y;\n}"
 	.__lt__ 				"function __lt__(x, y) {\n return x < y;\n}"
+	.AND 						"function AND(x, y) {\n return x & y;\n}"
+	.OR 						"function AND(x, y) {\n return x | y;\n}"
+	.XOR 						"function AND(x, y) {\n return x ^ y;\n}"
 	.isFunction 		"function isFunction(x) {\n return typeof x === 'function';\n}"
 	.isArray 				"function isArray(x) {\n return x instanceof Array;\n}"
 	.foreach 				"function foreach(arr, cb) {\n for (var i in arr) { cb(arr[i], i); };\n}"

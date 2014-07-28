@@ -379,6 +379,7 @@ var generate = (function () {var _uniq_var_61 = function (expr, env, ctx) {retur
 generate;
 var env0 = {
 exports: true,
+require: true,
 print: "function print(x) {\n return console.log(x); \n}",
 not: "function not(x) {\n return !x;\n}",
 _instance_: "function _instance_(x) {\n return new x(); \n}",
