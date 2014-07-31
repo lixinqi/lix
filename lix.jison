@@ -17,7 +17,23 @@
 
 %lex
 %%
-<<EOF>>   										{ return 'EOF'; }
+<<EOF>>   											{ return 'EOF'; }
+
+'/'+"["\s*(("#".*)?\n+)*\s*			{ return 'DIRITEM_BRACKET'; }
+'.''/'+"["\s*(("#".*)?\n+)*\s*	{ return 'CURRENT_DIRITEM_BRACKET'; }
+'..''/'+"["\s*(("#".*)?\n+)*\s*	{ return 'PARENT_DIRITEM_BRACKET'; }
+
+'/'+[.\u4e00-\u9fa5_a-zA-Z0-9]+	{	return 'DIRITEM'; }
+'/'+'..' 												{	return 'DIRITEM'; }
+'/'+'.'													{	return 'DIRITEM'; }
+'..''/'+[.\u4e00-\u9fa5_a-zA-Z0-9]+ {	return 'DIRITEM'; }
+'.''/'+[.\u4e00-\u9fa5_a-zA-Z0-9]+	{	return 'DIRITEM'; }
+
+'..''/'+												{	return 'PARENT_PATH'; }
+'.''/'+													{	return 'CURRENT_PATH'; }
+'/''/'+													{	return 'ROOT'; }
+
+
 \'(\\.|[^\\'])*\'|\"(\\.|[^\\"])*\"			{ return 'STRING_LITERAL'; }	
 
 \.    												{ return '.'; }
@@ -37,7 +53,6 @@
 \s*"]"       									{ return ']'; }
 
 
-
 'if'													{ return 'IF'; }
 'else'												{ return 'ELSE'; }
 'while'												{ return 'WHILE'; }
@@ -50,18 +65,18 @@
 \s+"or"\s+										{ return 'OR'; }
 
 [+-]?[0-9]+("."[0-9]*)?([Ee][+-]?[0-9]+)?  		{ return 'NAT'; }
-[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'VAR'; }
-"+"														{ return 'VAR'; }
-"*"														{ return 'VAR'; }
-"-"														{ return 'VAR'; }
-"/"														{ return 'VAR'; }
-"%"														{ return 'VAR'; }
-">="													{ return 'VAR'; }
-">"														{ return 'VAR'; }
-"=="													{ return 'VAR'; }
-"!="													{ return 'VAR'; }
-"<="													{ return 'VAR'; }
-"<"														{ return 'VAR'; }
+[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'var'; }
+"+"														{ return 'var'; }
+"*"														{ return 'var'; }
+"-"														{ return 'var'; }
+"/"														{ return 'DIV'; }
+"%"														{ return 'var'; }
+">="													{ return 'var'; }
+">"														{ return 'var'; }
+"=="													{ return 'var'; }
+"!="													{ return 'var'; }
+"<="													{ return 'var'; }
+"<"														{ return 'var'; }
 
 \s+":="\s+  									{ return 'DEF'; }
 \s+"="\s+  										{ return 'ASSIGN_OPERATOR'; }
@@ -75,6 +90,12 @@
 %left ASSIGN_OPERATOR
 
 %%
+
+VAR
+	: var
+	| DIV
+	;
+		
 
 FUNC_ARGS
 		: VAR
@@ -162,6 +183,59 @@ PropertyList
 			}
 		;
 
+DirItem
+		: DIRITEM
+			{
+				$$ = [$1, '{path_item}'];
+			}
+		| CURRENT_DIRITEM_BRACKET MultiLineExpr ']'
+			{
+				$$ = [makeExpr($MultiLineExpr), '{path_arg_item}', './'];
+			}
+		| PARENT_DIRITEM_BRACKET MultiLineExpr ']'
+			{
+				$$ = [makeExpr($MultiLineExpr), '{path_arg_item}', '../'];
+			}
+		| DIRITEM_BRACKET MultiLineExpr ']'
+			{
+				$$ = [makeExpr($MultiLineExpr), '{path_arg_item}', ''];
+			}
+		;
+
+PATH
+		: DirItem
+			{
+				$$ = [[$DirItem], '{path}'];
+			}
+		| PATH DirItem
+			{
+				$PATH[0].push($DirItem);
+				$$ = $PATH;
+			}
+		;
+
+Slashes
+		: DIV
+		| ROOT
+		;
+
+Path
+		: PATH
+		| ROOT
+			{
+				$$ = [[$ROOT], '{path}'];
+			}
+		| PARENT_PATH
+			{
+				$$ = [[$PARENT_PATH], '{path}'];
+			}
+		| CURRENT_PATH
+			{
+				$$ = [[$CURRENT_PATH], '{path}'];
+			}
+		| Path Slashes
+		;
+
 PrimaryExpr
 		: OPENPARAN MultiLineExpr CLOSEPARAN FUNC_ARROW '{' FUNC_BODY '}'
 			{
@@ -212,6 +286,7 @@ PrimaryExpr
 			{
 				$$ = [$STRING_LITERAL, '{atomic}'];
 			}
+		| Path
 		;
 
 ArrayLiteral

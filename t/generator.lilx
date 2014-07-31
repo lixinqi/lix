@@ -1,0 +1,22 @@
+#!/usr/local/bin/node ./lix.js
+
+Fiber := 'fibers' require
+
+inc := (start)->{
+	total := start
+	while true {
+		total = total + (Fiber .yield total)
+	}
+} Fiber
+
+generate := (fn)->{
+	ii := inc .run 1
+	while (ii < 10) {
+		ii fn
+		ii = inc .run 1
+	}
+}
+
+generate call (i)->{
+	i console.log
+}

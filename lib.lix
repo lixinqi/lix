@@ -247,24 +247,42 @@ generateMono := (expr env ctx)->{
 	expr.0 generate env ctx
 }
 
+generatePathItem := (expr env ctx)->{
+	['"' expr.0 '"'] | join | ctx
+}
+
+generatePathArgItem := (expr env ctx)->{
+	['("' expr.2 '" + ' (expr.0 generate env ctx0) ')'] | join | ctx
+}
+
+generatePath := (expr env ctx)->{
+	path := expr.0 map (i)->{
+		i generate env ctx0
+	} | .join ','
+	['[' path '].join("/")'] | join | ctx
+}
+
 generateOpTable := {
-	.['{start}'] 				generateStart
-	.['{seq}'] 					generateSeq
-	.['{mono}'] 				generateMono
-	.['{atomic}']				generateAtomic
-	.['{.}'] 						generateFieldAccess
-	.['{func}'] 				generateFunc
-	.['{array}'] 				generateArray
-	.['{object}'] 			generateObjectLiteral
-	.['{method}'] 			generateMethod
-	.['{empty}'] 				generateEmpty
-	.[':=']							generateDef
-	.['='] 							generateAssign
-	.['if']							generateIf
-	.['and']						generateAnd
-	.['or'] 						generateOr
-	.['while']					generateWhile
-	.['break'] 					generateBreak
+	.['{start}'] 							generateStart
+	.['{seq}'] 								generateSeq
+	.['{mono}'] 							generateMono
+	.['{atomic}']							generateAtomic
+	.['{.}'] 									generateFieldAccess
+	.['{func}'] 							generateFunc
+	.['{array}'] 							generateArray
+	.['{object}'] 						generateObjectLiteral
+	.['{method}'] 						generateMethod
+	.['{empty}'] 							generateEmpty
+	.['{path}'] 							generatePath
+	.['{path_item}'] 					generatePathItem
+	.['{path_arg_item}']			generatePathArgItem
+	.[':=']										generateDef
+	.['='] 										generateAssign
+	.['if']										generateIf
+	.['and']									generateAnd
+	.['or'] 									generateOr
+	.['while']								generateWhile
+	.['break'] 								generateBreak
 }
 
 generateOp := (hint)->{

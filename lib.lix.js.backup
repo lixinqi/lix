@@ -1,4 +1,5 @@
 true
+true
 function print(x) {
  return console.log(x); 
 }
@@ -40,6 +41,15 @@ function __le__(x, y) {
 }
 function __lt__(x, y) {
  return x < y;
+}
+function AND(x, y) {
+ return x & y;
+}
+function AND(x, y) {
+ return x | y;
+}
+function AND(x, y) {
+ return x ^ y;
 }
 function isFunction(x) {
  return typeof x === 'function';
@@ -345,6 +355,27 @@ generateStart;
 var generateMono = (function () {var _uniq_var_59 = function (expr, env, ctx) {return generate(expr[0], env, ctx);
 };_uniq_var_59.__lix_func__ = true;return _uniq_var_59;})();
 generateMono;
+var generatePathItem = (function () {var _uniq_var_60 = function (expr, env, ctx) {return ctx(join(['"', expr[0], '"']));
+};_uniq_var_60.__lix_func__ = true;return _uniq_var_60;})();
+generatePathItem;
+var generatePathArgItem = (function () {var _uniq_var_61 = function (expr, env, ctx) {return ctx(generate(expr[0], env, ctx0));
+};_uniq_var_61.__lix_func__ = true;return _uniq_var_61;})();
+generatePathArgItem;
+var generatePath = (function () {var _uniq_var_66 = function (expr, env, ctx) {var path = (function () {var _uniq_var_64 = function (_uniq_var_62, _uniq_var_63) {
+if (typeof _uniq_var_62.join === 'function') {
+arguments = Array.prototype.slice.call(arguments, (_uniq_var_62.join.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_62.join.apply(_uniq_var_62, arguments);
+} else if (_uniq_var_62.join !== undefined) {
+if (_uniq_var_63 === undefined) {
+return _uniq_var_62.join;
+}
+_uniq_var_62.join = _uniq_var_63;
+}return _uniq_var_62;
+};_uniq_var_64.__lix_func__ = true;return _uniq_var_64;})()(map(expr[0], (function () {var _uniq_var_65 = function (i) {return generate(i, env, ctx0);
+};_uniq_var_65.__lix_func__ = true;return _uniq_var_65;})()), ',');
+path;
+return ctx(join(['[', path, '].join("/")']));
+};_uniq_var_66.__lix_func__ = true;return _uniq_var_66;})();
+generatePath;
 var generateOpTable = {
 '{start}': generateStart,
 '{seq}': generateSeq,
@@ -356,6 +387,9 @@ var generateOpTable = {
 '{object}': generateObjectLiteral,
 '{method}': generateMethod,
 '{empty}': generateEmpty,
+'{path}': generatePath,
+'{path_item}': generatePathItem,
+'{path_arg_item}': generatePathArgItem,
 ':=': generateDef,
 '=': generateAssign,
 'if': generateIf,
@@ -365,20 +399,22 @@ var generateOpTable = {
 'break': generateBreak
 };
 generateOpTable;
-var generateOp = (function () {var _uniq_var_60 = function (hint) {if (generateOpTable[hint]) {
+var generateOp = (function () {var _uniq_var_67 = function (hint) {if (generateOpTable[hint]) {
 return generateOpTable[hint];
 
 } else {
 return generateExpr;
 
 };
-};_uniq_var_60.__lix_func__ = true;return _uniq_var_60;})();
+};_uniq_var_67.__lix_func__ = true;return _uniq_var_67;})();
 generateOp;
-var generate = (function () {var _uniq_var_61 = function (expr, env, ctx) {return generateOp(expr[1])(expr, env, ctx);
-};_uniq_var_61.__lix_func__ = true;return _uniq_var_61;})();
+var generate = (function () {var _uniq_var_68 = function (expr, env, ctx) {return generateOp(expr[1])(expr, env, ctx);
+};_uniq_var_68.__lix_func__ = true;return _uniq_var_68;})();
 generate;
 var env0 = {
 exports: true,
+require: true,
+print: "function print(x) {\n return console.log(x); \n}",
 print: "function print(x) {\n return console.log(x); \n}",
 not: "function not(x) {\n return !x;\n}",
 _instance_: "function _instance_(x) {\n return new x(); \n}",
@@ -393,6 +429,9 @@ __eq__: "function __eq__(x, y) {\n return x == y;\n}",
 __ne__: "function __ne__(x, y) {\n return x != y;\n}",
 __le__: "function __le__(x, y) {\n return x <= y;\n}",
 __lt__: "function __lt__(x, y) {\n return x < y;\n}",
+AND: "function AND(x, y) {\n return x & y;\n}",
+OR: "function AND(x, y) {\n return x | y;\n}",
+XOR: "function AND(x, y) {\n return x ^ y;\n}",
 isFunction: "function isFunction(x) {\n return typeof x === 'function';\n}",
 isArray: "function isArray(x) {\n return x instanceof Array;\n}",
 foreach: "function foreach(arr, cb) {\n for (var i in arr) { cb(arr[i], i); };\n}",
@@ -400,25 +439,25 @@ call: "function call(fn) {\n var collect = []; for (var i in arguments) { collec
 apply: "function apply(fn) {\n return fn.apply(fn, arguments[1]); \n}"
 };
 env0;
-var env_new = (function () {var _uniq_var_63 = function (env) {(env = (env || env0));
-var Env = (function () {var _uniq_var_62 = function () {;
-};_uniq_var_62.__lix_func__ = true;return _uniq_var_62;})();
+var env_new = (function () {var _uniq_var_70 = function (env) {(env = (env || env0));
+var Env = (function () {var _uniq_var_69 = function () {;
+};_uniq_var_69.__lix_func__ = true;return _uniq_var_69;})();
 Env;
 (Env.prototype = env);
 return _instance_(Env);
-};_uniq_var_63.__lix_func__ = true;return _uniq_var_63;})();
+};_uniq_var_70.__lix_func__ = true;return _uniq_var_70;})();
 env_new;
-(exports.compile = (function () {var _uniq_var_68 = function (expr) {var libs = (function () {var _uniq_var_66 = function (_uniq_var_64, _uniq_var_65) {
-if (typeof _uniq_var_64.join === 'function') {
-arguments = Array.prototype.slice.call(arguments, (_uniq_var_64.join.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_64.join.apply(_uniq_var_64, arguments);
-} else if (_uniq_var_64.join !== undefined) {
-if (_uniq_var_65 === undefined) {
-return _uniq_var_64.join;
+(exports.compile = (function () {var _uniq_var_75 = function (expr) {var libs = (function () {var _uniq_var_73 = function (_uniq_var_71, _uniq_var_72) {
+if (typeof _uniq_var_71.join === 'function') {
+arguments = Array.prototype.slice.call(arguments, (_uniq_var_71.join.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_71.join.apply(_uniq_var_71, arguments);
+} else if (_uniq_var_71.join !== undefined) {
+if (_uniq_var_72 === undefined) {
+return _uniq_var_71.join;
 }
-_uniq_var_64.join = _uniq_var_65;
-}return _uniq_var_64;
-};_uniq_var_66.__lix_func__ = true;return _uniq_var_66;})()(map(env0, (function () {var _uniq_var_67 = function (i) {return i};_uniq_var_67.__lix_func__ = true;return _uniq_var_67;})()), "\n");
+_uniq_var_71.join = _uniq_var_72;
+}return _uniq_var_71;
+};_uniq_var_73.__lix_func__ = true;return _uniq_var_73;})()(map(env0, (function () {var _uniq_var_74 = function (i) {return i};_uniq_var_74.__lix_func__ = true;return _uniq_var_74;})()), "\n");
 libs;
 return console.log(join([libs, "\n", generate(expr, call(env_new), ctx0)]));
-};_uniq_var_68.__lix_func__ = true;return _uniq_var_68;})());
+};_uniq_var_75.__lix_func__ = true;return _uniq_var_75;})());
 
