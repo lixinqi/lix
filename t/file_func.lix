@@ -1,0 +1,27 @@
+#!/usr/local/bin/node ./lix.js
+
+# ./ | $ls | print
+# 
+# ./ | $./t/file_func_test | print
+# ./ | $../lix/t/file_func_test | print
+# 
+# ./ | $/tmp/
+# 
+# ./ | $[good]
+# 
+
+# 'function test() { return function () { console.log("nice"); }; }' | eval
+
+wrap := (str)->{
+	funcName := 'test'
+	[
+		'var ' funcName ' = function (){'
+		str '; }'
+	] | .join '' | eval
+	funcName | eval
+}
+
+code := 'console.log("func wrap ok")'
+
+code wrap | call
+
