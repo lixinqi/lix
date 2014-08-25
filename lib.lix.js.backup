@@ -358,7 +358,7 @@ generateMono;
 var generatePathItem = (function () {var _uniq_var_60 = function (expr, env, ctx) {return ctx(join(['"', expr[0], '"']));
 };_uniq_var_60.__lix_func__ = true;return _uniq_var_60;})();
 generatePathItem;
-var generatePathArgItem = (function () {var _uniq_var_61 = function (expr, env, ctx) {return ctx(generate(expr[0], env, ctx0));
+var generatePathArgItem = (function () {var _uniq_var_61 = function (expr, env, ctx) {return ctx(join(['("', expr[2], '" + ', generate(expr[0], env, ctx0), ')']));
 };_uniq_var_61.__lix_func__ = true;return _uniq_var_61;})();
 generatePathArgItem;
 var generatePath = (function () {var _uniq_var_66 = function (expr, env, ctx) {var path = (function () {var _uniq_var_64 = function (_uniq_var_62, _uniq_var_63) {
@@ -447,17 +447,164 @@ Env;
 return _instance_(Env);
 };_uniq_var_70.__lix_func__ = true;return _uniq_var_70;})();
 env_new;
-(exports.compile = (function () {var _uniq_var_75 = function (expr) {var libs = (function () {var _uniq_var_73 = function (_uniq_var_71, _uniq_var_72) {
-if (typeof _uniq_var_71.join === 'function') {
-arguments = Array.prototype.slice.call(arguments, (_uniq_var_71.join.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_71.join.apply(_uniq_var_71, arguments);
-} else if (_uniq_var_71.join !== undefined) {
-if (_uniq_var_72 === undefined) {
-return _uniq_var_71.join;
+var flattenExpr = (function () {var _uniq_var_72 = function (expr, define) {return define(map(expr, (function () {var _uniq_var_71 = function (item) {return flatten(item, define);
+};_uniq_var_71.__lix_func__ = true;return _uniq_var_71;})()));
+};_uniq_var_72.__lix_func__ = true;return _uniq_var_72;})();
+flattenExpr;
+var flattenBreak = (function () {var _uniq_var_73 = function (expr, define) {;
+};_uniq_var_73.__lix_func__ = true;return _uniq_var_73;})();
+flattenBreak;
+var flattenWhile = (function () {var _uniq_var_74 = function (expr, define) {;
+};_uniq_var_74.__lix_func__ = true;return _uniq_var_74;})();
+flattenWhile;
+var flattenOr = (function () {var _uniq_var_75 = function (expr, define) {;
+};_uniq_var_75.__lix_func__ = true;return _uniq_var_75;})();
+flattenOr;
+var flattenAnd = (function () {var _uniq_var_76 = function (expr, define) {;
+};_uniq_var_76.__lix_func__ = true;return _uniq_var_76;})();
+flattenAnd;
+var flattenIf = (function () {var _uniq_var_77 = function (expr, define) {;
+};_uniq_var_77.__lix_func__ = true;return _uniq_var_77;})();
+flattenIf;
+var flattenAssign = (function () {var _uniq_var_78 = function (expr, define) {;
+};_uniq_var_78.__lix_func__ = true;return _uniq_var_78;})();
+flattenAssign;
+var flattenDef = (function () {var _uniq_var_79 = function (expr, define) {;
+};_uniq_var_79.__lix_func__ = true;return _uniq_var_79;})();
+flattenDef;
+var flattenPathArgItem = (function () {var _uniq_var_80 = function (expr, define) {;
+};_uniq_var_80.__lix_func__ = true;return _uniq_var_80;})();
+flattenPathArgItem;
+var flattenPathItem = (function () {var _uniq_var_81 = function (expr, define) {;
+};_uniq_var_81.__lix_func__ = true;return _uniq_var_81;})();
+flattenPathItem;
+var flattenPath = (function () {var _uniq_var_82 = function (expr, define) {;
+};_uniq_var_82.__lix_func__ = true;return _uniq_var_82;})();
+flattenPath;
+var flattenEmpty = (function () {var _uniq_var_83 = function (expr, define) {;
+};_uniq_var_83.__lix_func__ = true;return _uniq_var_83;})();
+flattenEmpty;
+var flattenMethod = (function () {var _uniq_var_84 = function (expr, define) {;
+};_uniq_var_84.__lix_func__ = true;return _uniq_var_84;})();
+flattenMethod;
+var flattenObjectLiteral = (function () {var _uniq_var_85 = function (expr, define) {;
+};_uniq_var_85.__lix_func__ = true;return _uniq_var_85;})();
+flattenObjectLiteral;
+var flattenArray = (function () {var _uniq_var_86 = function (expr, define) {;
+};_uniq_var_86.__lix_func__ = true;return _uniq_var_86;})();
+flattenArray;
+var flattenFunc = (function () {var _uniq_var_87 = function (expr, define) {;
+};_uniq_var_87.__lix_func__ = true;return _uniq_var_87;})();
+flattenFunc;
+var flattenFieldAccess = (function () {var _uniq_var_88 = function (expr, define) {;
+};_uniq_var_88.__lix_func__ = true;return _uniq_var_88;})();
+flattenFieldAccess;
+var flattenAtomic = (function () {var _uniq_var_89 = function (expr, define) {return expr;
+};_uniq_var_89.__lix_func__ = true;return _uniq_var_89;})();
+flattenAtomic;
+var flattenMono = (function () {var _uniq_var_90 = function (expr, define) {return flatten(expr[0], define);
+};_uniq_var_90.__lix_func__ = true;return _uniq_var_90;})();
+flattenMono;
+var statementFlattenGenerator = (function () {var _uniq_var_95 = function () {var data = {
+
+};
+data;
+return (function () {var _uniq_var_94 = function (statement) {if (__eq__(statement, undefined)) {
+return data;
+
+} else {
+var varName = call(getUniqVarName);
+varName;
+var lixVar = [varName, '{atomic}', '{var}'];
+lixVar;
+(function () {var _uniq_var_93 = function (_uniq_var_91, _uniq_var_92) {
+if (typeof _uniq_var_91.push === 'function') {
+arguments = Array.prototype.slice.call(arguments, (_uniq_var_91.push.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_91.push.apply(_uniq_var_91, arguments);
+} else if (_uniq_var_91.push !== undefined) {
+if (_uniq_var_92 === undefined) {
+return _uniq_var_91.push;
 }
-_uniq_var_71.join = _uniq_var_72;
-}return _uniq_var_71;
-};_uniq_var_73.__lix_func__ = true;return _uniq_var_73;})()(map(env0, (function () {var _uniq_var_74 = function (i) {return i};_uniq_var_74.__lix_func__ = true;return _uniq_var_74;})()), "\n");
+_uniq_var_91.push = _uniq_var_92;
+}return _uniq_var_91;
+};_uniq_var_93.__lix_func__ = true;return _uniq_var_93;})()(data, [lixVar, ':=', statement]);
+return lixVar;
+
+};
+};_uniq_var_94.__lix_func__ = true;return _uniq_var_94;})();
+};_uniq_var_95.__lix_func__ = true;return _uniq_var_95;})();
+statementFlattenGenerator;
+var flattenSeq = (function () {var _uniq_var_100 = function (expr, define) {var ret = [];
+ret;
+foreach(expr[0], (function () {var _uniq_var_99 = function (item, index) {var exprDefine = call(statementFlattenGenerator);
+exprDefine;
+flatten(item, exprDefine);
+return (function () {var _uniq_var_98 = function (_uniq_var_96, _uniq_var_97) {
+if (typeof _uniq_var_96.concat === 'function') {
+arguments = Array.prototype.slice.call(arguments, (_uniq_var_96.concat.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_96.concat.apply(_uniq_var_96, arguments);
+} else if (_uniq_var_96.concat !== undefined) {
+if (_uniq_var_97 === undefined) {
+return _uniq_var_96.concat;
+}
+_uniq_var_96.concat = _uniq_var_97;
+}return _uniq_var_96;
+};_uniq_var_98.__lix_func__ = true;return _uniq_var_98;})()(ret, call(exprDefine));
+};_uniq_var_99.__lix_func__ = true;return _uniq_var_99;})());
+(expr[0] = ret);
+return expr;
+};_uniq_var_100.__lix_func__ = true;return _uniq_var_100;})();
+flattenSeq;
+var flattenStart = (function () {var _uniq_var_101 = function (expr, define) {return flatten(expr[0], define);
+};_uniq_var_101.__lix_func__ = true;return _uniq_var_101;})();
+flattenStart;
+var flattenOpTable = {
+'{start}': flattenStart,
+'{seq}': flattenSeq,
+'{mono}': flattenMono,
+'{atomic}': flattenAtomic,
+'{.}': flattenFieldAccess,
+'{func}': flattenFunc,
+'{array}': flattenArray,
+'{object}': flattenObjectLiteral,
+'{method}': flattenMethod,
+'{empty}': flattenEmpty,
+'{path}': flattenPath,
+'{path_item}': flattenPathItem,
+'{path_arg_item}': flattenPathArgItem,
+':=': flattenDef,
+'=': flattenAssign,
+'if': flattenIf,
+'and': flattenAnd,
+'or': flattenOr,
+'while': flattenWhile,
+'break': flattenBreak
+};
+flattenOpTable;
+var flattenOp = (function () {var _uniq_var_102 = function (hint) {if (flattenOpTable[hint]) {
+return flattenOpTable[hint];
+
+} else {
+return flattenExpr;
+
+};
+};_uniq_var_102.__lix_func__ = true;return _uniq_var_102;})();
+flattenOp;
+var flatten = (function () {var _uniq_var_103 = function (expr, define) {return flattenOp(expr[1])(expr, define);
+};_uniq_var_103.__lix_func__ = true;return _uniq_var_103;})();
+flatten;
+(exports.compile = (function () {var _uniq_var_109 = function (expr) {var libs = (function () {var _uniq_var_106 = function (_uniq_var_104, _uniq_var_105) {
+if (typeof _uniq_var_104.join === 'function') {
+arguments = Array.prototype.slice.call(arguments, (_uniq_var_104.join.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_104.join.apply(_uniq_var_104, arguments);
+} else if (_uniq_var_104.join !== undefined) {
+if (_uniq_var_105 === undefined) {
+return _uniq_var_104.join;
+}
+_uniq_var_104.join = _uniq_var_105;
+}return _uniq_var_104;
+};_uniq_var_106.__lix_func__ = true;return _uniq_var_106;})()(map(env0, (function () {var _uniq_var_107 = function (i) {return i};_uniq_var_107.__lix_func__ = true;return _uniq_var_107;})()), "\n");
 libs;
-return console.log(join([libs, "\n", generate(expr, call(env_new), ctx0)]));
-};_uniq_var_75.__lix_func__ = true;return _uniq_var_75;})());
+var code = generate(flatten(expr, (function () {var _uniq_var_108 = function (i) {;
+};_uniq_var_108.__lix_func__ = true;return _uniq_var_108;})()), call(env_new), ctx0);
+code;
+return console.log(join([libs, "\n", code]));
+};_uniq_var_109.__lix_func__ = true;return _uniq_var_109;})());
 

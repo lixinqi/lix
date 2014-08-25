@@ -1,4 +1,5 @@
 #!/usr/local/bin/node ./lix.js
+fs := 'fs' require
 
 # ./ | $ls | print
 # 
@@ -21,7 +22,10 @@ wrap := (str)->{
 	funcName | eval
 }
 
-code := 'console.log("func wrap ok")'
+# code := 'console.log("func wrap ok")'
 
-code wrap | call
+# code wrap | call
+
+fileName := ./['test.js']
+fileName | fs.readFileSync 'utf-8' | wrap | call 'nice' 'good'
 

@@ -7,7 +7,7 @@
 %{
 	function makeExpr(expr) {
 		if (expr.length === 1) {
-			expr.push('{mono}');
+			expr.push("{mono}");
 		}
 		return expr;
 	}
@@ -19,15 +19,15 @@
 %%
 <<EOF>>   											{ return 'EOF'; }
 
-'/'+"["\s*(("#".*)?\n+)*\s*			{ return 'DIRITEM_BRACKET'; }
+"/"+"["\s*(("#".*)?\n+)*\s*			{ return 'DIRITEM_BRACKET'; }
 '.''/'+"["\s*(("#".*)?\n+)*\s*	{ return 'CURRENT_DIRITEM_BRACKET'; }
 '..''/'+"["\s*(("#".*)?\n+)*\s*	{ return 'PARENT_DIRITEM_BRACKET'; }
 
-'/'+[.\u4e00-\u9fa5_a-zA-Z0-9]+	{	return 'DIRITEM'; }
+'/'+[\-.\u4e00-\u9fa5_a-zA-Z0-9]+	{	return 'DIRITEM'; }
 '/'+'..' 												{	return 'DIRITEM'; }
 '/'+'.'													{	return 'DIRITEM'; }
-'..''/'+[.\u4e00-\u9fa5_a-zA-Z0-9]+ {	return 'DIRITEM'; }
-'.''/'+[.\u4e00-\u9fa5_a-zA-Z0-9]+	{	return 'DIRITEM'; }
+'..''/'+[\-.\u4e00-\u9fa5_a-zA-Z0-9]+ {	return 'DIRITEM'; }
+'.''/'+[\-.\u4e00-\u9fa5_a-zA-Z0-9]+	{	return 'DIRITEM'; }
 
 '..''/'+												{	return 'PARENT_PATH'; }
 '.''/'+													{	return 'CURRENT_PATH'; }
@@ -112,7 +112,7 @@ FUNC_ARGS
 PropertyField
 		: VAR
 			{
-				$$ = [$1, '{atomic}'];
+				$$ = [$1, "{atomic}"];
 			}
 		| '[' STRING_LITERAL ']'
 			{

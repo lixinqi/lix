@@ -332,7 +332,136 @@ env_new := (env)->{
 	Env _instance_
 }
 
+flattenExpr := (expr define)->{
+	expr map (item)->{
+		item flatten define
+	} | define
+}
+
+flattenBreak := (expr define)->{
+}
+
+flattenWhile := (expr define)->{
+}
+
+flattenOr := (expr define)->{
+}
+
+flattenAnd := (expr define)->{
+}
+
+flattenIf := (expr define)->{
+}
+
+flattenAssign := (expr define)->{
+}
+
+flattenDef := (expr define)->{
+}
+
+flattenPathArgItem := (expr define)->{
+}
+
+flattenPathItem := (expr define)->{
+}
+
+flattenPath := (expr define)->{
+}
+
+flattenEmpty := (expr define)->{
+}
+
+flattenMethod := (expr define)->{
+}
+
+flattenObjectLiteral := (expr define)->{
+}
+
+flattenArray := (expr define)->{
+}
+
+flattenFunc := (expr define)->{
+}
+
+flattenFieldAccess := (expr define)->{
+}
+
+flattenAtomic := (expr define)->{
+	expr
+}
+
+flattenMono := (expr define)->{
+	expr.0 flatten define
+}
+
+statementFlattenGenerator := ()->{
+	data := {}
+	(statement)->{
+		if (statement == undefined) {
+			data
+		} else {
+			varName := getUniqVarName call
+			lixVar := [varName '{atomic}' '{var}']
+			data .push [lixVar ':=' statement] 
+			lixVar
+		}
+	}
+}
+
+flattenSeq := (expr define)->{
+	ret := []
+	expr.0 foreach (item index)->{
+		exprDefine := statementFlattenGenerator call
+		item flatten exprDefine
+		ret .concat (exprDefine call)
+	}
+	expr.0 = ret
+	expr
+}
+
+flattenStart := (expr define)->{
+	expr.0 flatten define
+}
+
+flattenOpTable := {
+	.['{start}'] 							flattenStart
+	.['{seq}'] 								flattenSeq
+	.['{mono}'] 							flattenMono
+	.['{atomic}']							flattenAtomic
+	.['{.}'] 									flattenFieldAccess
+	.['{func}'] 							flattenFunc
+	.['{array}'] 							flattenArray
+	.['{object}'] 						flattenObjectLiteral
+	.['{method}'] 						flattenMethod
+	.['{empty}'] 							flattenEmpty
+	.['{path}'] 							flattenPath
+	.['{path_item}'] 					flattenPathItem
+	.['{path_arg_item}']			flattenPathArgItem
+	.[':=']										flattenDef
+	.['='] 										flattenAssign
+	.['if']										flattenIf
+	.['and']									flattenAnd
+	.['or'] 									flattenOr
+	.['while']								flattenWhile
+	.['break'] 								flattenBreak
+}
+
+flattenOp := (hint)->{
+	if (flattenOpTable.[hint]) {
+		flattenOpTable.[hint]
+	} else {
+		flattenExpr
+	}
+}
+
+flatten := (expr define)->{
+	ret := expr (expr.1 flattenOp) define
+	ret console.log
+	ret
+}
+
 exports.compile = (expr)->{
 	libs := env0 | map (i)->{i} | .join "\n"
-	[libs "\n" (expr generate (env_new call) ctx0)] join | console.log
+	code := expr | flatten (i)->{} | generate (env_new call) ctx0
+	[libs "\n" code] join | console.log
 }
