@@ -8,3 +8,5 @@
 ] | print
 
 [] isArray | print
+
+[1 2 3] .concat [3 4 5] | print
