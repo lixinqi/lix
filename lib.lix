@@ -386,6 +386,8 @@ flattenArray := (expr define)->{
 }
 
 flattenFunc := (expr define)->{
+	expr.2 = expr.2 flatten define
+	expr
 }
 
 flattenFieldAccess := (expr define)->{
