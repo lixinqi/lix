@@ -354,9 +354,13 @@ flattenIf := (expr define)->{
 }
 
 flattenAssign := (expr define)->{
+	expr.2 = expr.2 flatten define
+	expr
 }
 
 flattenDef := (expr define)->{
+	expr.2 = expr.2 flatten define
+	expr
 }
 
 flattenPathArgItem := (expr define)->{
@@ -369,6 +373,7 @@ flattenPath := (expr define)->{
 }
 
 flattenEmpty := (expr define)->{
+	expr
 }
 
 flattenMethod := (expr define)->{
@@ -412,8 +417,9 @@ flattenSeq := (expr define)->{
 	ret := []
 	expr.0 foreach (item index)->{
 		exprDefine := statementFlattenGenerator call
-		item flatten exprDefine
+		itemRet := item flatten exprDefine
 		ret = ret .concat (exprDefine call)
+		ret .push itemRet
 	}
 	expr.0 = ret
 	expr
