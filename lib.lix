@@ -339,6 +339,7 @@ flattenExpr := (expr define)->{
 }
 
 flattenBreak := (expr define)->{
+	expr
 }
 
 flattenWhile := (expr define)->{
@@ -364,25 +365,54 @@ flattenDef := (expr define)->{
 }
 
 flattenPathArgItem := (expr define)->{
+	expr.0 = expr.0 flatten define
+	expr
 }
 
 flattenPathItem := (expr define)->{
+	expr
 }
 
 flattenPath := (expr define)->{
+	expr.0 = expr.0 map (i)->{
+		i flatten define
+	}
+	expr
 }
 
 flattenEmpty := (expr define)->{
 	expr
 }
 
+flattenField := (expr define)->{
+	if (expr.1 == '{index}') {
+		expr.0 = expr.0 flatten define
+	}
+	expr
+}
+
 flattenMethod := (expr define)->{
+	expr.0 = expr.0 flattenField define
+	expr
+}
+
+flattenProperty := (expr define)->{
+	expr.2 = expr.2 flatten define
+	expr
 }
 
 flattenObjectLiteral := (expr define)->{
+	expr.0 = expr.0 map (i)->{
+		i flattenProperty define
+	}
+	expr
 }
 
 flattenArray := (expr define)->{
+	expr.0 = expr.0 map (i)->{
+		i flatten define
+	}
+	expr
 }
 
 flattenFunc := (expr define)->{
@@ -391,6 +421,11 @@ flattenFunc := (expr define)->{
 }
 
 flattenFieldAccess := (expr define)->{
+	if (expr.1 == '{.}') {
+		expr.0 = expr.0 flattenFieldAccess define
+		expr.2 = expr.2 flattenField define
+	}
+	expr
 }
 
 flattenAtomic := (expr define)->{
