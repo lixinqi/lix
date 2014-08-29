@@ -343,6 +343,15 @@ flattenBreak := (expr define)->{
 }
 
 flattenWhile := (expr define)->{
+		whileDefine := statementFlattenGenerator call
+		expr.0 = expr.0 flatten whileDefine
+		expr.2 = expr.2 flatten define0
+		expr.[2].[0] = expr.[2].[0] .concat (whileDefine call)
+
+		whileDefine call | foreach (i)->{
+			i define true
+		}
+		expr
 }
 
 flattenOr := (expr define)->{
@@ -438,9 +447,11 @@ flattenMono := (expr define)->{
 
 statementFlattenGenerator := ()->{
 	data := []
-	(statement)->{
+	(statement onlyPush)->{
 		if (statement == undefined) {
 			data
+		} (onlyPush) {
+			data .push statement 
 		} else {
 			varName := getUniqVarName call
 			lixVar := [varName '{atomic}' '{var}']
@@ -501,6 +512,8 @@ flattenOp := (hint)->{
 flatten := (expr define)->{
 	expr (expr.1 flattenOp) define
 }
+
+define0 := (i)->{i}
 
 exports.compile = (expr)->{
 	libs := env0 | map (i)->{i} | .join "\n"
