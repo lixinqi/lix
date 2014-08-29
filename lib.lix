@@ -360,7 +360,27 @@ flattenOr := (expr define)->{
 flattenAnd := (expr define)->{
 }
 
+_flattenIf := (expr define tmpVar)->{
+	expr.0 foreach (i)->{
+		if (i.1 == 'else') {
+			elseSeq := i.0 flatten define0
+			[[[tmpVar elseSeq]] 'if'] define true
+		} (i.1 == 'if') {
+			i _flattenIf define tmpVar | define
+		} else {
+			ifSeq := i.1 flatten define0
+			ifSeq.0 .unshift [tmpVar '=' ['false' '{atomic}']]
+			cond := i.0 flatten define
+			cond := [tmpVar 'and' cond]
+			[[[cond ifSeq]] 'if'] define true
+		}
+	}
+	['' '{empty}']
+}
+
 flattenIf := (expr define)->{
+	tmpVar := ['true' '{atomic}'] define
+	expr _flattenIf define tmpVar
 }
 
 flattenAssign := (expr define)->{

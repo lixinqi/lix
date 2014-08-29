@@ -479,148 +479,182 @@ flattenOr;
 var flattenAnd = (function () {var _uniq_var_80 = function (expr, define) {;
 };_uniq_var_80.__lix_func__ = true;return _uniq_var_80;})();
 flattenAnd;
-var flattenIf = (function () {var _uniq_var_81 = function (expr, define) {;
-};_uniq_var_81.__lix_func__ = true;return _uniq_var_81;})();
-flattenIf;
-var flattenAssign = (function () {var _uniq_var_82 = function (expr, define) {(expr[2] = flatten(expr[2], define));
-return expr;
-};_uniq_var_82.__lix_func__ = true;return _uniq_var_82;})();
-flattenAssign;
-var flattenDef = (function () {var _uniq_var_83 = function (expr, define) {(expr[2] = flatten(expr[2], define));
-return expr;
-};_uniq_var_83.__lix_func__ = true;return _uniq_var_83;})();
-flattenDef;
-var flattenPathArgItem = (function () {var _uniq_var_84 = function (expr, define) {(expr[0] = flatten(expr[0], define));
-return expr;
-};_uniq_var_84.__lix_func__ = true;return _uniq_var_84;})();
-flattenPathArgItem;
-var flattenPathItem = (function () {var _uniq_var_85 = function (expr, define) {return expr;
+var _flattenIf = (function () {var _uniq_var_85 = function (expr, define, tmpVar) {foreach(expr[0], (function () {var _uniq_var_84 = function (i) {if (__eq__(i[1], 'else')) {
+var elseSeq = flatten(i[0], define0);
+elseSeq;
+return define([[[tmpVar, elseSeq]], 'if'], true);
+
+} else if (__eq__(i[1], 'if')) {
+return define(_flattenIf(i, define, tmpVar));
+
+} else {
+var ifSeq = flatten(i[1], define0);
+ifSeq;
+(function () {var _uniq_var_83 = function (_uniq_var_81, _uniq_var_82) {
+if (typeof _uniq_var_81.unshift === 'function') {
+arguments = Array.prototype.slice.call(arguments, (_uniq_var_81.unshift.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_81.unshift.apply(_uniq_var_81, arguments);
+} else if (_uniq_var_81.unshift !== undefined) {
+if (_uniq_var_82 === undefined) {
+return _uniq_var_81.unshift;
+}
+_uniq_var_81.unshift = _uniq_var_82;
+}return _uniq_var_81;
+};_uniq_var_83.__lix_func__ = true;return _uniq_var_83;})()(ifSeq[0], [tmpVar, '=', ['false', '{atomic}']]);
+var cond = flatten(i[0], define);
+cond;
+var cond = [tmpVar, 'and', cond];
+cond;
+return define([[[cond, ifSeq]], 'if'], true);
+
+};
+};_uniq_var_84.__lix_func__ = true;return _uniq_var_84;})());
+return ['', '{empty}'];
 };_uniq_var_85.__lix_func__ = true;return _uniq_var_85;})();
-flattenPathItem;
-var flattenPath = (function () {var _uniq_var_87 = function (expr, define) {(expr[0] = map(expr[0], (function () {var _uniq_var_86 = function (i) {return flatten(i, define);
-};_uniq_var_86.__lix_func__ = true;return _uniq_var_86;})()));
+_flattenIf;
+var flattenIf = (function () {var _uniq_var_86 = function (expr, define) {var tmpVar = define(['true', '{atomic}']);
+tmpVar;
+return _flattenIf(expr, define, tmpVar);
+};_uniq_var_86.__lix_func__ = true;return _uniq_var_86;})();
+flattenIf;
+var flattenAssign = (function () {var _uniq_var_87 = function (expr, define) {(expr[2] = flatten(expr[2], define));
 return expr;
 };_uniq_var_87.__lix_func__ = true;return _uniq_var_87;})();
-flattenPath;
-var flattenEmpty = (function () {var _uniq_var_88 = function (expr, define) {return expr;
+flattenAssign;
+var flattenDef = (function () {var _uniq_var_88 = function (expr, define) {(expr[2] = flatten(expr[2], define));
+return expr;
 };_uniq_var_88.__lix_func__ = true;return _uniq_var_88;})();
+flattenDef;
+var flattenPathArgItem = (function () {var _uniq_var_89 = function (expr, define) {(expr[0] = flatten(expr[0], define));
+return expr;
+};_uniq_var_89.__lix_func__ = true;return _uniq_var_89;})();
+flattenPathArgItem;
+var flattenPathItem = (function () {var _uniq_var_90 = function (expr, define) {return expr;
+};_uniq_var_90.__lix_func__ = true;return _uniq_var_90;})();
+flattenPathItem;
+var flattenPath = (function () {var _uniq_var_92 = function (expr, define) {(expr[0] = map(expr[0], (function () {var _uniq_var_91 = function (i) {return flatten(i, define);
+};_uniq_var_91.__lix_func__ = true;return _uniq_var_91;})()));
+return expr;
+};_uniq_var_92.__lix_func__ = true;return _uniq_var_92;})();
+flattenPath;
+var flattenEmpty = (function () {var _uniq_var_93 = function (expr, define) {return expr;
+};_uniq_var_93.__lix_func__ = true;return _uniq_var_93;})();
 flattenEmpty;
-var flattenField = (function () {var _uniq_var_89 = function (expr, define) {if (__eq__(expr[1], '{index}')) {
+var flattenField = (function () {var _uniq_var_94 = function (expr, define) {if (__eq__(expr[1], '{index}')) {
 (expr[0] = flatten(expr[0], define));
 
 };
 return expr;
-};_uniq_var_89.__lix_func__ = true;return _uniq_var_89;})();
+};_uniq_var_94.__lix_func__ = true;return _uniq_var_94;})();
 flattenField;
-var flattenMethod = (function () {var _uniq_var_90 = function (expr, define) {(expr[0] = flattenField(expr[0], define));
-return expr;
-};_uniq_var_90.__lix_func__ = true;return _uniq_var_90;})();
-flattenMethod;
-var flattenProperty = (function () {var _uniq_var_91 = function (expr, define) {(expr[2] = flatten(expr[2], define));
-return expr;
-};_uniq_var_91.__lix_func__ = true;return _uniq_var_91;})();
-flattenProperty;
-var flattenObjectLiteral = (function () {var _uniq_var_93 = function (expr, define) {(expr[0] = map(expr[0], (function () {var _uniq_var_92 = function (i) {return flattenProperty(i, define);
-};_uniq_var_92.__lix_func__ = true;return _uniq_var_92;})()));
-return expr;
-};_uniq_var_93.__lix_func__ = true;return _uniq_var_93;})();
-flattenObjectLiteral;
-var flattenArray = (function () {var _uniq_var_95 = function (expr, define) {(expr[0] = map(expr[0], (function () {var _uniq_var_94 = function (i) {return flatten(i, define);
-};_uniq_var_94.__lix_func__ = true;return _uniq_var_94;})()));
+var flattenMethod = (function () {var _uniq_var_95 = function (expr, define) {(expr[0] = flattenField(expr[0], define));
 return expr;
 };_uniq_var_95.__lix_func__ = true;return _uniq_var_95;})();
-flattenArray;
-var flattenFunc = (function () {var _uniq_var_96 = function (expr, define) {(expr[2] = flatten(expr[2], define));
+flattenMethod;
+var flattenProperty = (function () {var _uniq_var_96 = function (expr, define) {(expr[2] = flatten(expr[2], define));
 return expr;
 };_uniq_var_96.__lix_func__ = true;return _uniq_var_96;})();
+flattenProperty;
+var flattenObjectLiteral = (function () {var _uniq_var_98 = function (expr, define) {(expr[0] = map(expr[0], (function () {var _uniq_var_97 = function (i) {return flattenProperty(i, define);
+};_uniq_var_97.__lix_func__ = true;return _uniq_var_97;})()));
+return expr;
+};_uniq_var_98.__lix_func__ = true;return _uniq_var_98;})();
+flattenObjectLiteral;
+var flattenArray = (function () {var _uniq_var_100 = function (expr, define) {(expr[0] = map(expr[0], (function () {var _uniq_var_99 = function (i) {return flatten(i, define);
+};_uniq_var_99.__lix_func__ = true;return _uniq_var_99;})()));
+return expr;
+};_uniq_var_100.__lix_func__ = true;return _uniq_var_100;})();
+flattenArray;
+var flattenFunc = (function () {var _uniq_var_101 = function (expr, define) {(expr[2] = flatten(expr[2], define));
+return expr;
+};_uniq_var_101.__lix_func__ = true;return _uniq_var_101;})();
 flattenFunc;
-var flattenFieldAccess = (function () {var _uniq_var_97 = function (expr, define) {if (__eq__(expr[1], '{.}')) {
+var flattenFieldAccess = (function () {var _uniq_var_102 = function (expr, define) {if (__eq__(expr[1], '{.}')) {
 (expr[0] = flattenFieldAccess(expr[0], define));
 (expr[2] = flattenField(expr[2], define));
 
 };
 return expr;
-};_uniq_var_97.__lix_func__ = true;return _uniq_var_97;})();
+};_uniq_var_102.__lix_func__ = true;return _uniq_var_102;})();
 flattenFieldAccess;
-var flattenAtomic = (function () {var _uniq_var_98 = function (expr, define) {return expr;
-};_uniq_var_98.__lix_func__ = true;return _uniq_var_98;})();
+var flattenAtomic = (function () {var _uniq_var_103 = function (expr, define) {return expr;
+};_uniq_var_103.__lix_func__ = true;return _uniq_var_103;})();
 flattenAtomic;
-var flattenMono = (function () {var _uniq_var_99 = function (expr, define) {return flatten(expr[0], define);
-};_uniq_var_99.__lix_func__ = true;return _uniq_var_99;})();
+var flattenMono = (function () {var _uniq_var_104 = function (expr, define) {return flatten(expr[0], define);
+};_uniq_var_104.__lix_func__ = true;return _uniq_var_104;})();
 flattenMono;
-var statementFlattenGenerator = (function () {var _uniq_var_107 = function () {var data = [];
+var statementFlattenGenerator = (function () {var _uniq_var_112 = function () {var data = [];
 data;
-return (function () {var _uniq_var_106 = function (statement, onlyPush) {if (__eq__(statement, undefined)) {
+return (function () {var _uniq_var_111 = function (statement, onlyPush) {if (__eq__(statement, undefined)) {
 return data;
 
 } else if (onlyPush) {
-return (function () {var _uniq_var_102 = function (_uniq_var_100, _uniq_var_101) {
-if (typeof _uniq_var_100.push === 'function') {
-arguments = Array.prototype.slice.call(arguments, (_uniq_var_100.push.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_100.push.apply(_uniq_var_100, arguments);
-} else if (_uniq_var_100.push !== undefined) {
-if (_uniq_var_101 === undefined) {
-return _uniq_var_100.push;
+return (function () {var _uniq_var_107 = function (_uniq_var_105, _uniq_var_106) {
+if (typeof _uniq_var_105.push === 'function') {
+arguments = Array.prototype.slice.call(arguments, (_uniq_var_105.push.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_105.push.apply(_uniq_var_105, arguments);
+} else if (_uniq_var_105.push !== undefined) {
+if (_uniq_var_106 === undefined) {
+return _uniq_var_105.push;
 }
-_uniq_var_100.push = _uniq_var_101;
-}return _uniq_var_100;
-};_uniq_var_102.__lix_func__ = true;return _uniq_var_102;})()(data, statement);
+_uniq_var_105.push = _uniq_var_106;
+}return _uniq_var_105;
+};_uniq_var_107.__lix_func__ = true;return _uniq_var_107;})()(data, statement);
 
 } else {
 var varName = call(getUniqVarName);
 varName;
 var lixVar = [varName, '{atomic}', '{var}'];
 lixVar;
-(function () {var _uniq_var_105 = function (_uniq_var_103, _uniq_var_104) {
-if (typeof _uniq_var_103.push === 'function') {
-arguments = Array.prototype.slice.call(arguments, (_uniq_var_103.push.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_103.push.apply(_uniq_var_103, arguments);
-} else if (_uniq_var_103.push !== undefined) {
-if (_uniq_var_104 === undefined) {
-return _uniq_var_103.push;
+(function () {var _uniq_var_110 = function (_uniq_var_108, _uniq_var_109) {
+if (typeof _uniq_var_108.push === 'function') {
+arguments = Array.prototype.slice.call(arguments, (_uniq_var_108.push.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_108.push.apply(_uniq_var_108, arguments);
+} else if (_uniq_var_108.push !== undefined) {
+if (_uniq_var_109 === undefined) {
+return _uniq_var_108.push;
 }
-_uniq_var_103.push = _uniq_var_104;
-}return _uniq_var_103;
-};_uniq_var_105.__lix_func__ = true;return _uniq_var_105;})()(data, [lixVar, ':=', statement]);
+_uniq_var_108.push = _uniq_var_109;
+}return _uniq_var_108;
+};_uniq_var_110.__lix_func__ = true;return _uniq_var_110;})()(data, [lixVar, ':=', statement]);
 return lixVar;
 
 };
-};_uniq_var_106.__lix_func__ = true;return _uniq_var_106;})();
-};_uniq_var_107.__lix_func__ = true;return _uniq_var_107;})();
+};_uniq_var_111.__lix_func__ = true;return _uniq_var_111;})();
+};_uniq_var_112.__lix_func__ = true;return _uniq_var_112;})();
 statementFlattenGenerator;
-var flattenSeq = (function () {var _uniq_var_115 = function (expr, define) {var ret = [];
+var flattenSeq = (function () {var _uniq_var_120 = function (expr, define) {var ret = [];
 ret;
-foreach(expr[0], (function () {var _uniq_var_114 = function (item, index) {var exprDefine = call(statementFlattenGenerator);
+foreach(expr[0], (function () {var _uniq_var_119 = function (item, index) {var exprDefine = call(statementFlattenGenerator);
 exprDefine;
 var itemRet = flatten(item, exprDefine);
 itemRet;
-(ret = (function () {var _uniq_var_110 = function (_uniq_var_108, _uniq_var_109) {
-if (typeof _uniq_var_108.concat === 'function') {
-arguments = Array.prototype.slice.call(arguments, (_uniq_var_108.concat.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_108.concat.apply(_uniq_var_108, arguments);
-} else if (_uniq_var_108.concat !== undefined) {
-if (_uniq_var_109 === undefined) {
-return _uniq_var_108.concat;
+(ret = (function () {var _uniq_var_115 = function (_uniq_var_113, _uniq_var_114) {
+if (typeof _uniq_var_113.concat === 'function') {
+arguments = Array.prototype.slice.call(arguments, (_uniq_var_113.concat.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_113.concat.apply(_uniq_var_113, arguments);
+} else if (_uniq_var_113.concat !== undefined) {
+if (_uniq_var_114 === undefined) {
+return _uniq_var_113.concat;
 }
-_uniq_var_108.concat = _uniq_var_109;
-}return _uniq_var_108;
-};_uniq_var_110.__lix_func__ = true;return _uniq_var_110;})()(ret, call(exprDefine)));
-return (function () {var _uniq_var_113 = function (_uniq_var_111, _uniq_var_112) {
-if (typeof _uniq_var_111.push === 'function') {
-arguments = Array.prototype.slice.call(arguments, (_uniq_var_111.push.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_111.push.apply(_uniq_var_111, arguments);
-} else if (_uniq_var_111.push !== undefined) {
-if (_uniq_var_112 === undefined) {
-return _uniq_var_111.push;
+_uniq_var_113.concat = _uniq_var_114;
+}return _uniq_var_113;
+};_uniq_var_115.__lix_func__ = true;return _uniq_var_115;})()(ret, call(exprDefine)));
+return (function () {var _uniq_var_118 = function (_uniq_var_116, _uniq_var_117) {
+if (typeof _uniq_var_116.push === 'function') {
+arguments = Array.prototype.slice.call(arguments, (_uniq_var_116.push.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_116.push.apply(_uniq_var_116, arguments);
+} else if (_uniq_var_116.push !== undefined) {
+if (_uniq_var_117 === undefined) {
+return _uniq_var_116.push;
 }
-_uniq_var_111.push = _uniq_var_112;
-}return _uniq_var_111;
-};_uniq_var_113.__lix_func__ = true;return _uniq_var_113;})()(ret, itemRet);
-};_uniq_var_114.__lix_func__ = true;return _uniq_var_114;})());
+_uniq_var_116.push = _uniq_var_117;
+}return _uniq_var_116;
+};_uniq_var_118.__lix_func__ = true;return _uniq_var_118;})()(ret, itemRet);
+};_uniq_var_119.__lix_func__ = true;return _uniq_var_119;})());
 (expr[0] = ret);
 return expr;
-};_uniq_var_115.__lix_func__ = true;return _uniq_var_115;})();
+};_uniq_var_120.__lix_func__ = true;return _uniq_var_120;})();
 flattenSeq;
-var flattenStart = (function () {var _uniq_var_116 = function (expr, define) {var ret = flatten(expr[0], define);
+var flattenStart = (function () {var _uniq_var_121 = function (expr, define) {var ret = flatten(expr[0], define);
 ret;
 return [ret, '{start}'];
-};_uniq_var_116.__lix_func__ = true;return _uniq_var_116;})();
+};_uniq_var_121.__lix_func__ = true;return _uniq_var_121;})();
 flattenStart;
 var flattenOpTable = {
 '{start}': flattenStart,
@@ -645,34 +679,34 @@ var flattenOpTable = {
 'break': flattenBreak
 };
 flattenOpTable;
-var flattenOp = (function () {var _uniq_var_117 = function (hint) {if (flattenOpTable[hint]) {
+var flattenOp = (function () {var _uniq_var_122 = function (hint) {if (flattenOpTable[hint]) {
 return flattenOpTable[hint];
 
 } else {
 return flattenExpr;
 
 };
-};_uniq_var_117.__lix_func__ = true;return _uniq_var_117;})();
+};_uniq_var_122.__lix_func__ = true;return _uniq_var_122;})();
 flattenOp;
-var flatten = (function () {var _uniq_var_118 = function (expr, define) {return flattenOp(expr[1])(expr, define);
-};_uniq_var_118.__lix_func__ = true;return _uniq_var_118;})();
+var flatten = (function () {var _uniq_var_123 = function (expr, define) {return flattenOp(expr[1])(expr, define);
+};_uniq_var_123.__lix_func__ = true;return _uniq_var_123;})();
 flatten;
-var define0 = (function () {var _uniq_var_119 = function (i) {return i};_uniq_var_119.__lix_func__ = true;return _uniq_var_119;})();
+var define0 = (function () {var _uniq_var_124 = function (i) {return i};_uniq_var_124.__lix_func__ = true;return _uniq_var_124;})();
 define0;
-(exports.compile = (function () {var _uniq_var_125 = function (expr) {var libs = (function () {var _uniq_var_122 = function (_uniq_var_120, _uniq_var_121) {
-if (typeof _uniq_var_120.join === 'function') {
-arguments = Array.prototype.slice.call(arguments, (_uniq_var_120.join.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_120.join.apply(_uniq_var_120, arguments);
-} else if (_uniq_var_120.join !== undefined) {
-if (_uniq_var_121 === undefined) {
-return _uniq_var_120.join;
+(exports.compile = (function () {var _uniq_var_130 = function (expr) {var libs = (function () {var _uniq_var_127 = function (_uniq_var_125, _uniq_var_126) {
+if (typeof _uniq_var_125.join === 'function') {
+arguments = Array.prototype.slice.call(arguments, (_uniq_var_125.join.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_125.join.apply(_uniq_var_125, arguments);
+} else if (_uniq_var_125.join !== undefined) {
+if (_uniq_var_126 === undefined) {
+return _uniq_var_125.join;
 }
-_uniq_var_120.join = _uniq_var_121;
-}return _uniq_var_120;
-};_uniq_var_122.__lix_func__ = true;return _uniq_var_122;})()(map(env0, (function () {var _uniq_var_123 = function (i) {return i};_uniq_var_123.__lix_func__ = true;return _uniq_var_123;})()), "\n");
+_uniq_var_125.join = _uniq_var_126;
+}return _uniq_var_125;
+};_uniq_var_127.__lix_func__ = true;return _uniq_var_127;})()(map(env0, (function () {var _uniq_var_128 = function (i) {return i};_uniq_var_128.__lix_func__ = true;return _uniq_var_128;})()), "\n");
 libs;
-var code = generate(flatten(expr, (function () {var _uniq_var_124 = function (i) {;
-};_uniq_var_124.__lix_func__ = true;return _uniq_var_124;})()), call(env_new), ctx0);
+var code = generate(flatten(expr, (function () {var _uniq_var_129 = function (i) {;
+};_uniq_var_129.__lix_func__ = true;return _uniq_var_129;})()), call(env_new), ctx0);
 code;
 return console.log(join([libs, "\n", code]));
-};_uniq_var_125.__lix_func__ = true;return _uniq_var_125;})());
+};_uniq_var_130.__lix_func__ = true;return _uniq_var_130;})());
 
