@@ -355,9 +355,35 @@ flattenWhile := (expr define)->{
 }
 
 flattenOr := (expr define)->{
+	ret := expr.0 flatten define
+	if (ret.2 != 'var') {
+		ret := ret define
+	}
+	getAndOpSeq := ()->{
+		AndDefine := statementFlattenGenerator call
+		seqRet := expr.2 flatten AndDefine
+		seq := (AndDefine call)
+		seq .push [ret '=' seqRet]
+		[seq '{seq}']
+	}
+	[[[[ret ['not' '{atomic}' 'var']] (getAndOpSeq call)]] 'if'] define true
+	ret
 }
 
 flattenAnd := (expr define)->{
+	ret := expr.0 flatten define
+	if (ret.2 != 'var') {
+		ret := ret define
+	}
+	getAndOpSeq := ()->{
+		AndDefine := statementFlattenGenerator call
+		seqRet := expr.2 flatten AndDefine
+		seq := (AndDefine call)
+		seq .push [ret '=' seqRet]
+		[seq '{seq}']
+	}
+	[[[ret (getAndOpSeq call)]] 'if'] define true
+	ret
 }
 
 _flattenIf := (expr define tmpVar)->{

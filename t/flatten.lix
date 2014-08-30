@@ -1,14 +1,29 @@
 #!/usr/local/bin/node lix.js
 
-a := 10
+# 0 or 1 | and 0 | or 0 | print
 
-if ((2 - 1 | + 2 ) < 1) {
-	'yes-if' print
-} (a > (3 + 4 | - 5)) {
-	'yes-else-if' print
-} else {
-	'yes-else' print
+test := (ret)->{
+	'test' + ret | print
+	ret
 }
+
+a := 2 and (1 and 3) | and (3 test) | and (0 test) | or (2 test) | and (1 test)
+
+a print
+
+# a := 2 and (1 + 1 | test) | and (1 + -1 | test)
+# 
+# a print
+
+# a := 10
+# 
+# if ((2 - 1 | + 2 ) < 1) {
+# 	'yes-if' print
+# } (a > (3 + 4 | - 5)) {
+# 	'yes-else-if' print
+# } else {
+# 	'yes-else' print
+# }
 
 # a := 0
 # while (a < (1 | + (1 + 2) | + (-1 + 3))) {
