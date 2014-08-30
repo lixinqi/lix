@@ -1,15 +1,20 @@
 #!/usr/local/bin/node lix.js
 
+join := (arr)->{ arr .join '' }
+
+[1 2 3 4] | join | print
+
 # 0 or 1 | and 0 | or 0 | print
 
-test := (ret)->{
-	'test' + ret | print
-	ret
-}
+# test := (ret)->{
+# 	'test' + ret | print
+# 	ret
+# }
 
-a := 2 and (1 and 3) | and (3 test) | and (0 test) | or (2 test) | and (1 test)
+# a := 2 and (1 and 3) | and (3 test) | and (0 test) | or (2 test) | and (1 test)
 
-a print
+# a := 2 and (1 and (0 or 3))
+# a print
 
 # a := 2 and (1 + 1 | test) | and (1 + -1 | test)
 # 

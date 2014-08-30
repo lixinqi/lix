@@ -414,7 +414,7 @@ FUNC_BODY
 		: NullableSourceElements
 		| Expr
 			{
-				$$ = makeExpr($Expr);
+				$$ = [[makeExpr($Expr)], '{seq}'];
 			}
 		;
 

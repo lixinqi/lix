@@ -309,7 +309,7 @@ case 73:
 			
 break;
 case 75:
-				this.$ = makeExpr($$[$0]);
+				this.$ = [[makeExpr($$[$0])], '{seq}'];
 			
 break;
 case 76:
