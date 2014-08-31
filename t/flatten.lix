@@ -1,92 +1,118 @@
 #!/usr/local/bin/node lix.js
 
-join := (arr)->{ arr .join '' }
+seq := (count)->{
+	i := 0
+	while (i < count) {
+		i print
+		i = i + 1
+	}
+}
 
-[1 2 3 4] | join | print
+5 seq | print
 
-# 0 or 1 | and 0 | or 0 | print
+test := (i)->{
+	if (i == 0) {
+		-1
+	} else {
+		i + 1
+	}
+}
 
-# test := (ret)->{
-# 	'test' + ret | print
-# 	ret
-# }
+test := (i)->{
+	ret := null
+	if (i == 0) {
+		ret := -1
+	} else {
+		ret := (i + 1)
+	}
+	ret
+}
 
-# a := 2 and (1 and 3) | and (3 test) | and (0 test) | or (2 test) | and (1 test)
+1 test | print
 
-# a := 2 and (1 and (0 or 3))
-# a print
+0 or 1 | and 0 | or 0 | print
 
-# a := 2 and (1 + 1 | test) | and (1 + -1 | test)
-# 
-# a print
+test := (ret)->{
+	'test' + ret | print
+	ret
+}
 
-# a := 10
-# 
-# if ((2 - 1 | + 2 ) < 1) {
-# 	'yes-if' print
-# } (a > (3 + 4 | - 5)) {
-# 	'yes-else-if' print
-# } else {
-# 	'yes-else' print
-# }
+a := 2 and (1 and 3) | and (3 test) | and (0 test) | or (2 test) | and (1 test)
 
-# a := 0
-# while (a < (1 | + (1 + 2) | + (-1 + 3))) {
-# 	a print
-# 	a = a + 1
-# }
+a := 2 and (1 and (0 or 3))
+a print
 
-# ./good/nice | print
-# 
-# path := /user/local/bin
-# /[path]/nodejs | print
-# 
-# /['/user' + '/local' | + '/bin']/nodejs | print
+a := 2 and (1 + 1 | test) | and (1 + -1 | test)
 
-# obj := {
-# 	.name 'good'
-# }
-# 
-# obj.[('n' + 'a') + ('m' + 'e')] | print
+a print
 
-# obj := {
-# 	.good 'nice'
-# 	.count (1 + 2 | + 3)
-# 	.otherInfo {
-# 		.age (20 + 1)
-# 		.name ('Li ' + 'Xinqi')
-# 	}
-# }
-# 
-# obj | .good | print
-# 
-# attr := .['count']
-# 
-# obj | attr | print
-# 
-# [1 (1 + 1) (1 + 1 | + 1)] print
-# 
-# [
-# 	[1 2 3]
-# 	[1 (1 + 1) (1 + 1 | + 1)]
-# 	([3 4 (10 - 5)])
-# ] | print
+a := 10
 
-# test := (i)->{
-# 	i + 2 | - (3 - 2) | print
-# }
-# 
-# 3 test
-# 
-# test call 4
+if ((2 - 1 | + 2 ) < 1) {
+	'yes-if' print
+} (a > (3 + 4 | - 5)) {
+	'yes-else-if' print
+} else {
+	'yes-else' print
+}
+
+a := 0
+while (a < (1 | + (1 + 2) | + (-1 + 3))) {
+	a print
+	a = a + 1
+}
+
+./good/nice | print
+
+path := /user/local/bin
+/[path]/nodejs | print
+
+/['/user' + '/local' | + '/bin']/nodejs | print
+
+obj := {
+	.name 'good'
+}
+
+obj.[('n' + 'a') + ('m' + 'e')] | print
+
+obj := {
+	.good 'nice'
+	.count (1 + 2 | + 3)
+	.otherInfo {
+		.age (20 + 1)
+		.name ('Li ' + 'Xinqi')
+	}
+}
+
+obj | .good | print
+
+attr := .['count']
+
+obj | attr | print
+
+[1 (1 + 1) (1 + 1 | + 1)] print
+
+[
+	[1 2 3]
+	[1 (1 + 1) (1 + 1 | + 1)]
+	([3 4 (10 - 5)])
+] | print
+
+test := (i)->{
+	i + 2 | - (3 - 2) | print
+}
+
+3 test
+
+test call 4
 
 
-# 1 + 1 | + (2 + 3) | - 1| print
-# a := 1
-# a + 1 | print
-# b := 3
-# a + 1 | + b | print
-# 
-# a = b
-# 
-# a print
+1 + 1 | + (2 + 3) | - 1| print
+a := 1
+a + 1 | print
+b := 3
+a + 1 | + b | print
+
+a = b
+
+a print

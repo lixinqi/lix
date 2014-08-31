@@ -386,27 +386,31 @@ flattenAnd := (expr define)->{
 	ret
 }
 
-_flattenIf := (expr define tmpVar)->{
+_flattenIf := (expr define tmpVar ctx)->{
 	expr.0 foreach (i)->{
 		if (i.1 == 'else') {
-			elseSeq := i.0 flatten define0
+			elseSeq := i.0 flatten define0 ctx
 			[[[tmpVar elseSeq]] 'if'] define true
 		} (i.1 == 'if') {
-			i _flattenIf define tmpVar | define
+			i _flattenIf define tmpVar ctx | define
 		} else {
-			ifSeq := i.1 flatten define0
+			ifSeq := i.1 flatten define0 ctx
 			ifSeq.0 .unshift [tmpVar '=' ['false' '{atomic}']]
 			cond := i.0 flatten define
 			cond := [tmpVar 'and' cond]
 			[[[cond ifSeq]] 'if'] define true
 		}
 	}
-	['' '{empty}']
 }
 
 flattenIf := (expr define)->{
 	tmpVar := ['true' '{atomic}'] define
-	expr _flattenIf define tmpVar
+	retVar := ['null' '{atomic}'] define
+	ctx := (i)->{
+		[retVar '=' i]
+	}
+	expr _flattenIf define tmpVar ctx
+	retVar
 }
 
 flattenAssign := (expr define)->{
@@ -416,7 +420,8 @@ flattenAssign := (expr define)->{
 
 flattenDef := (expr define)->{
 	expr.2 = expr.2 flatten define
-	expr
+	expr define true
+	expr.0
 }
 
 flattenPathArgItem := (expr define)->{
@@ -507,13 +512,20 @@ statementFlattenGenerator := ()->{
 	}
 }
 
-flattenSeq := (expr define)->{
+flattenSeq := (expr define seqCtx)->{
 	ret := []
+	ctx := (stmt index)->{
+		ret := stmt
+		if (seqCtx and ((index parseInt) == (expr.[0].length - 1))) {
+			ret := stmt seqCtx
+		}
+		ret
+	}
 	expr.0 foreach (item index)->{
 		exprDefine := statementFlattenGenerator call
 		itemRet := item flatten exprDefine
 		ret = ret .concat (exprDefine call)
-		ret .push itemRet
+		ret .push (itemRet ctx index)
 	}
 	expr.0 = ret
 	expr
@@ -555,8 +567,8 @@ flattenOp := (hint)->{
 	}
 }
 
-flatten := (expr define)->{
-	expr (expr.1 flattenOp) define
+flatten := (expr define ctx)->{
+	expr (expr.1 flattenOp) define ctx
 }
 
 define0 := (i)->{i}
