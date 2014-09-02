@@ -158,25 +158,22 @@ generateArray := (expr env ctx def)->{
 generateMethod := (expr env ctx)->{
 	localVarName := getUniqVarName call
 	localValueName := getUniqVarName call
-	method := localVarName + (expr.0 generateField env ctx0)
+	methodName := (expr.0 generateField env ctx0)
+	method := localVarName + methodName
 	tmpVar := (getUniqVarName call)
-	["(function () {"
-		'var ' tmpVar ' = function (' localVarName ", " localValueName ") {\n"
-			"if (typeof " method " === 'function') {\n"
-				"arguments = Array.prototype.slice.call("
-					"arguments, (" method ".__lix_func__ ? 0 : 1), arguments.length);"
+	["(function (" localVarName ", " localValueName ") {\n"
+		"if (typeof " method " === 'function') {\n"
+				"arguments = Array.prototype.slice.call(arguments, 0, arguments.length);\n"
 				"return " method ".apply(" localVarName ", arguments);\n"
-			"} else if (" method " !== undefined) {\n"
-				"if (" localValueName " === undefined) {\n"
-					"return " method ';\n'
-				"}\n"
+		"} else if (" method " !== undefined) {\n"
+			"if (" localValueName " === undefined) {\n"
+				"return " method ';\n'
+			"}\n"
+			"return function () {\n"
 				method " = " localValueName ";\n"
-			"}"
-			"return " localVarName ';\n'
-		'};'
-		tmpVar '.__lix_func__ = true;'
-		'return ' tmpVar ';'
-	'})()'] | join | ctx
+			"}\n"
+		"}"
+	"})"] join
 }
 
 
@@ -192,7 +189,7 @@ generateBreak := (expr env ctx)->{
 }
 
 generateEmpty := (expr env ctx def)->{
-	0
+	""
 }
 
 generateDef := (expr env ctx def)->{
@@ -330,6 +327,14 @@ generate := (expr env ctx def)->{
 env0 := {
 	.exports 				true
 #	.require 				true
+	.array_join
+									([
+									"function array_join(arr, glue) {\n"
+										"return function () {\n"
+											"return arr.join(glue)\n"
+										"}\n"
+									"}"
+									] .join '\n')
 	.print 					([
 										"function print(x) {"
 											"return function () {"
@@ -453,14 +458,11 @@ env0 := {
 									] .join '\n')
 	.call						([
 										"function call(fn) {"
-											"var collect = [];"
+											"var collect = []"
 											"for (var i in arguments) {"
-												"collect.push(arguments[i]);"
+												"collect.push(arguments[i])"
 											"}"
-											"collect.shift();"
-											"return function () {"
-												"return fn.apply(fn, collect)();"
-											"}"
+											"return fn.apply(fn, collect);"
 										"}"
 									] .join '\n')
 	.apply					([

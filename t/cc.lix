@@ -1,14 +1,34 @@
 #!/usr/local/bin/node ./lix.js
 
-test := (i)->{
-	i print
+obj := {
+	.name "lixinqi"
+	.hi (self)->{
+		self.name print
+	}
 }
 
-3 test
 
-test call 3
+obj .hi
+obj .name "good"
+obj .hi
 
-test apply [3]
+obj.hi = (self)->{
+#	'Hi, I\' am ' + self.name | print
+	['Hi, I\' am ' self.name] array_join '' | print
+}
+
+obj .hi
+
+
+# test := (i)->{
+# 	i print
+# }
+# 
+# 3 test
+
+#test call 3
+
+#test apply [3]
 
 # arr := [
 # 	(1 + 2)
