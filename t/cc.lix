@@ -1,7 +1,35 @@
 #!/usr/local/bin/node ./lix.js
 
-a := 3
-b := a + 3 | - 2 | * 4
-b + 5 | print
+test := (i)->{
+	i print
+}
+
+3 test
+
+test call 3
+
+test apply [3]
+
+# arr := [
+# 	(1 + 2)
+# 	(1 + (1 + 2))
+# 	(1 + (1 + (1 + 2)))
+# 	(1 + (1 + (1 + 2)) | * 4)
+# ]
+# 
+# arr print
+
+# obj := {
+# 	.name ("li" + "xin" | + 'qi')
+# 	.age (1 + 2 | - 2 | + (3 * 4) | * 2)
+# }
+# 
+# obj print
+# 
+# obj.[("n" + "am" | + 'e')] print
+
+# a := 3
+# b := a + 3 | - 2 | * 4
+# b + 5 | print
 
 # 3 print

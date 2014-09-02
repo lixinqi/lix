@@ -98,25 +98,25 @@ generateAtomic := (expr env ctx def)->{
 	ret
 }
 
-generatePropertyName := (expr env ctx)->{
+generatePropertyName := (expr env ctx def)->{
 	if (expr.1 == '{atomic}') {
-		expr generateAtomic env ctx0 | ctx
+		expr generateAtomic env ctx def
 	} (expr.1 == '{index}') {
-		expr.0 generateAtomic env ctx0 | ctx
+		expr.0 generateAtomic env ctx def
 	}
 }
 
-generateProperty := (expr env ctx)->{
-	propertyName := expr.0 generatePropertyName env ctx0
-	propertyValue := expr.2 generate env ctx0
+generateProperty := (expr env ctx def)->{
+	propertyName := expr.0 generatePropertyName env ctx0 def
+	propertyValue := expr.2 generate env ctx def
 	[propertyName ": " propertyValue] | join
 }
 
-generateObjectLiteral := (expr env ctx)->{
+generateObjectLiteral := (expr env ctx def)->{
 	objectBody := expr.0 map (i)->{
-		(i generateProperty env ctx0)
+		(i generateProperty env ctx def)
 	} | .join ",\n"
-	["{\n" objectBody "\n}"] | join | ctx
+	["{\n" objectBody "\n}"] | join
 }
 
 transformVarName := (name)->{ name }
@@ -129,30 +129,30 @@ getVarName := (expr)->{
 	}
 }
 
-generateField := (expr env ctx)->{
+generateField := (expr env ctx def)->{
 	if (expr.1 == '{atomic}') {
-		'.' + (expr generateAtomic env ctx0)
+		'.' + (expr generateAtomic env ctx0 def)
 	} (expr.1 == '{index}') {
-		['[' (expr.0 generate env ctx0) ']'] join
+		['[' (expr.0 generate env ctx def) ']'] join
 	}
 }
 
 
-generateFieldAccess := (expr env ctx)->{
+generateFieldAccess := (expr env ctx def)->{
 	if (expr.1 == '{atomic}') {
-		expr generateAtomic env ctx0 | ctx
+		expr generateAtomic env ctx0 def
 	} (expr.1 == '{.}') {
-		obj := (expr.0 generateFieldAccess env ctx0)
-		field := (expr.2 generateField env ctx0)
-		obj + field | ctx
+		obj := (expr.0 generateFieldAccess env ctx def)
+		field := (expr.2 generateField env ctx def)
+		obj + field
 	}
 }
 
-generateArray := (expr env ctx)->{
+generateArray := (expr env ctx def)->{
 	arrayBody := expr.0 map (i)->{
-		(i generate env ctx0)
+		(i generate env ctx def)
 	} | .join ', '
-	['[' arrayBody ']'] | join | ctx
+	['[' arrayBody ']'] | join
 }
 
 generateMethod := (expr env ctx)->{
@@ -214,18 +214,18 @@ generateAssign := (expr env ctx def)->{
 	[varname " = " (expr.2 generate env ctx def)] | join
 }
 
-generateFunc := (expr env ctx)->{
+generateFunc := (expr env ctx def)->{
 	funcEnv := env env_new
 	args := expr.0 generateFuncArgs funcEnv ctx0
-	body := expr.2 generate funcEnv (v)->{
-		'return ' + v
-	}
 	tmpVar := (getUniqVarName call)
-	['(function () {'
-		'var ' tmpVar ' = function (' args ') {' body '};'
-		tmpVar '.__lix_func__ = true;'
-		'return ' tmpVar ';'
-	'})()'] | join | ctx
+
+	def := GenerateDefNew call
+	body := expr.2 generate funcEnv ctx0 def
+	['(function (' args ') {\n'
+		(def.defineVar call) ";\n"
+		(def.defineFunc call) ";\n"
+		'return ' body ";\n"
+	'})'] join
 }
 
 generateExpr := (expr env ctx def)->{
@@ -446,27 +446,28 @@ env0 := {
 										"function foreach(arr, cb) {"
 											"return function () {"
 												"for (var i in arr) {"
-													"cb(arr[i], i);"
+													"cb(arr[i], i)();"
 												"}"
 											"}"
 										"}"
 									] .join '\n')
 	.call						([
 										"function call(fn) {"
+											"var collect = [];"
+											"for (var i in arguments) {"
+												"collect.push(arguments[i]);"
+											"}"
+											"collect.shift();"
 											"return function () {"
-												"var collect = [];"
-												"for (var i in arguments) {"
-													"collect.push(arguments[i]);"
-												"}"
-												"collect.shift();"
-												"return fn.apply(fn, collect);"
+												"return fn.apply(fn, collect)();"
 											"}"
 										"}"
 									] .join '\n')
 	.apply					([
 										"function apply(fn) {"
+											"var args = arguments[1]"
 											"return function () {"
-												"return fn.apply(fn, arguments[1]);"
+												"return fn.apply(fn, args)();"
 											"}"
 										"}"
 									] .join '\n')
