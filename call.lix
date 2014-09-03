@@ -1,7 +1,0 @@
-#!/usr/local/bin/node ./lix.js
-
-(i)->{i} call 20 | print
-
-(x y)->{ x + y } | apply [3 4] | print
-(x y)->{ x + y } | call 3 4 | print
-

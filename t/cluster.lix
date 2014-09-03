@@ -1,3 +1,0 @@
-#!/usr/local/bin/node ./lix.js
-module := require
-cluster := 'cluster' module
