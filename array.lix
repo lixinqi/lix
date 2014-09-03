@@ -1,0 +1,12 @@
+#!/usr/local/bin/node ./lix.js
+[1 "2" 3 ] | print
+
+[
+	[1 2 3]
+	[4 5 6]
+	[7 8 9]
+] | print
+
+[] isArray | print
+
+[1 2 3] .concat [3 4 5] | print

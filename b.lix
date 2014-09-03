@@ -1,0 +1,137 @@
+Y := (f)->{
+	(x)->{
+		(t)->{
+			t (x x)
+		} f
+	} (x)->{
+		x x
+	}
+}
+
+cons := (x y)->{
+	(f)->{
+		x f y
+	}
+}
+
+car := (f)->{
+	(x y)->{
+		x
+	} f
+}
+
+cdr := (f)->{
+	(x y)->{
+		y
+	} f
+}
+
+compose := (f0 f1)->{
+	(i)->{
+		i | f0 | f1
+	}
+}
+
+iszero := (i)->{
+	i eq 0
+}
+
+_else := (cond block)->{
+	cond | not | then block
+}
+
+ifGt0 := (i block)->{
+	i gt 0 | then block
+}
+
+printStep2 := (i)->{
+	i print
+	i ifGt0 ()->{
+		i - 2 | printStep2
+	}
+}
+
+printStep2 := (self)->{
+	(i)->{
+		i print
+		i ifGt0 ()->{
+			i - 2 | self
+		}
+	}
+} Y
+
+i := 0
+
+
+ifTrue := (cond trueBlock falseBlock)->{
+	cond | then trueBlock | _else falseBlock
+}
+
+l := 1 cons 2 | cons 3 | cons 4 | cons 5
+
+l | car | cdr 
+
+call := (fn)->{
+	1 ifTrue fn
+}
+
+to := (x y)->{
+	x cons y
+}
+
+each := (range fn)->{
+	start := range car
+	end := range cdr
+	if (start <= end) {
+		start fn
+		start = start + 1
+		start to end | each fn
+	}
+}
+
+
+mul := (x y)->{
+	ret := 0
+	1 to y | each ()->{
+		ret = ret + x
+	}
+	ret
+}
+
+puts := print
+
+square := (i)->{
+	i mul i
+}
+
+isOdd := (i)->{
+	if (i == 0) {
+		0
+	} else {
+		i - 1 | isEven
+	}
+}
+
+isEven := (i)->{
+	if (i == 0) {
+		1
+	} else {
+		i - 1 | isOdd
+	}
+}
+
+yu := cons
+
+pingfanghe := (x)->{
+	(x car | square) + (x cdr | square)
+}
+
+3 yu 4 | pingfanghe | puts
+
+i := 0
+
+i to 9 | each (i)->{
+	if (i isEven) {
+		i print
+	}
+}

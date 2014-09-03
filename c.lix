@@ -1,0 +1,170 @@
+#!/usr/local/bin/node ./lix.js
+# "Hello world" | + '\n"good' | print
+
+a := [10 20 30]
+
+# a.[2] | print
+
+a.0 = 40
+
+# a | print
+
+a := []
+
+a.0 = 9527
+
+# a | print
+
+cons := (x y)->{
+	[x y]
+}
+
+car := (x)->{
+	x.0
+}
+
+cdr := (x)->{
+	x.1
+}
+
+# 3 cons 4 | print
+
+length := (x)->{
+	x.length
+}
+
+to := (start end)->{
+	[start end]
+}
+
+each := (range cb)->{
+	start := range.0
+	end := range.1
+	if (start < end) {
+		start cb
+		start + 1 | to end | each cb
+	}
+}
+
+foreach := (arr cb)->{
+	l := arr length
+	0 to l | each (i)->{
+		arr.[i] | cb i
+	}
+}
+
+square := (i)->{
+	i * i
+}
+
+# 平方 := (i)->{
+# 	i 乘 i
+# }
+# 
+# 再 := (f0 f1)->{
+# 	(i)->{i | f0 | f1}
+# }
+# 
+# 再 := (pair)->{
+# 	(i)->{i | pair.0 | pair.1}
+# }
+# 
+# 四次方 := 平方 再 平方
+# 四次方 := [平方 平方] 再
+# 
+# 
+# [1 2 3 4 5] | 其中的每个 (值 键)->{
+# 	"索引：" | 加 键 | 打印到终端
+# 	"值：" | 加 值 | 打印到终端
+# 	"平方：" | 加 (值 平方) | 打印到终端
+# 	"" | 打印到终端
+# }
+
+# 0 到 5 | 其中每个 整数的平方 
+
+# obj := {
+# 	.url "www.baidu.com"
+# 	.data {
+# 		.answer (1 + 2)
+# 	}
+# 	.success (data)->{
+# 		data | console.log
+# 	}
+# 	.error (status)->{
+# 		status | console.log
+# 	}
+# }
+# 
+# obj.url
+
+
+To := (start end)->{
+	[ 1 2 3 4 5]
+}
+
+计数器发生器 := (counter)->{
+	()->{
+		ret := counter
+		counter = counter + 1
+		ret
+	}
+}
+
+走起 := (fn)->{
+	0 fn
+}
+
+当前值 := (fn)->{
+	0 fn
+}
+
+forEach := (range fn)->{
+	ret := []
+	range each (value)->{
+		ret .push (value fn)
+	}
+	ret | print
+	ret
+}
+
+# 再 := (f0 f1)->{
+#
+# }
+
+# 四次方 := 平方 再 平方
+
+# 整数的平方 := 平方
+
+# 0 到 5 | 其中每个 整数的平方 | 打印到终端
+
+# 0 To 5 | forEach square | print
+
+到 := to
+
+其中每个 := forEach
+
+整数的平方 := square
+
+打印到终端 := print
+
+0 到 5 | 其中每个 整数的平方 | 打印到终端
+
+# 6 到 10 | 其中每个 整数的平方 | 打印到终端
+
+# [1 2 3 4 5] | foreach (value index)->{
+# 	"index: " | + index | print
+# 	"value: " | + value | print
+# 	"square: " | + (value square) | print
+# 	"" | print
+# }
+
+compose := (f0 f1)->{
+	(i)->{ i | f0 | f1}
+}
+
+forth := square compose square
+
+# 2 | 四次方 | 打印
+# 2 | forth | print
+# 2 | 平方 | 平方 | 打印
+# 2 | square | square | print

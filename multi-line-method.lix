@@ -1,0 +1,30 @@
+#!/usr/local/bin/node ./lix.js
+obj := {
+	.self (me)->{
+		me
+	}
+	.name ()->{
+		"nice"
+	}
+}
+
+obj .self | .name | print
+
+self := (obj)->{ obj }
+name := (obj)->{ obj .name }
+
+obj .self | .name | print
+
+(
+	obj self
+	| .name) | print
+
+( obj
+	| .self
+	| (i)->{
+			'nice' | print
+			i
+		}
+	| .name
+) | print
+

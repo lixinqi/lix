@@ -1,0 +1,9 @@
+#!/usr/local/bin/node ./lix.js
+async := 'async' require
+fs := 'fs' require
+
+
+['a.lix' 'b.lix' 'c.lix'] async.map fs.stat (err result)->{
+	'nice' console.log
+}
+'good' console.log

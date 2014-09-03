@@ -1,0 +1,93 @@
+#!/usr/local/bin/node ./lix.js
+
+obj := {
+	.name (self)->{
+		self._name
+	}
+	.setName (self value)->{
+		self._name = value
+		self
+	}
+
+	.age (self)->{
+		self._age
+	}
+	.setAge (self value)->{
+		self._age = value
+		self
+	}
+
+	._name "good"
+	._age 21
+}
+
+#obj | .setAge 23 | .setName "fine"
+#
+#obj .name | print
+#obj .age | print
+
+obj | (i)->{
+			i | .name | print
+			i | .age | print
+			i
+	} | (i)->{
+			i | .setName "fine"  | .setAge 43
+	} | (i)->{
+			i | .name | print
+			i | .age | print
+			i
+	}
+
+
+# obj .['name'] | print
+# 
+# obj | .name | print
+# 
+# obj .name "你好"
+# 
+# obj | .name | print
+# 
+arr := [
+ 	(self)->{
+ 		self.1
+ 	}
+
+ 	"good"
+
+	(self)->{
+		self
+	}
+]
+
+ 
+arr | .[2] | .[0] | print
+# 
+# arr := [
+# 	print
+# 	"good"
+# 	"nice"
+# ]
+# 
+# arr .[0]
+
+compose := (f0 f1)->{
+	(i)->{ i | f0 | f1 }
+}
+
+obj := {
+	.name "nice name"
+}
+
+namePrint := .name compose print
+
+obj | namePrint
+
+obj .name "oh yeah"
+
+obj | namePrint
+
+obj .name ()->{ "function changed" }
+
+obj | namePrint
+
+obj .name "oh yeah"

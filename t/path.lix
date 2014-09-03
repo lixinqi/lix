@@ -1,0 +1,68 @@
+#!/usr/local/bin/node ./lix.js
+#
+#
+fs := 'fs' require
+
+# //root | print
+# /var//www | print
+# /var/./www | print
+# /var/../www | print
+# 
+# /// | print
+# ./ | print
+# .// | print
+# ../ | print
+# ..// | print
+# 
+# ./tmp | print
+# ../tmp | print
+# ../tmp | print
+# ./tmp/nice/./www | print
+# ./tmp/./.. | print
+# 
+# '----------' print
+# 
+# ../lix/./ | fs.readdirSync | foreach (filename)->{
+# 		filename console.log
+# }
+# 
+# ../ fs.readdir (err filenames)->{
+# 	filenames foreach (filename)->{
+# 		filename console.log
+# 	}
+# }
+
+# ../ | $ls | foreach (filename)->{
+# 	filename console.log
+# }
+
+# // | fs.readdirSync | .join ' ' | print
+# 
+# ./good
+# ./good/nice
+# ./good.lix/ok
+# ../a
+# ../book
+# 
+# 
+# /[good.b]/path/to/[file]
+
+# home := /home/lixinqi
+# 
+# tmp := "tmp"
+# 
+# /[home]/[tmp]/ | console.log
+# 
+# 
+# cur := './'
+# 
+# tmp := 'lix'
+# 
+# ../[tmp] | fs.readdirSync | .join '\t' | print
+
+process.env.PATH | .split ':' | foreach (path)->{
+	/[path]/node | fs.existsSync | (exists)->{
+		[/[path]/node exists] print	
+	}
+}
+

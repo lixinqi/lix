@@ -1,0 +1,65 @@
+#!/usr/local/bin/node ./lix.js
+to := (start end)->{
+	[start end]
+}
+
+each := (range cb)->{
+	start := range.0
+	end := range.1
+	if (start < range.1) {
+		start cb
+		start + 1 | to end | each cb
+	}
+}
+
+foreach := (arr cb)->{
+	l := arr.length
+	0 to l | each (i)->{
+		arr.[i] | cb i
+	}
+}
+
+objList := [
+	{
+		.name (self)->{
+			self print
+			self._name
+		}
+		.setName (self name)->{
+			self._name = name
+		}
+		._name "nice"
+	}
+	{
+		.name (self)->{
+			self._name
+		}
+		.setName (self name)->{
+			self._name = name
+		}
+		._name "_ok_"
+	}
+	{
+		.name (self)->{
+			self._name
+		}
+		.setName (self name)->{
+			self._name = name
+		}
+		._name "_fine_"
+	}
+]
+
+objList foreach (i index)->{
+	i i.name
+	i .name | print
+}
+
+# objList foreach (i index)->{
+# 	i .setName (i .name | + index)
+# }
+# 
+# objList foreach (i index)->{
+# 	i .name | print
+# }
+
