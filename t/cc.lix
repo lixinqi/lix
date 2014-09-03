@@ -6,33 +6,6 @@ while (a > 0) {
 	a = a - 1
 }
 
-<<<<<<< HEAD
-timeout := (ms fn)->{
-	fn setTimeout ms
-}
-
-FiberProc call ()->{
-
-	ret := cc call (brk)->{
-		1 timeout ()->{
-			'before' console.log
-			cc call (bk)->{
-				1 timeout ()->{
-					'nested before' console.log
-					'nice' bk
-					'nested after' console.log
-				}
-			}
-			'hello world' brk
-			'after' console.log
-		}
-	}
-	ret print
-} 
-
-'main exit' | print
-
-=======
 # a := 3
 # if (a > (3 + 1 | - (2 - 1))) {
 # 	'a > 3' print
@@ -100,4 +73,3 @@ FiberProc call ()->{
 # b + 5 | print
 
 # 3 print
->>>>>>> flatten

@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-1 isFunction
-=======
 #!/usr/local/bin/node lix.js
 
 seq := (count)->{
@@ -119,4 +116,3 @@ a + 1 | + b | print
 a = b
 
 a print
->>>>>>> flatten
