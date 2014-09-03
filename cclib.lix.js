@@ -978,7 +978,7 @@ _uniq_var_198.concat = _uniq_var_199;
 };_uniq_var_200.__lix_func__ = true;return _uniq_var_200;})()(ret, call(exprDefine)));
 var stmtRet = ctx(itemRet, index);
 stmtRet;
-if ((__ne__(stmtRet[1], '{atomic}') || __ne__(stmtRet[3], 'tmp'))) {
+if (((__ne__(stmtRet[1], '{atomic}') || __ne__(stmtRet[3], 'tmp')) || __ne__(stmtRet[1], '{empty}'))) {
 return (function () {var _uniq_var_203 = function (_uniq_var_201, _uniq_var_202) {
 if (typeof _uniq_var_201.push === 'function') {
 arguments = Array.prototype.slice.call(arguments, (_uniq_var_201.push.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_201.push.apply(_uniq_var_201, arguments);

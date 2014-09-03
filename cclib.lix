@@ -573,8 +573,6 @@ flattenAssign := (expr define)->{
 flattenDef := (expr define)->{
 	expr.2 = expr.2 flatten define
 	expr
-# 	expr define true
-# 	expr.0
 }
 
 flattenPathArgItem := (expr define)->{
@@ -679,7 +677,10 @@ flattenSeq := (expr define seqCtx)->{
 		itemRet := item flatten exprDefine
 		ret = ret .concat (exprDefine call)
 		stmtRet := itemRet ctx index
-		if ((stmtRet.[1] != '{atomic}') or (stmtRet.[3] != 'tmp')) {
+		if ((stmtRet.[1] != '{atomic}') | or
+			(stmtRet.[3] != 'tmp') | or
+			(stmtRet.[1] != '{empty}')) {
+
 			ret .push stmtRet
 		}
 	}

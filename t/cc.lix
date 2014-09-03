@@ -73,3 +73,5 @@ b := a + 3 | - 2 | * 4
 b + 5 | print
 
 3 print
+
+()->{} call
