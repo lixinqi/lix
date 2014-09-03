@@ -482,9 +482,11 @@ env_new := (env)->{
 }
 
 flattenExpr := (expr define)->{
-	expr map (item)->{
+	ret := expr map (item)->{
 		item flatten define
 	} | define
+	ret .push 'tmp'
+	ret
 }
 
 flattenBreak := (expr define)->{
@@ -570,8 +572,9 @@ flattenAssign := (expr define)->{
 
 flattenDef := (expr define)->{
 	expr.2 = expr.2 flatten define
- 	expr define true
- 	expr.0
+	expr
+# 	expr define true
+# 	expr.0
 }
 
 flattenPathArgItem := (expr define)->{
@@ -675,7 +678,10 @@ flattenSeq := (expr define seqCtx)->{
 		exprDefine := statementFlattenGenerator call
 		itemRet := item flatten exprDefine
 		ret = ret .concat (exprDefine call)
-		ret .push (itemRet ctx index)
+		stmtRet := itemRet ctx index
+		if ((stmtRet.[1] != '{atomic}') or (stmtRet.[3] != 'tmp')) {
+			ret .push stmtRet
+		}
 	}
 	expr.0 = ret
 	expr
