@@ -32,37 +32,40 @@ generateFuncArgs := (args env ctx)->{
 
 ctx0 := (x)->{x}
 
-generateSeq := (expr env ctx)->{
-	last := expr.[0].length - 1
-	seqCtx := (index)->{
-		if (index < last) {
-			ctx0
-		} else {
-			ctx
-		}
+generateSeq := (expr env ctx def)->{
+	funcName := getUniqVarName call
+	ctx := (v)->{
+		v + '()'
 	}
-	expr.0 map (item index)->{
-		item generate env (index seqCtx)
+	body := expr.0 map (item index)->{
+		stmt := item generate env ctx def
+		if (index == (expr.[0].length - 1)) {
+			stmt := 'return ' + stmt
+		}
+		stmt
 	} | .join ";\n" | + ";\n"
+
+	['function ' funcName '() {\n' body '}'] | join | def.defineFunc
+	funcName
 }
 
-generateOr := (expr env ctx)->{
-	['(' (expr.0 generate env ctx0) " || " (expr.2 generate env ctx0) ')'] | join | ctx
+generateOr := (expr env ctx def)->{
+	['(' (expr.0 generate env ctx def) " || " (expr.2 generate env ctx def) ')'] | join
 }
 
-generateAnd := (expr env ctx)->{
-	['(' (expr.0 generate env ctx0) " && " (expr.2 generate env ctx0) ')'] | join | ctx
+generateAnd := (expr env ctx def)->{
+	['(' (expr.0 generate env ctx def) " && " (expr.2 generate env ctx def) ')'] | join 
 }
 
-generateIf := (expr env ctx)->{
+generateIf := (expr env ctx def)->{
 	expr.0 map (i)->{
 		if (i.1 == 'else') {
-			['{\n' (i.0 generate env ctx) '\n}'] join
+			['{\n' (i.0 generate env ctx def) '\n}'] join
 		} (i.1 == 'if') {
-			(i generateIf env ctx)
+			(i generateIf env ctx def)
 		} else {
-			[ 'if (' (i.0 generate env ctx0) ') {\n'
-					(i.1 generate env ctx)
+			[ 'if (' (i.0 generate env ctx def) ') {\n'
+					(i.1 generate env ctx def | ctx)
 				'\n}'
 			] join
 		}
@@ -83,7 +86,7 @@ operateFuncName := {
 	.["<="] 			'__le__'
 }
 
-generateAtomic := (expr env ctx)->{
+generateAtomic := (expr env ctx def)->{
 	ret := expr.0
 	if (expr.2 == '{var}') {
 		if (operateFuncName.[expr.0]) {
@@ -92,28 +95,28 @@ generateAtomic := (expr env ctx)->{
 			ret = expr.0 transformVarName
 		}
 	}
-	ret ctx
+	ret
 }
 
-generatePropertyName := (expr env ctx)->{
+generatePropertyName := (expr env ctx def)->{
 	if (expr.1 == '{atomic}') {
-		expr generateAtomic env ctx0 | ctx
+		expr generateAtomic env ctx def
 	} (expr.1 == '{index}') {
-		expr.0 generateAtomic env ctx0 | ctx
+		expr.0 generateAtomic env ctx def
 	}
 }
 
-generateProperty := (expr env ctx)->{
-	propertyName := expr.0 generatePropertyName env ctx0
-	propertyValue := expr.2 generate env ctx0
+generateProperty := (expr env ctx def)->{
+	propertyName := expr.0 generatePropertyName env ctx0 def
+	propertyValue := expr.2 generate env ctx def
 	[propertyName ": " propertyValue] | join
 }
 
-generateObjectLiteral := (expr env ctx)->{
+generateObjectLiteral := (expr env ctx def)->{
 	objectBody := expr.0 map (i)->{
-		(i generateProperty env ctx0)
+		(i generateProperty env ctx def)
 	} | .join ",\n"
-	["{\n" objectBody "\n}"] | join | ctx
+	["{\n" objectBody "\n}"] | join
 }
 
 transformVarName := (name)->{ name }
@@ -126,140 +129,163 @@ getVarName := (expr)->{
 	}
 }
 
-generateField := (expr env ctx)->{
+generateField := (expr env ctx def)->{
 	if (expr.1 == '{atomic}') {
-		'.' + (expr generateAtomic env ctx0)
+		'.' + (expr generateAtomic env ctx0 def)
 	} (expr.1 == '{index}') {
-		['[' (expr.0 generate env ctx0) ']'] join
+		['[' (expr.0 generate env ctx def) ']'] join
 	}
 }
 
 
-generateFieldAccess := (expr env ctx)->{
+generateFieldAccess := (expr env ctx def)->{
 	if (expr.1 == '{atomic}') {
-		expr generateAtomic env ctx0 | ctx
+		expr generateAtomic env ctx0 def
 	} (expr.1 == '{.}') {
-		obj := (expr.0 generateFieldAccess env ctx0)
-		field := (expr.2 generateField env ctx0)
-		obj + field | ctx
+		obj := (expr.0 generateFieldAccess env ctx def)
+		field := (expr.2 generateField env ctx def)
+		obj + field
 	}
 }
 
-generateArray := (expr env ctx)->{
+generateArray := (expr env ctx def)->{
 	arrayBody := expr.0 map (i)->{
-		(i generate env ctx0)
+		(i generate env ctx def)
 	} | .join ', '
-	['[' arrayBody ']'] | join | ctx
+	['[' arrayBody ']'] | join
 }
 
 generateMethod := (expr env ctx)->{
 	localVarName := getUniqVarName call
 	localValueName := getUniqVarName call
-	method := localVarName + (expr.0 generateField env ctx0)
+	methodName := (expr.0 generateField env ctx0)
+	method := localVarName + methodName
 	tmpVar := (getUniqVarName call)
-	["(function () {"
-		'var ' tmpVar ' = function (' localVarName ", " localValueName ") {\n"
-			"if (typeof " method " === 'function') {\n"
-				"arguments = Array.prototype.slice.call("
-					"arguments, (" method ".__lix_func__ ? 0 : 1), arguments.length);"
+	["(function (" localVarName ", " localValueName ") {\n"
+		"if (typeof " method " === 'function') {\n"
+				"arguments = Array.prototype.slice.call(arguments, 0, arguments.length);\n"
 				"return " method ".apply(" localVarName ", arguments);\n"
-			"} else if (" method " !== undefined) {\n"
-				"if (" localValueName " === undefined) {\n"
-					"return " method ';\n'
-				"}\n"
+		"} else if (" method " !== undefined) {\n"
+			"if (" localValueName " === undefined) {\n"
+				"return " method ';\n'
+			"}\n"
+			"return function () {\n"
 				method " = " localValueName ";\n"
-			"}"
-			"return " localVarName ';\n'
-		'};'
-		tmpVar '.__lix_func__ = true;'
-		'return ' tmpVar ';'
-	'})()'] | join | ctx
+			"}\n"
+		"}"
+	"})"] join
 }
 
 
-generateWhile := (expr env ctx)->{
-	['while (' (expr.0 generate env ctx0) ') {\n'
-			(expr.2 generate env ctx0)
-		"}\n"
-		('null' ctx)] join
+generateWhile := (expr env ctx def)->{
+	['while (' (expr.0 generate env ctx def) ') {\n'
+			(expr.2 generate env ctx def | ctx)
+		"\n}" ] join
 }
 
 generateBreak := (expr env ctx)->{
 	'break'
 }
 
-generateEmpty := (expr env ctx)->{
-	0 ctx
+generateEmpty := (expr env ctx def)->{
+	""
 }
 
-generateDef := (expr env ctx)->{
+generateDef := (expr env ctx def)->{
 	varname := expr.[0].[0]
-	ret := [
-		'var ' varname ' = ' (expr.2 generate env ctx0) ";\n"
-		(varname ctx)
-	] | join
+	varname def.defineVar
+	ret := [varname ' = ' (expr.2 generate env ctx def)] | join
 	env.[varname] = true
 	ret
 }
 
-generateAssign := (expr env ctx)->{
+generateAssign := (expr env ctx def)->{
 	varname := expr.0 getVarName
 	if (env.[varname] == undefined) {
 		varname console.log
 		"var undefined" console.log
 	}
 
-	["("
-			(expr.0 generate env ctx0) " = " (expr.2 generate env ctx0)
-	")"] | join | ctx
+	varname := (expr.0 generate env ctx0 def)
+	[varname " = " (expr.2 generate env ctx def)] | join
 }
 
-generateFunc := (expr env ctx)->{
+generateFunc := (expr env ctx def)->{
 	funcEnv := env env_new
 	args := expr.0 generateFuncArgs funcEnv ctx0
-	body := expr.2 generate funcEnv (v)->{
-		'return ' + v
-	}
 	tmpVar := (getUniqVarName call)
-	['(function () {'
-		'var ' tmpVar ' = function (' args ') {' body '};'
-		tmpVar '.__lix_func__ = true;'
-		'return ' tmpVar ';'
-	'})()'] | join | ctx
+
+	def := GenerateDefNew call
+	body := expr.2 generate funcEnv ctx0 def
+	['(function (' args ') {\n'
+		(def.defineVar call) ";\n"
+		(def.defineFunc call) ";\n"
+		'return ' body ";\n"
+	'})'] join
 }
 
-generateExpr := (expr env ctx)->{
-	func := (expr.1 generate env ctx0)
-	args := (expr.0 generate env ctx0)
+generateExpr := (expr env ctx def)->{
+	func := (expr.1 generate env ctx0 def)
+	args := (expr.0 generate env ctx0 def)
 	expr foreach (item index)->{
 		if (index > 1) {
-			args = [args ', ' (item generate env ctx0)] join
+			args = [args ', ' (item generate env ctx0 def)] join
 		}
 	}
 	[func '(' args ')'] | join | ctx
 }
 
-generateStart := (expr env ctx)->{
-	expr.0 generate env ctx
+GenerateDefNew := ()->{
+	vars := {}
+	funcs := []
+
+	{
+		.defineVar (v)->{
+			if (v) {
+				vars.[v] = v
+			} else {
+				vecs := vars map (i)->{i}
+				if (vecs.length > 0) {
+					'var ' + (vecs .join ', ')
+				} else {
+					''
+				}
+			}
+		}
+		.defineFunc (v)->{
+			if (v) {
+				funcs .push v
+			} else {
+				funcs .join ';\n'
+			}
+		}
+	}
 }
 
-generateMono := (expr env ctx)->{
-	expr.0 generate env ctx
+generateStart := (expr env ctx def)->{
+	def := GenerateDefNew call
+	body := expr.0 generate env ctx def
+	body := [body '()'] join
+	[(def.defineVar call) ";\n" (def.defineFunc call) ";\n" body] join
 }
 
-generatePathItem := (expr env ctx)->{
-	['"' expr.0 '"'] | join | ctx
+generateMono := (expr env ctx def)->{
+	expr.0 generate env ctx def
 }
 
-generatePathArgItem := (expr env ctx)->{
-	['("' expr.2 '" + ' (expr.0 generate env ctx0) ')'] | join | ctx
+generatePathItem := (expr env ctx def)->{
+	['"' expr.0 '"'] | join
 }
 
-generatePath := (expr env ctx)->{
+generatePathArgItem := (expr env ctx def)->{
+	['("' expr.2 '" + ' (expr.0 generate env ctx def) ')'] | join
+}
+
+generatePath := (expr env ctx def)->{
 	path := expr.0 map (i)->{
-		i generate env ctx0
+		i generate env ctx def
 	} | .join ','
-	['[' path '].join("/")'] | join | ctx
+	['[' path '].join("/")'] | join
 }
 
 generateOpTable := {
@@ -293,36 +319,159 @@ generateOp := (hint)->{
 	}
 }
 
-generate := (expr env ctx)->{
-	expr (expr.1 generateOp) env ctx
+generate := (expr env ctx def)->{
+	expr (expr.1 generateOp) env ctx def
 }
 
 env0 := {
 	.exports 				true
-	.require 				true
-	.print 					"function print(x) {\n return console.log(x); \n}"
-	.print 					"function print(x) {\n return console.log(x); \n}"
-	.not 						"function not(x) {\n return !x;\n}"
-	._instance_ 		"function _instance_(x) {\n return new x(); \n}"
-	.__add__ 				"function __add__(x, y) {\n return x + y;\n}"
-	.__sub__ 				"function __sub__(x, y) {\n return x - y;\n}"
-	.__mul__ 				"function __mul__(x, y) {\n return x * y;\n}"
-	.__div__ 				"function __div__(x, y) {\n return x / y;\n}"
-	.__mod__ 				"function __mod__(x, y) {\n return x % y;\n}"
-	.__gt__ 				"function __gt__(x, y) {\n return x > y;\n}"
-	.__ge__ 				"function __ge__(x, y) {\n return x >= y;\n}"
-	.__eq__ 				"function __eq__(x, y) {\n return x == y;\n}"
-	.__ne__ 				"function __ne__(x, y) {\n return x != y;\n}"
-	.__le__ 				"function __le__(x, y) {\n return x <= y;\n}"
-	.__lt__ 				"function __lt__(x, y) {\n return x < y;\n}"
-	.AND 						"function AND(x, y) {\n return x & y;\n}"
-	.OR 						"function AND(x, y) {\n return x | y;\n}"
-	.XOR 						"function AND(x, y) {\n return x ^ y;\n}"
-	.isFunction 		"function isFunction(x) {\n return typeof x === 'function';\n}"
-	.isArray 				"function isArray(x) {\n return x instanceof Array;\n}"
-	.foreach 				"function foreach(arr, cb) {\n for (var i in arr) { cb(arr[i], i); };\n}"
-	.call 					"function call(fn) {\n var collect = []; for (var i in arguments) { collect.push(arguments[i]); }; collect.shift(); return fn.apply(fn, collect); \n}"
-	.apply 					"function apply(fn) {\n return fn.apply(fn, arguments[1]); \n}"
+#	.require 				true
+	.array_join
+									([
+									"function array_join(arr, glue) {\n"
+										"return function () {\n"
+											"return arr.join(glue)\n"
+										"}\n"
+									"}"
+									] .join '\n')
+	.print 					([
+										"function print(x) {"
+											"return function () {"
+												"return console.log(x); "
+											"}"
+										"}"
+									] .join '\n')
+	.not 					([
+										"function not(x) {"
+											"return function () {"
+												"return !x; "
+											"}"
+										"}"
+									] .join '\n')
+	._instance_ 	([
+										"function _instance_(x) {"
+											"return function () {"
+												"return new x(); "
+											"}"
+										"}"
+									] .join '\n')
+	.__add__ 				([
+										"function __add__(x, y) {"
+											"return function () {"
+												"return x + y;"
+											"}"
+										"}"
+									] .join '\n')
+	.__sub__ 				([
+										"function __sub__(x, y) {"
+											"return function () {"
+												"return x - y;"
+											"}"
+										"}"
+									] .join '\n')
+	.__mul__ 				([
+										"function __mul__(x, y) {"
+											"return function () {"
+												"return x * y;"
+											"}"
+										"}"
+									] .join '\n')
+	.__div__ 				([
+										"function __div__(x, y) {"
+											"return function () {"
+												"return x / y;"
+											"}"
+										"}"
+									] .join '\n')
+	.__mod__ 				([
+										"function __mod__(x, y) {"
+											"return function () {"
+												"return x % y;"
+											"}"
+										"}"
+									] .join '\n')
+	.__gt__ 				([
+										"function __gt__(x, y) {"
+											"return function () {"
+												"return x > y;"
+											"}"
+										"}"
+									] .join '\n')
+	.__ge__ 				([
+										"function __ge__(x, y) {"
+											"return function () {"
+												"return x >= y;"
+											"}"
+										"}"
+									] .join '\n')
+	.__eq__ 				([
+										"function __eq__(x, y) {"
+											"return function () {"
+												"return x == y;"
+											"}"
+										"}"
+									] .join '\n')
+	.__ne__ 				([
+										"function __ne__(x, y) {"
+											"return function () {"
+												"return x != y;"
+											"}"
+										"}"
+									] .join '\n')
+	.__le__ 				([
+										"function __le__(x, y) {"
+											"return function () {"
+												"return x <= y;"
+											"}"
+										"}"
+									] .join '\n')
+	.__lt__ 				([
+										"function __lt__(x, y) {"
+											"return function () {"
+												"return x < y;"
+											"}"
+										"}"
+									] .join '\n')
+	.isFunction 		([
+										"function isFunction(x) {"
+											"return function () {"
+												"return typeof x === 'function';"
+											"}"
+										"}"
+									] .join '\n')
+	.isArray 				([
+										"function isArray(x) {"
+											"return function () {"
+												"return x instanceof Array;"
+											"}"
+										"}"
+									] .join '\n')
+	.foreach				([
+										"function foreach(arr, cb) {"
+											"return function () {"
+												"for (var i in arr) {"
+													"cb(arr[i], i)();"
+												"}"
+											"}"
+										"}"
+									] .join '\n')
+	.call						([
+										"function call(fn) {"
+											"var collect = []"
+											"for (var i in arguments) {"
+												"collect.push(arguments[i])"
+											"}"
+											"return fn.apply(fn, collect);"
+										"}"
+									] .join '\n')
+	.apply					([
+										"function apply(fn) {"
+											"var args = arguments[1]"
+											"return function () {"
+												"return fn.apply(fn, args)();"
+											"}"
+										"}"
+									] .join '\n')
 }
 
 env_new := (env)->{
@@ -339,53 +488,6 @@ flattenExpr := (expr define)->{
 }
 
 flattenBreak := (expr define)->{
-<<<<<<< HEAD
-}
-
-flattenWhile := (expr define)->{
-}
-
-flattenOr := (expr define)->{
-}
-
-flattenAnd := (expr define)->{
-}
-
-flattenIf := (expr define)->{
-}
-
-flattenAssign := (expr define)->{
-}
-
-flattenDef := (expr define)->{
-}
-
-flattenPathArgItem := (expr define)->{
-}
-
-flattenPathItem := (expr define)->{
-}
-
-flattenPath := (expr define)->{
-}
-
-flattenEmpty := (expr define)->{
-}
-
-flattenMethod := (expr define)->{
-}
-
-flattenObjectLiteral := (expr define)->{
-}
-
-flattenArray := (expr define)->{
-}
-
-flattenFunc := (expr define)->{
-}
-
-flattenFieldAccess := (expr define)->{
-=======
 	expr
 }
 
@@ -398,7 +500,8 @@ flattenWhile := (expr define)->{
 		whileDefine call | foreach (i)->{
 			i define true
 		}
-		expr
+		expr define true
+		['' '{empty}']
 }
 
 flattenOr := (expr define)->{
@@ -467,8 +570,8 @@ flattenAssign := (expr define)->{
 
 flattenDef := (expr define)->{
 	expr.2 = expr.2 flatten define
-	expr define true
-	expr.0
+ 	expr define true
+ 	expr.0
 }
 
 flattenPathArgItem := (expr define)->{
@@ -533,7 +636,6 @@ flattenFieldAccess := (expr define)->{
 		expr.2 = expr.2 flattenField define
 	}
 	expr
->>>>>>> flatten
 }
 
 flattenAtomic := (expr define)->{
@@ -545,19 +647,12 @@ flattenMono := (expr define)->{
 }
 
 statementFlattenGenerator := ()->{
-<<<<<<< HEAD
-	data := {}
-	(statement)->{
-		if (statement == undefined) {
-			data
-=======
 	data := []
 	(statement onlyPush)->{
 		if (statement == undefined) {
 			data
 		} (onlyPush) {
 			data .push statement 
->>>>>>> flatten
 		} else {
 			varName := getUniqVarName call
 			lixVar := [varName '{atomic}' '{var}']
@@ -567,14 +662,6 @@ statementFlattenGenerator := ()->{
 	}
 }
 
-<<<<<<< HEAD
-flattenSeq := (expr define)->{
-	ret := []
-	expr.0 foreach (item index)->{
-		exprDefine := statementFlattenGenerator call
-		item flatten exprDefine
-		ret .concat (exprDefine call)
-=======
 flattenSeq := (expr define seqCtx)->{
 	ret := []
 	ctx := (stmt index)->{
@@ -589,19 +676,14 @@ flattenSeq := (expr define seqCtx)->{
 		itemRet := item flatten exprDefine
 		ret = ret .concat (exprDefine call)
 		ret .push (itemRet ctx index)
->>>>>>> flatten
 	}
 	expr.0 = ret
 	expr
 }
 
 flattenStart := (expr define)->{
-<<<<<<< HEAD
-	expr.0 flatten define
-=======
 	ret := expr.0 flatten define
 	[ret '{start}']
->>>>>>> flatten
 }
 
 flattenOpTable := {
@@ -635,23 +717,19 @@ flattenOp := (hint)->{
 	}
 }
 
-<<<<<<< HEAD
-flatten := (expr define)->{
-	ret := expr (expr.1 flattenOp) define
-	ret console.log
-	ret
-}
-
-=======
 flatten := (expr define ctx)->{
 	expr (expr.1 flattenOp) define ctx
 }
 
 define0 := (i)->{i}
 
->>>>>>> flatten
+def0 := {
+	.defineVar (i)->{}
+	.defineFunc (i)->{}
+}
+
 exports.compile = (expr)->{
 	libs := env0 | map (i)->{i} | .join "\n"
-	code := expr | flatten (i)->{} | generate (env_new call) ctx0
+	code := expr | flatten (i)->{} | generate (env_new call) ctx0 def0
 	[libs "\n" code] join | console.log
 }

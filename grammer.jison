@@ -12,7 +12,7 @@
 		return expr;
 	}
 //	lixlib = require("./lixlib.js");
-	lixlib = require("./lib.lix.js");
+//	lixlib = require("./lib.lix.js");
 %}
 
 %lex
@@ -66,6 +66,7 @@
 
 [+-]?[0-9]+("."[0-9]*)?([Ee][+-]?[0-9]+)?  		{ return 'NAT'; }
 [\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'var'; }
+
 "+"														{ return 'var'; }
 "*"														{ return 'var'; }
 "-"														{ return 'var'; }
@@ -413,7 +414,7 @@ FUNC_BODY
 		: NullableSourceElements
 		| Expr
 			{
-				$$ = makeExpr($Expr);
+				$$ = [[makeExpr($Expr)], '{seq}'];
 			}
 		;
 
@@ -529,10 +530,16 @@ SourceElements
 
 Program
 		:
+			{
+				$$ = [[], '{start}'];
+				//lixlib.compile($$);
+				return $$;
+			}
 		| SourceElements EOF
 			{
 				$$ = [$SourceElements, '{start}'];
-				lixlib.compile($$);
+				//lixlib.compile($$);
+				return $$;
 			}
     ;   
 
