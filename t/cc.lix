@@ -1,24 +1,44 @@
 #!/usr/local/bin/node ./lix.js
 
-obj := {
-	.name "lixinqi"
-	.hi (self)->{
-		self.name print
-	}
+a := 3
+while (a > 0) {
+	a print
+	a = a - 1
 }
 
+# a := 3
+# if (a > (3 + 1 | - (2 - 1))) {
+# 	'a > 3' print
+# } (a > (2 + 1 | - (2 - 1))) {
+# 	'a > 2' print
+# } (a > (1 + 1 | - (2 - 1))) {
+# 	'a > 1' print
+# } else {
+# 	'others' print
+# }
+# 
+# good := 'nice'
+# /[good + ('a' + 'b') | + 'c'] print
 
-obj .hi
-obj .name "good"
-obj .hi
-
-obj.hi = (self)->{
-#	'Hi, I\' am ' + self.name | print
-	['Hi, I\' am ' self.name] array_join '' | print
-}
-
-obj .hi
-
+# obj := {
+# 	.name "lixinqi"
+# 	.hi (self)->{
+# 		self.name print
+# 	}
+# }
+# 
+# 
+# obj .hi
+# obj .name "good"
+# obj .hi
+# 
+# obj.hi = (self)->{
+# #	'Hi, I\' am ' + self.name | print
+# 	['Hi, I\' am ' self.name] array_join '' | print
+# }
+# 
+# obj .hi
+# 
 
 # test := (i)->{
 # 	i print

@@ -49,23 +49,23 @@ generateSeq := (expr env ctx def)->{
 	funcName
 }
 
-generateOr := (expr env ctx)->{
-	['(' (expr.0 generate env ctx0) " || " (expr.2 generate env ctx0) ')'] | join | ctx
+generateOr := (expr env ctx def)->{
+	['(' (expr.0 generate env ctx def) " || " (expr.2 generate env ctx def) ')'] | join
 }
 
-generateAnd := (expr env ctx)->{
-	['(' (expr.0 generate env ctx0) " && " (expr.2 generate env ctx0) ')'] | join | ctx
+generateAnd := (expr env ctx def)->{
+	['(' (expr.0 generate env ctx def) " && " (expr.2 generate env ctx def) ')'] | join 
 }
 
-generateIf := (expr env ctx)->{
+generateIf := (expr env ctx def)->{
 	expr.0 map (i)->{
 		if (i.1 == 'else') {
-			['{\n' (i.0 generate env ctx) '\n}'] join
+			['{\n' (i.0 generate env ctx def) '\n}'] join
 		} (i.1 == 'if') {
-			(i generateIf env ctx)
+			(i generateIf env ctx def)
 		} else {
-			[ 'if (' (i.0 generate env ctx0) ') {\n'
-					(i.1 generate env ctx)
+			[ 'if (' (i.0 generate env ctx def) ') {\n'
+					(i.1 generate env ctx def | ctx)
 				'\n}'
 			] join
 		}
@@ -177,11 +177,10 @@ generateMethod := (expr env ctx)->{
 }
 
 
-generateWhile := (expr env ctx)->{
-	['while (' (expr.0 generate env ctx0) ') {\n'
-			(expr.2 generate env ctx0)
-		"}\n"
-		('null' ctx)] join
+generateWhile := (expr env ctx def)->{
+	['while (' (expr.0 generate env ctx def) ') {\n'
+			(expr.2 generate env ctx def | ctx)
+		"\n}" ] join
 }
 
 generateBreak := (expr env ctx)->{
@@ -274,19 +273,19 @@ generateMono := (expr env ctx def)->{
 	expr.0 generate env ctx def
 }
 
-generatePathItem := (expr env ctx)->{
-	['"' expr.0 '"'] | join | ctx
+generatePathItem := (expr env ctx def)->{
+	['"' expr.0 '"'] | join
 }
 
-generatePathArgItem := (expr env ctx)->{
-	['("' expr.2 '" + ' (expr.0 generate env ctx0) ')'] | join | ctx
+generatePathArgItem := (expr env ctx def)->{
+	['("' expr.2 '" + ' (expr.0 generate env ctx def) ')'] | join
 }
 
-generatePath := (expr env ctx)->{
+generatePath := (expr env ctx def)->{
 	path := expr.0 map (i)->{
-		i generate env ctx0
+		i generate env ctx def
 	} | .join ','
-	['[' path '].join("/")'] | join | ctx
+	['[' path '].join("/")'] | join
 }
 
 generateOpTable := {
@@ -501,7 +500,8 @@ flattenWhile := (expr define)->{
 		whileDefine call | foreach (i)->{
 			i define true
 		}
-		expr
+		expr define true
+		['' '{empty}']
 }
 
 flattenOr := (expr define)->{

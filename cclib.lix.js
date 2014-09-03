@@ -156,13 +156,13 @@ def.defineFunc(join(['function ', funcName, '() {\n', body, '}']));
 return funcName;
 };_uniq_var_23.__lix_func__ = true;return _uniq_var_23;})();
 generateSeq;
-var generateOr = (function () {var _uniq_var_24 = function (expr, env, ctx) {return ctx(join(['(', generate(expr[0], env, ctx0), " || ", generate(expr[2], env, ctx0), ')']));
+var generateOr = (function () {var _uniq_var_24 = function (expr, env, ctx, def) {return join(['(', generate(expr[0], env, ctx, def), " || ", generate(expr[2], env, ctx, def), ')']);
 };_uniq_var_24.__lix_func__ = true;return _uniq_var_24;})();
 generateOr;
-var generateAnd = (function () {var _uniq_var_25 = function (expr, env, ctx) {return ctx(join(['(', generate(expr[0], env, ctx0), " && ", generate(expr[2], env, ctx0), ')']));
+var generateAnd = (function () {var _uniq_var_25 = function (expr, env, ctx, def) {return join(['(', generate(expr[0], env, ctx, def), " && ", generate(expr[2], env, ctx, def), ')']);
 };_uniq_var_25.__lix_func__ = true;return _uniq_var_25;})();
 generateAnd;
-var generateIf = (function () {var _uniq_var_30 = function (expr, env, ctx) {return (function () {var _uniq_var_28 = function (_uniq_var_26, _uniq_var_27) {
+var generateIf = (function () {var _uniq_var_30 = function (expr, env, ctx, def) {return (function () {var _uniq_var_28 = function (_uniq_var_26, _uniq_var_27) {
 if (typeof _uniq_var_26.join === 'function') {
 arguments = Array.prototype.slice.call(arguments, (_uniq_var_26.join.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_26.join.apply(_uniq_var_26, arguments);
 } else if (_uniq_var_26.join !== undefined) {
@@ -172,13 +172,13 @@ return _uniq_var_26.join;
 _uniq_var_26.join = _uniq_var_27;
 }return _uniq_var_26;
 };_uniq_var_28.__lix_func__ = true;return _uniq_var_28;})()(map(expr[0], (function () {var _uniq_var_29 = function (i) {if (__eq__(i[1], 'else')) {
-return join(['{\n', generate(i[0], env, ctx), '\n}']);
+return join(['{\n', generate(i[0], env, ctx, def), '\n}']);
 
 } else if (__eq__(i[1], 'if')) {
-return generateIf(i, env, ctx);
+return generateIf(i, env, ctx, def);
 
 } else {
-return join(['if (', generate(i[0], env, ctx0), ') {\n', generate(i[1], env, ctx), '\n}']);
+return join(['if (', generate(i[0], env, ctx, def), ') {\n', ctx(generate(i[1], env, ctx, def)), '\n}']);
 
 };
 };_uniq_var_29.__lix_func__ = true;return _uniq_var_29;})()), ' else ');
@@ -308,7 +308,7 @@ tmpVar;
 return join(["(function (", localVarName, ", ", localValueName, ") {\n", "if (typeof ", method, " === 'function') {\n", "arguments = Array.prototype.slice.call(arguments, 0, arguments.length);\n", "return ", method, ".apply(", localVarName, ", arguments);\n", "} else if (", method, " !== undefined) {\n", "if (", localValueName, " === undefined) {\n", "return ", method, ';\n', "}\n", "return function () {\n", method, " = ", localValueName, ";\n", "}\n", "}", "})"]);
 };_uniq_var_48.__lix_func__ = true;return _uniq_var_48;})();
 generateMethod;
-var generateWhile = (function () {var _uniq_var_49 = function (expr, env, ctx) {return join(['while (', generate(expr[0], env, ctx0), ') {\n', generate(expr[2], env, ctx0), "}\n", ctx('null')]);
+var generateWhile = (function () {var _uniq_var_49 = function (expr, env, ctx, def) {return join(['while (', generate(expr[0], env, ctx, def), ') {\n', ctx(generate(expr[2], env, ctx, def)), "\n}"]);
 };_uniq_var_49.__lix_func__ = true;return _uniq_var_49;})();
 generateWhile;
 var generateBreak = (function () {var _uniq_var_50 = function (expr, env, ctx) {return 'break';
@@ -437,13 +437,13 @@ generateStart;
 var generateMono = (function () {var _uniq_var_71 = function (expr, env, ctx, def) {return generate(expr[0], env, ctx, def);
 };_uniq_var_71.__lix_func__ = true;return _uniq_var_71;})();
 generateMono;
-var generatePathItem = (function () {var _uniq_var_72 = function (expr, env, ctx) {return ctx(join(['"', expr[0], '"']));
+var generatePathItem = (function () {var _uniq_var_72 = function (expr, env, ctx, def) {return join(['"', expr[0], '"']);
 };_uniq_var_72.__lix_func__ = true;return _uniq_var_72;})();
 generatePathItem;
-var generatePathArgItem = (function () {var _uniq_var_73 = function (expr, env, ctx) {return ctx(join(['("', expr[2], '" + ', generate(expr[0], env, ctx0), ')']));
+var generatePathArgItem = (function () {var _uniq_var_73 = function (expr, env, ctx, def) {return join(['("', expr[2], '" + ', generate(expr[0], env, ctx, def), ')']);
 };_uniq_var_73.__lix_func__ = true;return _uniq_var_73;})();
 generatePathArgItem;
-var generatePath = (function () {var _uniq_var_78 = function (expr, env, ctx) {var path = (function () {var _uniq_var_76 = function (_uniq_var_74, _uniq_var_75) {
+var generatePath = (function () {var _uniq_var_78 = function (expr, env, ctx, def) {var path = (function () {var _uniq_var_76 = function (_uniq_var_74, _uniq_var_75) {
 if (typeof _uniq_var_74.join === 'function') {
 arguments = Array.prototype.slice.call(arguments, (_uniq_var_74.join.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_74.join.apply(_uniq_var_74, arguments);
 } else if (_uniq_var_74.join !== undefined) {
@@ -452,10 +452,10 @@ return _uniq_var_74.join;
 }
 _uniq_var_74.join = _uniq_var_75;
 }return _uniq_var_74;
-};_uniq_var_76.__lix_func__ = true;return _uniq_var_76;})()(map(expr[0], (function () {var _uniq_var_77 = function (i) {return generate(i, env, ctx0);
+};_uniq_var_76.__lix_func__ = true;return _uniq_var_76;})()(map(expr[0], (function () {var _uniq_var_77 = function (i) {return generate(i, env, ctx, def);
 };_uniq_var_77.__lix_func__ = true;return _uniq_var_77;})()), ',');
 path;
-return ctx(join(['[', path, '].join("/")']));
+return join(['[', path, '].join("/")']);
 };_uniq_var_78.__lix_func__ = true;return _uniq_var_78;})();
 generatePath;
 var generateOpTable = {
@@ -728,7 +728,8 @@ _uniq_var_146.concat = _uniq_var_147;
 };_uniq_var_148.__lix_func__ = true;return _uniq_var_148;})()(expr[2][0], call(whileDefine)));
 foreach(call(whileDefine), (function () {var _uniq_var_149 = function (i) {return define(i, true);
 };_uniq_var_149.__lix_func__ = true;return _uniq_var_149;})());
-return expr;
+define(expr, true);
+return ['', '{empty}'];
 };_uniq_var_150.__lix_func__ = true;return _uniq_var_150;})();
 flattenWhile;
 var flattenOr = (function () {var _uniq_var_155 = function (expr, define) {var ret = flatten(expr[0], define);
