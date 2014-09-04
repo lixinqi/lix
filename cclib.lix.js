@@ -305,7 +305,7 @@ var method = __add__(localVarName, methodName);
 method;
 var tmpVar = call(getUniqVarName);
 tmpVar;
-return join(["(function (", localVarName, ", ", localValueName, ") {\n", "if (typeof ", method, " === 'function') {\n", "arguments = Array.prototype.slice.call(arguments, 0, arguments.length);\n", "return ", method, ".apply(", localVarName, ", arguments);\n", "} else if (", method, " !== undefined) {\n", "if (", localValueName, " === undefined) {\n", "return ", method, ';\n', "}\n", "return function () {\n", method, " = ", localValueName, ";\n", "}\n", "}", "})"]);
+return join(["(function (", localVarName, ", ", localValueName, ") {\n", "if (typeof ", method, " === 'function') {\n", "arguments = Array.prototype.slice.call(arguments, 0, arguments.length);\n", "return ", method, ".apply(", localVarName, ", arguments);\n", "} else if (", method, " !== undefined) {\n", "if (", localValueName, " === undefined) {\n", "return function () {\n", "return ", method, ';\n', "}\n", "}\n", "return function () {\n", method, " = ", localValueName, ";\n", "}\n", "}", "})"]);
 };_uniq_var_48.__lix_func__ = true;return _uniq_var_48;})();
 generateMethod;
 var generateWhile = (function () {var _uniq_var_49 = function (expr, env, ctx, def) {return join(['while (', generate(expr[0], env, ctx, def), ') {\n', ctx(generate(expr[2], env, ctx, def)), "\n}"]);

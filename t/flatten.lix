@@ -84,7 +84,9 @@ obj := {
 	}
 }
 
-obj | .good | print
+'=======' print
+obj .good | print
+'-------' print
 
 attr := .['count']
 

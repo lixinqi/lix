@@ -27,6 +27,7 @@ obj := {
 	}
 }
 
+obj .name | print
 
 obj .hi
 obj .name "good"
@@ -66,7 +67,8 @@ obj := {
 
 obj print
 
-obj.[("n" + "am" | + 'e')] print
+attr := ("n" + "am" | + 'e')
+obj.[attr] print
 
 a := 3
 b := a + 3 | - 2 | * 4
@@ -75,3 +77,4 @@ b + 5 | print
 3 print
 
 ()->{} call
+

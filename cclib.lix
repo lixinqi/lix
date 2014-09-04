@@ -167,7 +167,9 @@ generateMethod := (expr env ctx)->{
 				"return " method ".apply(" localVarName ", arguments);\n"
 		"} else if (" method " !== undefined) {\n"
 			"if (" localValueName " === undefined) {\n"
-				"return " method ';\n'
+				"return function () {\n"
+					"return " method ';\n'
+				"}\n"
 			"}\n"
 			"return function () {\n"
 				method " = " localValueName ";\n"
