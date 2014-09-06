@@ -50,10 +50,14 @@ generateSeq := (expr env ctx def)->{
 	funcName := getUniqVarName call
 	getCount := counterGenerator call
 	ctx := (current)->{
-		(v)->{
+		(v loop)->{
+			next := current
+			if (loop == undefined) {
+				next = next + 1
+			}
 			[	v '(function (' seqFuncParamsName.ret ') {\n'
 				'return ' funcName '(' seqFuncParamsName.cb ', '
-				(current + 1) ', true, ' seqFuncParamsName.ret ');\n'
+				next ', true, ' seqFuncParamsName.ret ');\n'
 			'}, 0)'] join
 		}
 	}
@@ -213,7 +217,7 @@ generateMethod := (expr env ctx)->{
 
 generateWhile := (expr env ctx def)->{
 	['while (' (expr.0 generate env ctx def) ') {\n'
-			(expr.2 generate env ctx def | ctx)
+			(expr.2 generate env ctx def | ctx true)
 		"\n}" ] join
 }
 

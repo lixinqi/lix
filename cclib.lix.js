@@ -148,7 +148,13 @@ var generateSeq = (function () {var _uniq_var_27 = function (expr, env, ctx, def
 funcName;
 var getCount = call(counterGenerator);
 getCount;
-var ctx = (function () {var _uniq_var_22 = function (current) {return (function () {var _uniq_var_21 = function (v) {return join([v, '(function (', seqFuncParamsName.ret, ') {\n', 'return ', funcName, '(', seqFuncParamsName.cb, ', ', __add__(current, 1), ', true, ', seqFuncParamsName.ret, ');\n', '}, 0)']);
+var ctx = (function () {var _uniq_var_22 = function (current) {return (function () {var _uniq_var_21 = function (v, loop) {var next = current;
+next;
+if (__eq__(loop, undefined)) {
+(next = __add__(next, 1));
+
+};
+return join([v, '(function (', seqFuncParamsName.ret, ') {\n', 'return ', funcName, '(', seqFuncParamsName.cb, ', ', next, ', true, ', seqFuncParamsName.ret, ');\n', '}, 0)']);
 };_uniq_var_21.__lix_func__ = true;return _uniq_var_21;})();
 };_uniq_var_22.__lix_func__ = true;return _uniq_var_22;})();
 ctx;
@@ -325,7 +331,7 @@ tmpVar;
 return join(["(function (", localVarName, ", ", localValueName, ") {\n", "if (typeof ", method, " === 'function') {\n", "arguments = Array.prototype.slice.call(arguments, 0, arguments.length);\n", "return ", method, ".apply(", localVarName, ", arguments);\n", "} else if (", method, " !== undefined) {\n", "if (", localValueName, " === undefined) {\n", "return function (_ret) {\n", "return ", method, ';\n', "}\n", "}\n", "return function (_ret) {\n", method, " = ", localValueName, ";\n", "}\n", "}", "})"]);
 };_uniq_var_52.__lix_func__ = true;return _uniq_var_52;})();
 generateMethod;
-var generateWhile = (function () {var _uniq_var_53 = function (expr, env, ctx, def) {return join(['while (', generate(expr[0], env, ctx, def), ') {\n', ctx(generate(expr[2], env, ctx, def)), "\n}"]);
+var generateWhile = (function () {var _uniq_var_53 = function (expr, env, ctx, def) {return join(['while (', generate(expr[0], env, ctx, def), ') {\n', ctx(generate(expr[2], env, ctx, def), true), "\n}"]);
 };_uniq_var_53.__lix_func__ = true;return _uniq_var_53;})();
 generateWhile;
 var generateBreak = (function () {var _uniq_var_54 = function (expr, env, ctx) {return 'break';

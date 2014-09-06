@@ -8,12 +8,18 @@ sleep := (ms)->{
 	}
 }
 
-'good' print
-1000 sleep
-'good' print
-2000 sleep
-'good' print
-3000 sleep
+seq := (count fn)->{
+	i := 0
+	while (i < count) {
+		i fn
+		i = i + 1
+	}
+}
+
+10 seq ()->{
+	'good' print
+	1000 sleep
+}
 
 immediately call ()->{
 	'nice' print
