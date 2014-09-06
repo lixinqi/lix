@@ -1,80 +1,108 @@
 #!/usr/local/bin/node ./lix.js
 
-a := 3
-while (a > 0) {
-	a print
-	a = a - 1
-}
-
-a := 3
-if (a > (3 + 1 | - (2 - 1))) {
-	'a > 3' print
-} (a > (2 + 1 | - (2 - 1))) {
-	'a > 2' print
-} (a > (1 + 1 | - (2 - 1))) {
-	'a > 1' print
-} else {
-	'others' print
-}
-
-good := 'nice'
-/[good + ('a' + 'b') | + 'c'] print
-
-obj := {
-	.name "lixinqi"
-	.hi (self)->{
-		self.name print
+sleep := (ms)->{
+	cc call (brk)->{
+		ms timeout ()->{
+			brk call
+		}
 	}
 }
 
-obj .name | print
+'good' print
+1000 sleep
+'good' print
+2000 sleep
+'good' print
+3000 sleep
 
-obj .hi
-obj .name "good"
-obj .hi
-
-obj.hi = (self)->{
-#	'Hi, I\' am ' + self.name | print
-	['Hi, I\' am ' self.name] array_join '' | print
+immediately call ()->{
+	'nice' print
 }
 
-obj .hi
 
+# good console.log
+# good := cc call (brk)->{
+# 	'before' print
+# 	brk call 'yes'
+# 	'ok' brk
+# }
+# good print
 
-test := (i)->{
-	i print
-}
-
-3 test
-
-test call 3
-
-test apply [3]
-
-arr := [
-	(1 + 2)
-	(1 + (1 + 2))
-	(1 + (1 + (1 + 2)))
-	(1 + (1 + (1 + 2)) | * 4)
-]
-
-arr print
-
-obj := {
-	.name ("li" + "xin" | + 'qi')
-	.age (1 + 2 | - 2 | + (3 * 4) | * 2)
-}
-
-obj print
-
-attr := ("n" + "am" | + 'e')
-obj.[attr] print
-
-a := 3
-b := a + 3 | - 2 | * 4
-b + 5 | print
-
-3 print
-
-()->{} call
-
+# a := 3
+# while (a > 0) {
+# 	a print
+# 	a = a - 1
+# }
+# 
+# a := 3
+# if (a > (3 + 1 | - (2 - 1))) {
+# 	'a > 3' print
+# } (a > (2 + 1 | - (2 - 1))) {
+# 	'a > 2' print
+# } (a > (1 + 1 | - (2 - 1))) {
+# 	'a > 1' print
+# } else {
+# 	'others' print
+# }
+# 
+# good := 'nice'
+# /[good + ('a' + 'b') | + 'c'] print
+# 
+# obj := {
+# 	.name "lixinqi"
+# 	.hi (self)->{
+# 		self.name print
+# 	}
+# }
+# 
+# obj .name | print
+# 
+# obj .hi
+# obj .name "good"
+# obj .hi
+# 
+# obj.hi = (self)->{
+# #	'Hi, I\' am ' + self.name | print
+# 	['Hi, I\' am ' self.name] array_join '' | print
+# }
+# 
+# obj .hi
+# 
+# 
+# test := (i)->{
+# 	i print
+# }
+# 
+# 3 test
+# 
+# test call 3
+# 
+# test apply [3]
+# 
+# arr := [
+# 	(1 + 2)
+# 	(1 + (1 + 2))
+# 	(1 + (1 + (1 + 2)))
+# 	(1 + (1 + (1 + 2)) | * 4)
+# ]
+# 
+# arr print
+# 
+# obj := {
+# 	.name ("li" + "xin" | + 'qi')
+# 	.age (1 + 2 | - 2 | + (3 * 4) | * 2)
+# }
+# 
+# obj print
+# 
+# attr := ("n" + "am" | + 'e')
+# obj.[attr] print
+# 
+# a := 3
+# b := a + 3 | - 2 | * 4
+# b + 5 | print
+# 
+# 3 print
+# 
+# ()->{} call
+# 
