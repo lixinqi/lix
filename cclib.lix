@@ -32,20 +32,52 @@ generateFuncArgs := (args env ctx)->{
 
 ctx0 := (x)->{x}
 
-generateSeq := (expr env ctx def)->{
+withSeqLayout := (statements ctx)->{
 	funcName := getUniqVarName call
-	ctx := (v)->{
+	suffix := (v)->{
 		v + '()'
 	}
-	body := expr.0 map (item index)->{
-		stmt := item generate env ctx def
-		if (index == (expr.[0].length - 1)) {
-			stmt := 'return ' + stmt
+	body := statements map (stmtClosure index)->{
+		stmt := stmtClosure call suffix
+		if (index == (statements.length - 1)) {
+			stmt = 'return ' + stmt
 		}
 		stmt
-	} | .join ";\n" | + ";\n"
+	}
+}
 
-	['function ' funcName '() {\n' body '}'] | join | def.defineFunc
+generateSeq := (expr env ctx def)->{
+	funcName := getUniqVarName call
+	getCount := counterGenerator call
+	ctx := (current)->{
+		(v)->{
+			[	v '(function (' seqFuncParamsName.ret ') {\n'
+				'return ' funcName '(' seqFuncParamsName.cb ', '
+				(current + 1) ', true, ' seqFuncParamsName.ret ');\n'
+			'}, 0)'] join
+		}
+	}
+	body := expr.0 map (item index)->{
+		current := (getCount call)
+		stmt := item generate env (current ctx) def
+		stmt := ['case ' current ':\n' stmt] join
+	} | .join ";\n"
+
+	[
+		'function ' funcName '(' seqFuncParamsName.cb ', ' seqFuncParamsName.step ', '
+			seqFuncParamsName.cont ', ' seqFuncParamsName.ret ') {\n'
+		'switch (' seqFuncParamsName.step ') {\n'
+			body
+			'\n'
+			'default:\n'
+			'}\n'
+			'if (' seqFuncParamsName.cont ') {\n'
+				seqFuncParamsName.cb '(' seqFuncParamsName.ret ')\n'
+			'} else {\n'
+				'return ' seqFuncParamsName.ret '\n'
+			'}\n'
+		'}'
+	] | join | def.appendExpr
 	funcName
 }
 
@@ -167,11 +199,11 @@ generateMethod := (expr env ctx)->{
 				"return " method ".apply(" localVarName ", arguments);\n"
 		"} else if (" method " !== undefined) {\n"
 			"if (" localValueName " === undefined) {\n"
-				"return function () {\n"
+				"return function (_ret) {\n"
 					"return " method ';\n'
 				"}\n"
 			"}\n"
-			"return function () {\n"
+			"return function (_ret) {\n"
 				method " = " localValueName ";\n"
 			"}\n"
 		"}"
@@ -209,7 +241,9 @@ generateAssign := (expr env ctx def)->{
 	}
 
 	varname := (expr.0 generate env ctx0 def)
-	[varname " = " (expr.2 generate env ctx def)] | join
+	value := (expr.2 generate env ctx def)
+#	[seqFuncParamsName.ret " = " value] | join | def.appendExpr
+	[varname " = " value] | join
 }
 
 generateFunc := (expr env ctx def)->{
@@ -221,7 +255,7 @@ generateFunc := (expr env ctx def)->{
 	body := expr.2 generate funcEnv ctx0 def
 	['(function (' args ') {\n'
 		(def.defineVar call) ";\n"
-		(def.defineFunc call) ";\n"
+		(def.appendExpr call) ";\n"
 		'return ' body ";\n"
 	'})'] join
 }
@@ -254,7 +288,7 @@ GenerateDefNew := ()->{
 				}
 			}
 		}
-		.defineFunc (v)->{
+		.appendExpr (v)->{
 			if (v) {
 				funcs .push v
 			} else {
@@ -267,8 +301,13 @@ GenerateDefNew := ()->{
 generateStart := (expr env ctx def)->{
 	def := GenerateDefNew call
 	body := expr.0 generate env ctx def
-	body := [body '()'] join
-	[(def.defineVar call) ";\n" (def.defineFunc call) ";\n" body] join
+	body := [
+		'try {\n'
+			body '(function(x){return x;}, 0)\n'
+		'} catch (e) {\n'
+		'}'
+	] join
+	[(def.defineVar call) ";\n" (def.appendExpr call) ";\n" body] join
 }
 
 generateMono := (expr env ctx def)->{
@@ -484,11 +523,9 @@ env_new := (env)->{
 }
 
 flattenExpr := (expr define)->{
-	ret := expr map (item)->{
+	expr map (item)->{
 		item flatten define
 	} | define
-	ret .push 'tmp'
-	ret
 }
 
 flattenBreak := (expr define)->{
@@ -572,10 +609,7 @@ flattenAssign := (expr define)->{
 	expr
 }
 
-flattenDef := (expr define)->{
-	expr.2 = expr.2 flatten define
-	expr
-}
+flattenDef := flattenAssign
 
 flattenPathArgItem := (expr define)->{
 	expr.0 = expr.0 flatten define
@@ -651,15 +685,18 @@ flattenMono := (expr define)->{
 
 statementFlattenGenerator := ()->{
 	data := []
-	(statement onlyPush)->{
+	(statement tmpVarName)->{
 		if (statement == undefined) {
 			data
-		} (onlyPush) {
+		} (tmpVarName == true) {
 			data .push statement 
-		} else {
+		} (tmpVarName == undefined) {
 			varName := getUniqVarName call
-			lixVar := [varName '{atomic}' '{var}']
-			data .push [lixVar ':=' statement] 
+			lixVar := [varName '{atomic}' '{var}' 'tmp']
+			tmpRet := [seqFuncParamsName.ret '{atomic}' '{var}']
+			data .push [tmpRet ':=' statement]
+			data .push [lixVar ':=' tmpRet]
+#			data .push [lixVar ':=' statement]
 			lixVar
 		}
 	}
@@ -734,11 +771,19 @@ define0 := (i)->{i}
 
 def0 := {
 	.defineVar (i)->{}
-	.defineFunc (i)->{}
+	.appendExpr (i)->{}
+}
+
+seqFuncParamsName := {
+	.cb '_cb'
+	.step '_step'
+	.cont '_cont'
+	.ret '_ret'
 }
 
 exports.compile = (expr)->{
 	libs := env0 | map (i)->{i} | .join "\n"
-	code := expr | flatten (i)->{} | generate (env_new call) ctx0 def0
+	code := expr | flatten (i)->{} (i)->{i} | generate (env_new call) ctx0 def0
 	[libs "\n" code] join | console.log
 }
+
