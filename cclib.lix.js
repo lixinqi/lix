@@ -106,7 +106,7 @@ return ret;
 counterGenerator;
 var getCount = call(counterGenerator);
 getCount;
-var getUniqVarName = (function () {var _uniq_var_11 = function () {return __add__('_uniq_var_', call(getCount));
+var getUniqVarName = (function () {var _uniq_var_11 = function () {return __add__('_', call(getCount));
 };_uniq_var_11.__lix_func__ = true;return _uniq_var_11;})();
 getUniqVarName;
 var generateFuncArgs = (function () {var _uniq_var_16 = function (args, env, ctx) {return (function () {var _uniq_var_14 = function (_uniq_var_12, _uniq_var_13) {
@@ -121,7 +121,7 @@ _uniq_var_12.join = _uniq_var_13;
 };_uniq_var_14.__lix_func__ = true;return _uniq_var_14;})()(map(args, (function () {var _uniq_var_15 = function (i) {var varname = i[0];
 varname;
 (env[varname] = true);
-return varname;
+return transformVarName(varname);
 };_uniq_var_15.__lix_func__ = true;return _uniq_var_15;})()), ', ');
 };_uniq_var_16.__lix_func__ = true;return _uniq_var_16;})();
 generateFuncArgs;
@@ -225,9 +225,9 @@ var generateAtomic = (function () {var _uniq_var_35 = function (expr, env, ctx, 
 ret;
 if (__eq__(expr[2], '{var}')) {
 if (operateFuncName[expr[0]]) {
-(ret = operateFuncName[expr[0]]);
+(ret = transformVarName(operateFuncName[expr[0]]));
 
-} else {
+} else if (__eq__(expr[3], undefined)) {
 (ret = transformVarName(expr[0]));
 
 };
@@ -267,7 +267,8 @@ objectBody;
 return join(["{\n", objectBody, "\n}"]);
 };_uniq_var_42.__lix_func__ = true;return _uniq_var_42;})();
 generateObjectLiteral;
-var transformVarName = (function () {var _uniq_var_43 = function (name) {return name;
+var transformVarName = (function () {var _uniq_var_43 = function (name) {name;
+return (name = __add__('LIX_', name));
 };_uniq_var_43.__lix_func__ = true;return _uniq_var_43;})();
 transformVarName;
 var getVarName = (function () {var _uniq_var_44 = function (expr) {if (__eq__(expr[1], '{atomic}')) {
@@ -340,7 +341,7 @@ generateBreak;
 var generateEmpty = (function () {var _uniq_var_55 = function (expr, env, ctx, def) {return "";
 };_uniq_var_55.__lix_func__ = true;return _uniq_var_55;})();
 generateEmpty;
-var generateDef = (function () {var _uniq_var_56 = function (expr, env, ctx, def) {var varname = expr[0][0];
+var generateDef = (function () {var _uniq_var_56 = function (expr, env, ctx, def) {var varname = getVarName(expr[0]);
 varname;
 def.defineVar(varname);
 var ret = join([varname, ' = ', generate(expr[2], env, ctx, def)]);
@@ -756,7 +757,7 @@ var varName = call(getUniqVarName);
 varName;
 var lixVar = [varName, '{atomic}', '{var}', 'tmp'];
 lixVar;
-var tmpRet = [seqFuncParamsName.ret, '{atomic}', '{var}'];
+var tmpRet = [seqFuncParamsName.ret, '{atomic}', '{var}', 'aux'];
 tmpRet;
 (function () {var _uniq_var_137 = function (_uniq_var_135, _uniq_var_136) {
 if (typeof _uniq_var_135.push === 'function') {
@@ -813,6 +814,10 @@ _uniq_var_144.concat = _uniq_var_145;
 var stmtRet = ctx(itemRet, index);
 stmtRet;
 if (((__ne__(stmtRet[1], '{atomic}') || __ne__(stmtRet[3], 'tmp')) || __ne__(stmtRet[1], '{empty}'))) {
+if ((__eq__(stmtRet[1], '{atomic}') && __eq__(stmtRet[3], undefined))) {
+(stmtRet = [[seqFuncParamsName.ret, '{atomic}', '{var}', 'aux'], '=', stmtRet]);
+
+};
 return (function () {var _uniq_var_149 = function (_uniq_var_147, _uniq_var_148) {
 if (typeof _uniq_var_147.push === 'function') {
 arguments = Array.prototype.slice.call(arguments, (_uniq_var_147.push.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_147.push.apply(_uniq_var_147, arguments);

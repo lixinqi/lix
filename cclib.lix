@@ -20,13 +20,13 @@ counterGenerator := ()->{
 
 getCount := counterGenerator call
 
-getUniqVarName := ()->{ '_uniq_var_' + (getCount call) }
+getUniqVarName := ()->{ '_' + (getCount call) }
 
 generateFuncArgs := (args env ctx)->{
 	args map (i)->{
 		varname := i.0
 		env.[varname] = true
-		varname
+		varname transformVarName
 	} | .join ', '
 }
 
@@ -126,8 +126,8 @@ generateAtomic := (expr env ctx def)->{
 	ret := expr.0
 	if (expr.2 == '{var}') {
 		if (operateFuncName.[expr.0]) {
-			ret = operateFuncName.[expr.0]
-		} else {
+			ret = operateFuncName.[expr.0] transformVarName
+		} (expr.3 == undefined) {
 			ret = expr.0 transformVarName
 		}
 	}
@@ -155,7 +155,13 @@ generateObjectLiteral := (expr env ctx def)->{
 	["{\n" objectBody "\n}"] | join
 }
 
-transformVarName := (name)->{ name }
+transformVarName := (name)->{
+#	if (name != 'exports') {
+#		name = 'LIX_' + name
+#	}
+	name
+	name = 'LIX_' + name
+}
 
 getVarName := (expr)->{
 	if (expr.1 == '{atomic}') {
@@ -230,7 +236,7 @@ generateEmpty := (expr env ctx def)->{
 }
 
 generateDef := (expr env ctx def)->{
-	varname := expr.[0].[0]
+	varname := expr.0 getVarName
 	varname def.defineVar
 	ret := [varname ' = ' (expr.2 generate env ctx def)] | join
 	env.[varname] = true
@@ -378,152 +384,6 @@ env0 := {
 										"}"
 									] .join '\n')
 	.__builtin__		"load('/lib/lix/__builtin__.js')();"
-# 	.array_join
-# 									([
-# 									"function array_join(arr, glue) {\n"
-# 										"return function () {\n"
-# 											"return arr.join(glue)\n"
-# 										"}\n"
-# 									"}"
-# 									] .join '\n')
-# 	.print 					([
-# 										"function print(x) {"
-# 											"return function () {"
-# 												"return console.log(x); "
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.not 					([
-# 										"function not(x) {"
-# 											"return function () {"
-# 												"return !x; "
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	._instance_ 	([
-# 										"function _instance_(x) {"
-# 											"return function () {"
-# 												"return new x(); "
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.__add__ 				([
-# 										"function __add__(x, y) {"
-# 											"return function () {"
-# 												"return x + y;"
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.__sub__ 				([
-# 										"function __sub__(x, y) {"
-# 											"return function () {"
-# 												"return x - y;"
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.__mul__ 				([
-# 										"function __mul__(x, y) {"
-# 											"return function () {"
-# 												"return x * y;"
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.__div__ 				([
-# 										"function __div__(x, y) {"
-# 											"return function () {"
-# 												"return x / y;"
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.__mod__ 				([
-# 										"function __mod__(x, y) {"
-# 											"return function () {"
-# 												"return x % y;"
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.__gt__ 				([
-# 										"function __gt__(x, y) {"
-# 											"return function () {"
-# 												"return x > y;"
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.__ge__ 				([
-# 										"function __ge__(x, y) {"
-# 											"return function () {"
-# 												"return x >= y;"
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.__eq__ 				([
-# 										"function __eq__(x, y) {"
-# 											"return function () {"
-# 												"return x == y;"
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.__ne__ 				([
-# 										"function __ne__(x, y) {"
-# 											"return function () {"
-# 												"return x != y;"
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.__le__ 				([
-# 										"function __le__(x, y) {"
-# 											"return function () {"
-# 												"return x <= y;"
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.__lt__ 				([
-# 										"function __lt__(x, y) {"
-# 											"return function () {"
-# 												"return x < y;"
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.isFunction 		([
-# 										"function isFunction(x) {"
-# 											"return function () {"
-# 												"return typeof x === 'function';"
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.isArray 				([
-# 										"function isArray(x) {"
-# 											"return function () {"
-# 												"return x instanceof Array;"
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.foreach				([
-# 										"function foreach(arr, cb) {"
-# 											"return function () {"
-# 												"for (var i in arr) {"
-# 													"cb(arr[i], i)();"
-# 												"}"
-# 											"}"
-# 										"}"
-# 									] .join '\n')
-# 	.call						([
-# 										"function call(fn) {"
-# 											"var collect = []"
-# 											"for (var i in arguments) {"
-# 												"collect.push(arguments[i])"
-# 											"}"
-# 											"return fn.apply(fn, collect);"
-# 										"}"
-# 									] .join '\n')
-# 	.apply					([
-# 										"function apply(fn) {"
-# 											"var args = arguments[1]"
-# 											"return function () {"
-# 												"return fn.apply(fn, args)();"
-# 											"}"
-# 										"}"
-#										] .join '\n')
 }
 
 env_new := (env)->{
@@ -704,7 +564,7 @@ statementFlattenGenerator := ()->{
 		} (tmpVarName == undefined) {
 			varName := getUniqVarName call
 			lixVar := [varName '{atomic}' '{var}' 'tmp']
-			tmpRet := [seqFuncParamsName.ret '{atomic}' '{var}']
+			tmpRet := [seqFuncParamsName.ret '{atomic}' '{var}' 'aux']
 			data .push [tmpRet ':=' statement]
 			data .push [lixVar ':=' tmpRet]
 #			data .push [lixVar ':=' statement]
@@ -731,6 +591,9 @@ flattenSeq := (expr define seqCtx)->{
 			(stmtRet.[3] != 'tmp') | or
 			(stmtRet.[1] != '{empty}')) {
 
+			if ((stmtRet.[1] == '{atomic}') and (stmtRet.[3] == undefined)) {
+				stmtRet = [[seqFuncParamsName.ret '{atomic}' '{var}' 'aux'] '=' stmtRet] 
+			}
 			ret .push stmtRet
 		}
 	}

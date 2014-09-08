@@ -1,39 +1,68 @@
 #!/usr/local/bin/node ./lix.js
 
-sleep := (ms)->{
-	cc call (brk)->{
-		ms timeout ()->{
-			brk call
-		}
-	}
+echo := (i)->{
+	i print
+	i
 }
 
-seq := (count fn)->{
-	i := 0
-	while (i < count) {
-		i fn
-		i = i + 1
-	}
-}
+[1 2 3] | echo | echo
 
-10 seq ()->{
-	'good' print
-	1000 sleep
-}
+# arr := [2 0 3]
+# hasZero := (arr)->{
+# 	cc call (return)->{
+# 		arr foreach (i)->{
+# 			if (i == 0) {
+# 				return call true
+# 			}
+# 		}
+# 		return call false
+# 	}
+# }
 
-immediately call ()->{
-	'nice' print
-}
-
-
-# good console.log
+# sleep := (ms)->{
+# 	cc call (brk)->{
+# 		ms timeout ()->{
+# 			brk call
+# 		}
+# 	}
+# }
+# 
+# timesRepeat := (count fn)->{
+# 	i := 0
+# 	while (i < count) {
+# 		fn call i
+# 		i = i + 1
+# 	}
+# }
+# 
+# cc call (brk)->{
+# 	10 timesRepeat (i)->{
+# 		if (i < 3) {
+# 			a := i + '--'
+# 		} (i < 5) {
+# 			a := i + '=='
+# 		} (i < 8) {
+# 			a := i + '++'
+# 		} else {
+# 			brk call
+# 		}
+# 		'good ' + a | print
+# 		1000 sleep
+# 	}
+# }
+# 
+# immediately call ()->{
+# 	'nice' print
+# }
+# 
+# good print
 # good := cc call (brk)->{
 # 	'before' print
 # 	brk call 'yes'
 # 	'ok' brk
 # }
 # good print
-
+# 
 # a := 3
 # while (a > 0) {
 # 	a print
@@ -111,4 +140,3 @@ immediately call ()->{
 # 3 print
 # 
 # ()->{} call
-# 

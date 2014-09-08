@@ -56,7 +56,6 @@
 'if'													{ return 'IF'; }
 'else'												{ return 'ELSE'; }
 'while'												{ return 'WHILE'; }
-'break'												{ return 'BREAK'; }
 'true'												{ return 'TRUE'; }
 'false'												{ return 'FALSE'; }
 "and"\s*											{ return 'AND'; }
@@ -491,20 +490,12 @@ WhileStatement
 			}
 		;
 
-BreakStatement
-		: BREAK NEWLINE
-			{
-				$$ = [[], 'break']
-			}
-		;
-
 Statement
 		: ExprStatement
 		| AssignStatement
 		| DefStatement
 		| IfStatement
 		| WhileStatement
-		| BreakStatement
 		| EmptyStatement
 		;
 
