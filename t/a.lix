@@ -16,7 +16,7 @@ compose := (f0 f1)->{
 3 (square compose square) | print
 
 
-# [1 2 3] map (square compose square) | print
+[1 2 3] map (square compose square) | print
 
 test := ()->{
 	[1 2 3]
