@@ -245,7 +245,7 @@ generateDef := (expr env ctx def)->{
 
 generateAssign := (expr env ctx def)->{
 	varname := expr.0 getVarName
-	if (env.[varname] == undefined) {
+	if (env.[varname] == undefined | and (varname != seqFuncParamsName.ret)) {
 		varname console.log
 		"var undefined" console.log
 	}
@@ -587,11 +587,17 @@ flattenSeq := (expr define seqCtx)->{
 		itemRet := item flatten exprDefine
 		ret = ret .concat (exprDefine call)
 		stmtRet := itemRet ctx index
-		if ((stmtRet.[1] != '{atomic}') | or
-			(stmtRet.[3] != 'tmp') | or
-			(stmtRet.[1] != '{empty}')) {
-
-			if ((stmtRet.[1] == '{atomic}') and (stmtRet.[3] == undefined)) {
+		isTmpVar := (expr)->{
+			(expr.[1] == '{atomic}') and (expr.[3] != undefined)
+		}
+		isRealVar := (expr)->{
+			(expr.[1] == '{atomic}') and (expr.[3] == undefined)
+		}
+		isRealExpr := (expr)->{
+			(expr isRealVar) or ((expr.[1] != 'if') and (expr.1 != 'while'))
+		}
+		if ((stmtRet.[1] != '{empty}') and (stmtRet isTmpVar | not)) {
+ 			if (stmtRet isRealExpr) { 
 				stmtRet = [[seqFuncParamsName.ret '{atomic}' '{var}' 'aux'] '=' stmtRet] 
 			}
 			ret .push stmtRet

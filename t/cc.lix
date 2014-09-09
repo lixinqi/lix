@@ -7,136 +7,136 @@ echo := (i)->{
 
 [1 2 3] | echo | echo
 
-# arr := [2 0 3]
-# hasZero := (arr)->{
-# 	cc call (return)->{
-# 		arr foreach (i)->{
-# 			if (i == 0) {
-# 				return call true
-# 			}
-# 		}
-# 		return call false
-# 	}
-# }
+arr := [2 0 3]
+hasZero := (arr)->{
+	cc call (return)->{
+		arr foreach (i)->{
+			if (i == 0) {
+				return call true
+			}
+		}
+		return call false
+	}
+}
 
-# sleep := (ms)->{
-# 	cc call (brk)->{
-# 		ms timeout ()->{
-# 			brk call
-# 		}
-# 	}
-# }
-# 
-# timesRepeat := (count fn)->{
-# 	i := 0
-# 	while (i < count) {
-# 		fn call i
-# 		i = i + 1
-# 	}
-# }
-# 
-# cc call (brk)->{
-# 	10 timesRepeat (i)->{
-# 		if (i < 3) {
-# 			a := i + '--'
-# 		} (i < 5) {
-# 			a := i + '=='
-# 		} (i < 8) {
-# 			a := i + '++'
-# 		} else {
-# 			brk call
-# 		}
-# 		'good ' + a | print
-# 		1000 sleep
-# 	}
-# }
-# 
-# immediately call ()->{
-# 	'nice' print
-# }
-# 
-# good print
-# good := cc call (brk)->{
-# 	'before' print
-# 	brk call 'yes'
-# 	'ok' brk
-# }
-# good print
-# 
-# a := 3
-# while (a > 0) {
-# 	a print
-# 	a = a - 1
-# }
-# 
-# a := 3
-# if (a > (3 + 1 | - (2 - 1))) {
-# 	'a > 3' print
-# } (a > (2 + 1 | - (2 - 1))) {
-# 	'a > 2' print
-# } (a > (1 + 1 | - (2 - 1))) {
-# 	'a > 1' print
-# } else {
-# 	'others' print
-# }
-# 
-# good := 'nice'
-# /[good + ('a' + 'b') | + 'c'] print
-# 
-# obj := {
-# 	.name "lixinqi"
-# 	.hi (self)->{
-# 		self.name print
-# 	}
-# }
-# 
-# obj .name | print
-# 
-# obj .hi
-# obj .name "good"
-# obj .hi
-# 
-# obj.hi = (self)->{
-# #	'Hi, I\' am ' + self.name | print
-# 	['Hi, I\' am ' self.name] array_join '' | print
-# }
-# 
-# obj .hi
-# 
-# 
-# test := (i)->{
-# 	i print
-# }
-# 
-# 3 test
-# 
-# test call 3
-# 
-# test apply [3]
-# 
-# arr := [
-# 	(1 + 2)
-# 	(1 + (1 + 2))
-# 	(1 + (1 + (1 + 2)))
-# 	(1 + (1 + (1 + 2)) | * 4)
-# ]
-# 
-# arr print
-# 
-# obj := {
-# 	.name ("li" + "xin" | + 'qi')
-# 	.age (1 + 2 | - 2 | + (3 * 4) | * 2)
-# }
-# 
-# obj print
-# 
-# attr := ("n" + "am" | + 'e')
-# obj.[attr] print
-# 
-# a := 3
-# b := a + 3 | - 2 | * 4
-# b + 5 | print
-# 
-# 3 print
-# 
-# ()->{} call
+sleep := (ms)->{
+	cc call (brk)->{
+		ms timeout ()->{
+			brk call
+		}
+	}
+}
+
+timesRepeat := (count fn)->{
+	i := 0
+	while (i < count) {
+		fn call i
+		i = i + 1
+	}
+}
+
+cc call (brk)->{
+	20 timesRepeat (i)->{
+		if (i < 3) {
+			a := i + '--'
+		} (i < 5) {
+			a := i + '=='
+		} (i < 8) {
+			a := i + '++'
+		} else {
+			brk call
+		}
+		'good ' + a | print
+		1000 sleep
+	}
+}
+
+immediately call ()->{
+	'nice' print
+}
+
+good print
+good := cc call (brk)->{
+	'before' print
+	brk call 'yes'
+	'ok' brk
+}
+good print
+
+a := 3
+while (a > 0) {
+	a print
+	a = a - 1
+}
+
+a := 3
+if (a > (3 + 1 | - (2 - 1))) {
+	'a > 3' print
+} (a > (2 + 1 | - (2 - 1))) {
+	'a > 2' print
+} (a > (1 + 1 | - (2 - 1))) {
+	'a > 1' print
+} else {
+	'others' print
+}
+
+good := 'nice'
+/[good + ('a' + 'b') | + 'c'] print
+
+obj := {
+	.name "lixinqi"
+	.hi (self)->{
+		self.name print
+	}
+}
+
+obj .name | print
+
+obj .hi
+obj .name "good"
+obj .hi
+
+obj.hi = (self)->{
+#	'Hi, I\' am ' + self.name | print
+	['Hi, I\' am ' self.name] array_join '' | print
+}
+
+obj .hi
+
+
+test := (i)->{
+	i print
+}
+
+3 test
+
+test call 3
+
+test apply [3]
+
+arr := [
+	(1 + 2)
+	(1 + (1 + 2))
+	(1 + (1 + (1 + 2)))
+	(1 + (1 + (1 + 2)) | * 4)
+]
+
+arr print
+
+obj := {
+	.name ("li" + "xin" | + 'qi')
+	.age (1 + 2 | - 2 | + (3 * 4) | * 2)
+}
+
+obj print
+
+attr := ("n" + "am" | + 'e')
+obj.[attr] print
+
+a := 3
+b := a + 3 | - 2 | * 4
+b + 5 | print
+
+3 print
+
+()->{} call
