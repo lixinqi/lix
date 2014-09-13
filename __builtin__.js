@@ -1,4 +1,9 @@
 (function () {
+
+	Function.prototype.unCurrying = function() {
+		return this.call.bind(this);
+	};
+	
 	this.LIX_timeout = function (secs, ctx) {
 		return function () {
 			setTimeout(function () {
@@ -130,10 +135,15 @@
 			return x instanceof Array;
 		}
 	}
-	this.LIX_apply = (function () {}).apply;
-	this.LIX_call = function call(fn) {
-		return fn.apply(fn, Array.prototype.slice.call(arguments, 1, arguments.length));
-	}
+
+	this.LIX_apply = function (fn, args) {
+		return fn.apply(fn, args);
+	};
+
+	this.LIX_call = function (fn) {
+		return fn.apply(fn, Array_slice(arguments, 1));
+	};
+
 	this.LIX_foreach = function (LIX_arr, LIX_cb) {
 		var LIX_i, _ret, _0, _1, _2, _3;
 		function _16(_cb, _step, _cont, _ret) {
@@ -197,21 +207,111 @@
 		return _15;
 	};
 
-	Function.prototype.unCurrying = function() {
-		return this.call.bind(this);
-	};
-	
 	this.LIX_Array_isArray = function (arr) {
 		return function () {
 			return Array.isArray(arr);
 		};
 	}
 
-	Array_toString = Array.prototype.toString.unCurrying();
+	var Array_toString = Array.prototype.toString.unCurrying();
 	this.LIX_Array_toString = function (arr) {
 		return function () {
 			return Array_toString(arr);
 		};
 	}
+
+	var Array_toLocaleString = Array.prototype.toLocaleString.unCurrying();
+	this.LIX_Array_toLocaleString = function (arr) {
+		return function () {
+			return Array_toLocaleString(arr);
+		};
+	}
+
+	var Array_concat = Array.prototype.concat.unCurrying();
+	this.LIX_Array_concat = function (a, b) {
+		return function () {
+			return Array_concat(a, b);
+		};
+	}
+
+	var Array_join = Array.prototype.join.unCurrying();
+	this.LIX_Array_join = function (a, b) {
+		return function () {
+			return Array_join(a, b);
+		};
+	}
+
+	var Array_push = Array.prototype.push.unCurrying();
+	this.LIX_Array_push = function (a, b) {
+		return function () {
+			return Array_push(a, b);
+		};
+	}
+
+	var Array_unshift = Array.prototype.unshift.unCurrying();
+	this.LIX_Array_unshift = function (a, b) {
+		return function () {
+			return Array_unshift(a, b);
+		};
+	}
+
+	var Array_pop = Array.prototype.pop.unCurrying();
+	this.LIX_Array_pop = function (a) {
+		return function () {
+			return Array_pop(a);
+		};
+	}
+
+	var Array_shift = Array.prototype.shift.unCurrying();
+	this.LIX_Array_shift = function (a) {
+		return function () {
+			return Array_shift(a);
+		};
+	}
+
+	var Array_reverse = Array.prototype.reverse.unCurrying();
+	this.LIX_Array_reverse = function (a) {
+		return function () {
+			return Array_reverse(a);
+		};
+	}
+
+	var Array_slice = Array.prototype.slice.unCurrying();
+	this.LIX_Array_slice = function (a, start, end) {
+		return function () {
+			return Array_slice(a, start, end);
+		};
+	}
+
+	var Array_indexOf = Array.prototype.indexOf.unCurrying();
+	this.LIX_Array_indexOf = function (a, elem, start) {
+		return function () {
+			return Array_indexOf(a, elem, start);
+		};
+	}
+
+	var Array_lastIndexOf = Array.prototype.lastIndexOf.unCurrying();
+	this.LIX_Array_lastIndexOf = function (a, elem, start) {
+		if (arguments.length == 2) {
+			start = a.length
+		}
+		return function () {
+			return Array_lastIndexOf(a, elem, start);
+		};
+	}
+
+	this.LIX_Array_length = function (a) {
+		return function () {
+			return a.length;
+		};
+	}
+
+	this.LIX_Array_splice = function (a) {
+		var args = Array_slice(arguments, 1);
+		return function () {
+			return Array.prototype.splice.apply(a, args);
+		};
+	}
+
 })();
 
