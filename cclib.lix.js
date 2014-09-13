@@ -118,10 +118,10 @@ return _uniq_var_12.join;
 }
 _uniq_var_12.join = _uniq_var_13;
 }return _uniq_var_12;
-};_uniq_var_14.__lix_func__ = true;return _uniq_var_14;})()(map(args, (function () {var _uniq_var_15 = function (i) {var varname = i[0];
+};_uniq_var_14.__lix_func__ = true;return _uniq_var_14;})()(map(args, (function () {var _uniq_var_15 = function (i) {var varname = transformVarName(i[0]);
 varname;
 (env[varname] = true);
-return transformVarName(varname);
+return varname;
 };_uniq_var_15.__lix_func__ = true;return _uniq_var_15;})()), ', ');
 };_uniq_var_16.__lix_func__ = true;return _uniq_var_16;})();
 generateFuncArgs;
@@ -195,7 +195,7 @@ return _uniq_var_30.join;
 _uniq_var_30.join = _uniq_var_31;
 }return _uniq_var_30;
 };_uniq_var_32.__lix_func__ = true;return _uniq_var_32;})()(map(expr[0], (function () {var _uniq_var_33 = function (i) {if (__eq__(i[1], 'else')) {
-return join(['{\n', generate(i[0], env, ctx, def), '\n}']);
+return join(['{\n', ctx(generate(i[0], env, ctx, def)), '\n}']);
 
 } else if (__eq__(i[1], 'if')) {
 return generateIf(i, env, ctx, def);
@@ -267,8 +267,11 @@ objectBody;
 return join(["{\n", objectBody, "\n}"]);
 };_uniq_var_42.__lix_func__ = true;return _uniq_var_42;})();
 generateObjectLiteral;
-var transformVarName = (function () {var _uniq_var_43 = function (name) {name;
-return (name = __add__('LIX_', name));
+var transformVarName = (function () {var _uniq_var_43 = function (name) {if (((((__ne__(name, 'exports') && __ne__(name, 'undefined')) && __ne__(name, 'null')) && __ne__(name, 'true')) && __ne__(name, 'false'))) {
+(name = __add__('LIX_', name));
+
+};
+return name;
 };_uniq_var_43.__lix_func__ = true;return _uniq_var_43;})();
 transformVarName;
 var getVarName = (function () {var _uniq_var_44 = function (expr) {if (__eq__(expr[1], '{atomic}')) {
@@ -354,7 +357,7 @@ var generateAssign = (function () {var _uniq_var_57 = function (expr, env, ctx, 
 varname;
 if ((__eq__(env[varname], undefined) && __ne__(varname, seqFuncParamsName.ret))) {
 console.log(varname);
-console.log("var undefined");
+console.log("this var is undefined");
 
 };
 var varname = generate(expr[0], env, ctx0, def);
@@ -595,7 +598,7 @@ _uniq_var_98.push = _uniq_var_99;
 return [seq, '{seq}'];
 };_uniq_var_101.__lix_func__ = true;return _uniq_var_101;})();
 getAndOpSeq;
-define([[[[ret, ['not', '{atomic}', 'var']], call(getAndOpSeq)]], 'if'], true);
+define([[[ret, [[], '{empty}']], [call(getAndOpSeq), 'else']], 'if'], true);
 return ret;
 };_uniq_var_102.__lix_func__ = true;return _uniq_var_102;})();
 flattenOr;

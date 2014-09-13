@@ -1,0 +1,8 @@
+#!/usr/local/bin/node
+a := [1 2 3]
+
+a Array_toString | print
+
+# a Array_isArray | print
+# 
+# '' Array_isArray | print

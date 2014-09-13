@@ -24,9 +24,9 @@ getUniqVarName := ()->{ '_' + (getCount call) }
 
 generateFuncArgs := (args env ctx)->{
 	args map (i)->{
-		varname := i.0
+		varname := i.0 transformVarName
 		env.[varname] = true
-		varname transformVarName
+		varname
 	} | .join ', '
 }
 
@@ -96,7 +96,7 @@ generateAnd := (expr env ctx def)->{
 generateIf := (expr env ctx def)->{
 	expr.0 map (i)->{
 		if (i.1 == 'else') {
-			['{\n' (i.0 generate env ctx def) '\n}'] join
+			['{\n' (i.0 generate env ctx def | ctx) '\n}'] join
 		} (i.1 == 'if') {
 			(i generateIf env ctx def)
 		} else {
@@ -156,11 +156,11 @@ generateObjectLiteral := (expr env ctx def)->{
 }
 
 transformVarName := (name)->{
-#	if (name != 'exports') {
-#		name = 'LIX_' + name
-#	}
+	if ((name != 'exports') | and (name != 'undefined') |
+			and (name != 'null') | and (name != 'true') | and (name != 'false')) {
+		name = 'LIX_' + name
+	}
 	name
-	name = 'LIX_' + name
 }
 
 getVarName := (expr)->{
@@ -247,7 +247,7 @@ generateAssign := (expr env ctx def)->{
 	varname := expr.0 getVarName
 	if (env.[varname] == undefined | and (varname != seqFuncParamsName.ret)) {
 		varname console.log
-		"var undefined" console.log
+		"this var is undefined" console.log
 	}
 
 	varname := (expr.0 generate env ctx0 def)
@@ -428,7 +428,8 @@ flattenOr := (expr define)->{
 		seq .push [ret '=' seqRet]
 		[seq '{seq}']
 	}
-	[[[[ret ['not' '{atomic}' 'var']] (getAndOpSeq call)]] 'if'] define true
+#	[[[ret [[] '{seq}']] [(getAndOpSeq call) 'else']] 'if'] define true
+	[[[ret [[] '{empty}']] [(getAndOpSeq call) 'else']] 'if'] define true
 	ret
 }
 

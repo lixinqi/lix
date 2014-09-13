@@ -1,0 +1,5 @@
+if (undefined) {
+	a := undefined
+} else {
+	a := 0
+}

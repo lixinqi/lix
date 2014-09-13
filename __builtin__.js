@@ -196,4 +196,22 @@
 		};
 		return _15;
 	};
+
+	Function.prototype.unCurrying = function() {
+		return this.call.bind(this);
+	};
+	
+	this.LIX_Array_isArray = function (arr) {
+		return function () {
+			return Array.isArray(arr);
+		};
+	}
+
+	Array_toString = Array.prototype.toString.unCurrying();
+	this.LIX_Array_toString = function (arr) {
+		return function () {
+			return Array_toString(arr);
+		};
+	}
 })();
+

@@ -39,4 +39,4 @@ seqPrint := (self)->{
 	}
 } | Y
 
-#3 cons 4 | reverse | cdr | print
+3 cons 4 | reverse | cdr | print
