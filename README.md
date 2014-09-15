@@ -1,5 +1,6 @@
 a.js:
-`
+
+
     var sleep = function (ms, cb) {
       setTimeout(function () {
         cb();
@@ -37,10 +38,10 @@ a.js:
         });
       });
     });
-`
+
 
 a.lix:
-`
+
 
   sleep := (ms)->{
     cc call (brk)->{
@@ -58,7 +59,7 @@ a.lix:
   }
 
   'end' print
-`
+
 
 Both of about do the same thing, Which code is more simple and more maintenable?
 
