@@ -59,9 +59,9 @@ a.lix:
     'end' print
 
 
-Both of about do the same thing, Which code is more simple and more maintenable?
+Both of above do the same thing. Which code is more simple and more maintenable?
 
-Lix is a new language whose code is node compiled into javascript. 
+Lix is a new language whose code is compiled into javascript. 
 
 Write Lix, Stop the 'callback hell'!
 
