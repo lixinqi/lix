@@ -1,6 +1,5 @@
 a.js:
 
-
     var sleep = function (ms, cb) {
       setTimeout(function () {
         cb();
@@ -42,23 +41,22 @@ a.js:
 
 a.lix:
 
-
-  sleep := (ms)->{
-    cc call (brk)->{
-      ms timeout ()->{
-        brk call
+    sleep := (ms)->{
+      cc call (brk)->{
+        ms timeout ()->{
+          brk call
+        }
       }
     }
-  }
 
-  i := 0
-  while (i < 10) {
-    20 sleep
-    i print
-    i = i + 1
-  }
+    i := 0
+    while (i < 10) {
+      20 sleep
+      i print
+      i = i + 1
+    }
 
-  'end' print
+    'end' print
 
 
 Both of about do the same thing, Which code is more simple and more maintenable?
