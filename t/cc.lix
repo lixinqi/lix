@@ -10,7 +10,7 @@ sleep := (ms)->{
 
 i := 0
 while (i < 10) {
-	20 sleep
+	500 sleep
 	i print
 	i = i + 1
 }
