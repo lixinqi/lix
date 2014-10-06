@@ -1,0 +1,44 @@
+#!/usr/local/bin/node
+
+obj := {
+	.a 'nice'
+	.b 'good'
+}
+
+obj | Object_keys | print
+
+obj | Object_getPrototypeOf | print
+
+obj | Object_getOwnPropertyDescriptor | print
+
+obj | Object_getOwnPropertyNames | print
+
+newObj := obj Object_create
+
+newObj Object_defineProperty 'c' { .value 'ok' }
+
+newObj.c | print
+
+newObj Object_defineProperties {
+	.d { .value 'property-d' }
+	.e { .value 'property-e' }
+}
+
+newObj.d | print
+newObj.e | print
+
+obj := {
+	.a 'value-a'
+	.b 'value-b'
+	.c 'value-c'
+	.d 'value-d'
+}
+
+obj Object_keys | print
+
+obj Object_valueOf | print
+
+obj Object_hasOwnProperty 'b' | print
+newObj Object_hasOwnProperty 'd' | print
+newObj Object_hasOwnProperty 'z' | print
+

@@ -313,5 +313,245 @@
 		};
 	}
 
+	this.LIX_Object_keys = function (a) {
+		return function () {
+			try {
+				return Object.keys(a);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	this.LIX_Object_getPrototypeOf = function (a) {
+		return function () {
+			try {
+				return Object.getPrototypeOf(a);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	this.LIX_Object_getOwnPropertyDescriptor = function (o, p) {
+		return function () {
+			try {
+				return Object.getOwnPropertyDescriptor(o, p);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	this.LIX_Object_getOwnPropertyNames = function (o) {
+		return function () {
+			try {
+				return Object.getOwnPropertyNames(o);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	this.LIX_Object_create = function (o) {
+		return function () {
+			try {
+				return Object.create(o);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	this.LIX_Object_defineProperty = function (o, p, attribute) {
+		return function () {
+			try {
+				return Object.defineProperty(o, p, attribute);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	this.LIX_Object_defineProperties = function (o, properties) {
+		return function () {
+			try {
+				return Object.defineProperties(o, properties);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	this.LIX_Object_seal = function (o) {
+		return function () {
+			try {
+				return Object.seal(o);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	this.LIX_Object_freeze = function (o) {
+		return function () {
+			try {
+				return Object.freeze(o);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	this.LIX_Object_preventExtensions = function (o) {
+		return function () {
+			try {
+				return Object.preventExtensions(o);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	this.LIX_Object_isSealed = function (o) {
+		return function () {
+			try {
+				return Object.isSealed(o);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	this.LIX_Object_isFrozen = function (o) {
+		return function () {
+			try {
+				return Object.isFrozen(o);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	this.LIX_Object_isExtensible = function (o) {
+		return function () {
+			try {
+				return Object.isExtensible(o);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	var Object_toString = Object.prototype.toString.unCurrying();
+	this.LIX_Object_toString = function (o) {
+		return function () {
+			try {
+				return Object_toString(o);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	var Object_toLocaleString = Object.prototype.toString.unCurrying();
+	this.LIX_Object_toLocaleString = function (o) {
+		return function () {
+			try {
+				return Object_toLocaleString(o);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	var Object_valueOf = Object.prototype.valueOf.unCurrying();
+	this.LIX_Object_valueOf = function (o) {
+		return function () {
+			try {
+				return Object_valueOf(o);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	var Object_hasOwnProperty = Object.prototype.hasOwnProperty.unCurrying();
+	this.LIX_Object_hasOwnProperty = function (o, v) {
+		return function () {
+			try {
+				return Object_hasOwnProperty(o, v);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	var Object_isPrototypeOf = Object.prototype.isPrototypeOf.unCurrying();
+	this.LIX_Object_isPrototypeOf = function (o, v) {
+		return function () {
+			try {
+				return Object_isPrototypeOf(o, v);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	var Object_propertyIsEnumerable = Object.prototype.propertyIsEnumerable.unCurrying();
+	this.LIX_Object_propertyIsEnumerable = function (o, v) {
+		return function () {
+			try {
+				return Object_propertyIsEnumerable(o, v);
+			} catch (e) {
+				return e;
+			}
+		};
+	}
+
+	var String_fromCharCode = String.fromCharCode;
+	this.LIX_String_fromCharCode = function () {
+		var args = Array_slice(arguments);
+		return function () {
+			return String_fromCharCode.apply(String_fromCharCode, args);
+		};
+	};
+
+	var String_toString = String.prototype.toString.unCurrying();
+	this.LIX_String_toString = function (a) {
+		return function () {
+			return String_toString(a);
+		}
+	}
+
+	var String_valueOf = String.prototype.valueOf.unCurrying();
+	this.LIX_String_valueOf = function (a) {
+		return function () {
+			return String_valueOf(a);
+		}
+	}
+
+	var String_charAt = String.prototype.charAt.unCurrying();
+	this.LIX_String_charAt = function (a, pos) {
+		return function () {
+			return String_charAt(a, pos);
+		}
+	}
+
+	var String_charCodeAt = String.prototype.charCodeAt.unCurrying();
+	this.LIX_String_charCodeAt = function (a, pos) {
+		return function () {
+			return String_charCodeAt(a, pos);
+		}
+	}
+
+	var String_concat = String.prototype.concat.unCurrying();
+	this.LIX_String_concat = function () {
+		var args = Array_slice(arguments);
+		return function () {
+			return String_concat.apply(String_concat, args);
+		}
+	}
+
 })();
 
