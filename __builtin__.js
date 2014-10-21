@@ -241,7 +241,7 @@
 		};
 	}
 
-	var Array_push = Array.prototype.push.unCurrying();
+	var Array_push = Array.prototype.push.unCurrying(); 
 	this.LIX_Array_push = function (a, b) {
 		return function () {
 			return Array_push(a, b);

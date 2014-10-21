@@ -1,0 +1,56 @@
+#!/usr/local/bin/node
+
+Person := Object subclass (pub)->{
+
+	pub.__class__ := 'Person'
+
+	pub.name := 'lix'
+
+	pub.__init__ := (self name age)->{
+		self.name = name
+	}
+
+	pub.hi := (self)->{
+		self.name print
+	}
+
+	sleep := (secs)->{
+		cc call (brk)->{
+			secs * 1000 | timeout ()->{
+				brk call
+			}
+		}
+	}
+
+	timesRepeat := (times fn)->{
+		i := 0
+		while (i < count) {
+			fn call
+			i = i + 1
+		}
+	}
+
+	periodically := (count secs fn)->{
+		count timesRepeat ()->{
+			secs sleep
+			fn call
+		}
+	}
+
+	pub.periodSayHi := (self)->{
+		periodically call 10 1 ()->{
+			self .hi
+		}
+	}
+}
+
+SpecialPerson := Object subclass
+
+obj := Person instance :name 'lixinqi'
+
+obj .hi
+
+obj instanceof Person | print
+
+obj is Object | print
+

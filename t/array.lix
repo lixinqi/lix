@@ -54,3 +54,7 @@ a := [1 2 3]
 a Array_toString | print
 
 a Array_isArray | print
+
+[1 2 3 4 5 10 30] foreach (i)->{
+	i print
+}
