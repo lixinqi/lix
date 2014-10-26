@@ -1,0 +1,109 @@
+#!/usr/local/node
+
+date call 2010 0 | print
+date call 2010 0 29 1  | print
+date call | print
+oldTime := date call 2010 0 29 1 0 0
+dateA := date call 2010 0
+dateB := dateA date
+dateB print
+dateB | date_toString | date_parse | date | print
+date_UTC call 2010 3 | date | print
+date_now call | date | date_toString | print
+date_now call | date | date_valueOf | print
+date_now call | date | date_getTime | print
+date_now call | date | date_getFullYear | print
+date_now call | date | date_getMonth | print
+date_now call | date | date_getUTCMonth | print
+date_now call | date | date_getDate | print
+date_now call | date | date_getUTCDate | print
+date_now call | date | date_getDay | print
+date_now call | date | date_getUTCDay | print
+date_now call | date | date_getHours | print
+date_now call | date | date_getUTCHours | print
+date_now call | date | date_getMinutes | print
+date_now call | date | date_getUTCMinutes | print
+date_now call | date | date_getSeconds | print
+date_now call | date | date_getUTCSeconds | print
+date_now call | date | date_getMilliseconds | print
+date_now call | date | date_getUTCMilliseconds | print
+date_now call | date | date_getTimezoneOffset | print
+
+oldT := oldTime date
+oldT print
+oldT date_setTime (date_now call) | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT date_setMilliseconds 999 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT date_setUTCMilliseconds 999 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT date_setSeconds 30 999 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT date_setUTCSeconds 30 999 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT date_setMinutes 30 30 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT date_setUTCMinutes 30 30 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT date_setHours 11 11 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT date_setUTCHours 11 11 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT date_setDate 11 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT date_setUTCDate 11 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT date_setMonth 11 11 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT date_setUTCMonth 11 11 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT date_setFullYear 2013 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT date_setUTCFullYear 2013 | print
+oldT print
+
+oldT date_toUTCString | print
+oldT date_toISOString | print
+oldT date_toJSON 'date' | print

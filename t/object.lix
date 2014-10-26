@@ -5,21 +5,21 @@ obj := {
 	.b 'good'
 }
 
-obj | Object_keys | print
+obj | object_keys | print
 
-obj | Object_getPrototypeOf | print
+obj | object_getPrototypeOf | print
 
-obj | Object_getOwnPropertyDescriptor | print
+obj | object_getOwnPropertyDescriptor | print
 
-obj | Object_getOwnPropertyNames | print
+obj | object_getOwnPropertyNames | print
 
-newObj := obj Object_create
+newObj := obj object_create
 
-newObj Object_defineProperty 'c' { .value 'ok' }
+newObj object_defineProperty 'c' { .value 'ok' }
 
 newObj.c | print
 
-newObj Object_defineProperties {
+newObj object_defineProperties {
 	.d { .value 'property-d' }
 	.e { .value 'property-e' }
 }
@@ -34,11 +34,11 @@ obj := {
 	.d 'value-d'
 }
 
-obj Object_keys | print
+obj object_keys | print
 
-obj Object_valueOf | print
+obj object_valueOf | print
 
-obj Object_hasOwnProperty 'b' | print
-newObj Object_hasOwnProperty 'd' | print
-newObj Object_hasOwnProperty 'z' | print
+obj object_hasOwnProperty 'b' | print
+newObj object_hasOwnProperty 'd' | print
+newObj object_hasOwnProperty 'z' | print
 

@@ -1,0 +1,11 @@
+#!/usr/local/lix
+
+'error msg' error | error_name | print
+'error msg' error | error_message | print
+
+'error msg' error | .message | print
+'error msg' error | error_toString | print
+
+'error msg' error | instanceof Error | print
+
+'error msg' nativeError | instanceof Error | print

@@ -1,11 +1,25 @@
 #!/usr/local/bin/node
 
-String_fromCharCode call 65 65 66 67 | print
+string_fromCharCode call 65 65 66 67 | print
+null | string_fromCharCode 65 65 66 67 | print
+"good" | string_toString | print
+"good" | string_valueOf | print
+'good' | string_charAt 3 | print 
+'good' | string_charCodeAt 3 | print 
 
-"good" | String_toString | print
-"good" | String_valueOf | print
-'good' | String_charAt 3 | print 
-'good' | String_charCodeAt 3 | print 
+'good' | string_concat ' ' 'nice' | print
 
-'good' | String_concat ' ' 'nice' | print
+'good' | string_indexOf 'd' | print
+'good' | string_lastIndexOf 'o' | print
+'good' | string_replace 'oo' 'nice' | print
 
+'good' | string_slice 1 5 | print
+
+'good' | string_substring 1 5 | print
+
+'StrIng' | string_toLowerCase | print
+'StrIng' | string_toLocaleLowerCase | print
+'StrIng' | string_toUpperCase | print
+
+"a b c d\ne f g h\n" | string_trim | print
+"a b c d\ne f g h\n" | string_length | print

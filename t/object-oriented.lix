@@ -1,16 +1,28 @@
 #!/usr/local/bin/node
 
+subclass := (parent config)->{
+	class := parent object_create
+	if (config) {
+		class config
+	}
+	class
+}
+
+instance := object_create
+
+Object := {}
+
 Person := Object subclass (pub)->{
 
-	pub.__class__ := 'Person'
+	pub.__class__ = 'Person'
 
-	pub.name := 'lix'
+	pub.name = 'lix'
 
-	pub.__init__ := (self name age)->{
+	pub.__init__ = (self name age)->{
 		self.name = name
 	}
 
-	pub.hi := (self)->{
+	pub.hi = (self)->{
 		self.name print
 	}
 
@@ -22,7 +34,7 @@ Person := Object subclass (pub)->{
 		}
 	}
 
-	timesRepeat := (times fn)->{
+	timesRepeat := (count fn)->{
 		i := 0
 		while (i < count) {
 			fn call
@@ -37,20 +49,48 @@ Person := Object subclass (pub)->{
 		}
 	}
 
-	pub.periodSayHi := (self)->{
-		periodically call 10 1 ()->{
+	pub.periodicallyHi = (self)->{
+		periodically call 5 1 ()->{
 			self .hi
 		}
 	}
 }
 
-SpecialPerson := Object subclass
+person := Person instance
 
-obj := Person instance :name 'lixinqi'
+Student := Person subclass (pub)->{
+	pub.hi = (self)->{
+		'Im\' a student' | print
+	}
+}
 
-obj .hi
+Teacher := Person subclass (pub)->{
+	pub.hi = (self)->{
+		'Im\' a teacher' | print
+	}
+}
 
-obj instanceof Person | print
+student := Student instance
+teacher := Teacher instance
 
-obj is Object | print
+student instanceof Student | print
+
+student is Student | print
+student is Teacher | print
+
+MyStudent := Student subclass
+
+stu := MyStudent instance
+
+stu instanceof MyStudent | print
+stu instanceof Student | print
+
+stu is MyStudent | print
+stu is Student | print
+
+# student .hi
+# teacher .hi
+# student .periodicallyHi
+# teacher .periodicallyHi
+
 

@@ -1,0 +1,15 @@
+#!/usr/local/lix
+"good" regexp 'i' | print
+"(\\w)*" regexp 'i' | print
+
+"(\\w)*" regexp 'i' | regexp_exec "good 1 2 3" | print
+"(\\w)*" regexp | regexp_test "good 1 2 3" | print
+
+r := "(\\w)*" regexp
+r regexp_toString | print
+r regexp_source | print
+r regexp_global | print
+r regexp_ignoreCase | print
+r regexp_multiline | print
+r regexp_lastIndex | print
+

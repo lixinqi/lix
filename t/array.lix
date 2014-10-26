@@ -1,59 +1,59 @@
 #!/usr/local/bin/node
 
 a := [1 2 3 4 5 6]
-a Array_splice 1 3 | print
+a array_splice 1 3 | print
 a print
 
 a := [1 2 3 4 5 6]
-a Array_splice 1 3 'good' | print
+a array_splice 1 3 'good' | print
 a print
 
 a := [1 2 3 4 5 6]
-a Array_splice 1 3 'good' 'nice' | print
+a array_splice 1 3 'good' 'nice' | print
 a print
 
 a := [1 2 3 4 5 6]
-a Array_splice 1 0 'good' 'nice' | print
+a array_splice 1 0 'good' 'nice' | print
 a print
 
-[1 2 3 4 5 6] Array_length | print
+[1 2 3 4 5 6] array_length | print
 
-[1 3 2 3 4 5] Array_lastIndexOf 3 | print
+[1 3 2 3 4 5] array_lastIndexOf 3 | print
 
-[1 2 3 4 5] Array_indexOf 3 | print
+[1 2 3 4 5] array_indexOf 3 | print
 
-[1 2 3 4 5] Array_slice 0 3  | print
+[1 2 3 4 5] array_slice 0 3  | print
 
-[1 2 3] Array_reverse | print
+[1 2 3] array_reverse | print
 
 a := [1 2]
-a Array_unshift 3
+a array_unshift 3
 a print
 
-a Array_shift | print
+a array_shift | print
 
 a := [1 2]
 
 'good' print
-a Array_pop | print
+a array_pop | print
 a print
 
 a := [1 2]
 
-a Array_push 4
+a array_push 4
 
 a print
 
-[1 2] Array_join ':' | print
+[1 2] array_join ':' | print
 
-[1] Array_concat [2] | print
+[1] array_concat [2] | print
 
-['good' '你好'] Array_toLocaleString | print
+['good' '你好'] array_toLocaleString | print
 a := [1 2 3]
 
-a Array_toString | print
+a array_toString | print
 
-a Array_isArray | print
+a array_isArray | print
 
 [1 2 3 4 5 10 30] foreach (i)->{
 	i print
