@@ -8,4 +8,3 @@
 
 'error msg' error | instanceof Error | print
 
-'error msg' nativeError | instanceof Error | print

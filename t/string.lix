@@ -23,3 +23,9 @@ null | string_fromCharCode 65 65 66 67 | print
 
 "a b c d\ne f g h\n" | string_trim | print
 "a b c d\ne f g h\n" | string_length | print
+
+"a b c d\ne f g h\n" | string_search "d\ne" | print
+
+"a b c d\ne f g h\n" | string_match "d\ne" | print
+
+"a b c d e f g h" | string_split " " | print

@@ -4,6 +4,24 @@
 		return this.call.bind(this);
 	};
 	
+	this.LIX_instanceof = function (obj, type) {
+		return function () {
+			return Object.getPrototypeOf(obj) == type;
+		}
+	}
+
+	this.LIX_is = function (obj, type) {
+		return function () {
+			while (obj) {
+				if (obj == type) {
+					return true;
+				}
+				obj = Object.getPrototypeOf(obj);
+			}
+			return false;
+		}
+	}
+
 	this.LIX_timeout = function (secs, ctx) {
 		return function () {
 			setTimeout(function () {
@@ -574,6 +592,13 @@
 		}
 	}
 
+	var string_match = String.prototype.match.unCurrying();
+	this.LIX_string_match = function (str, r) {
+		return function () {
+			return string_match(str, r);
+		}
+	}
+
 	var string_replace = String.prototype.replace.unCurrying();
 	this.LIX_string_replace = function (str, searchValue, replaceValue) {
 		return function () {
@@ -581,10 +606,24 @@
 		}
 	}
 
+	var string_search = String.prototype.search.unCurrying();
+	this.LIX_string_search = function (str, r) {
+		return function () {
+			return string_search(str, r);
+		}
+	}
+
 	var string_slice = String.prototype.slice.unCurrying();
 	this.LIX_string_slice = function (str, start, end) {
 		return function () {
 			return string_slice(str, start, end);
+		}
+	}
+
+	var string_split = String.prototype.split.unCurrying();
+	this.LIX_string_split = function (str, separator, limit) {
+		return function () {
+			return string_split(str, separator, limit);
 		}
 	}
 
@@ -1283,21 +1322,17 @@
 	this.LIX_TypeError = TypeError.prototype;
 	this.LIX_URIError = URIError.prototype;
 
-	this.LIX_instanceof = function (obj, type) {
+	this.LIX_JSON_parse = function () {
+		var args = array_slice(arguments);
 		return function () {
-			return Object.getPrototypeOf(obj) == type;
+			return JSON.parse.apply(null, args);
 		}
 	}
 
-	this.LIX_is = function (obj, type) {
+	this.LIX_JSON_stringify = function () {
+		var args = array_slice(arguments);
 		return function () {
-			while (obj) {
-				if (obj == type) {
-					return true;
-				}
-				obj = Object.getPrototypeOf(obj);
-			}
-			return false;
+			return JSON.stringify.apply(null, args);
 		}
 	}
 
