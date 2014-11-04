@@ -1,6 +1,0 @@
-#!/usr/local/lix
-
-"[1, 2, 3]" | JSON_parse | print
-
-[1 2 3] | JSON_stringify | print
-

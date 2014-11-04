@@ -1,6 +1,0 @@
-#!/usr/local/node
-
-true boolean_toString | print
-false boolean_toString | print
-true boolean_valueOf | print
-false boolean_valueOf | print

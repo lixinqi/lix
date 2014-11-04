@@ -1,0 +1,110 @@
+#!/usr/local/node
+
+date call 2010 0 | print
+date call 2010 0 29 1  | print
+date call | print
+oldTime := date call 2010 0 29 1 0 0
+dateA := date call 2010 0
+dateB := dateA date
+dateB print
+dateB | .ToString | Date.Parse | date | print
+Date.UTC call 2010 3 | date | print
+Date.Now call | date | .ToString | print
+Date.Now call | date | .ValueOf | print
+Date.Now call | date | .GetTime | print
+Date.Now call | date | .GetFullYear | print
+Date.Now call | date | .GetMonth | print
+Date.Now call | date | .GetUTCMonth | print
+Date.Now call | date | .GetDate | print
+Date.Now call | date | .GetUTCDate | print
+Date.Now call | date | .GetDay | print
+Date.Now call | date | .GetUTCDay | print
+Date.Now call | date | .GetHours | print
+Date.Now call | date | .GetUTCHours | print
+Date.Now call | date | .GetMinutes | print
+Date.Now call | date | .GetUTCMinutes | print
+Date.Now call | date | .GetSeconds | print
+Date.Now call | date | .GetUTCSeconds | print
+Date.Now call | date | .GetMilliseconds | print
+Date.Now call | date | .GetUTCMilliseconds | print
+Date.Now call | date | .GetTimezoneOffset | print
+
+oldT := oldTime date
+oldT print
+oldT .SetTime (Date.Now call) | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT .SetMilliseconds 999 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT .SetUTCMilliseconds 999 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT .SetSeconds 30 999 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT .SetUTCSeconds 30 999 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT .SetMinutes 30 30 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT .SetUTCMinutes 30 30 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT .SetHours 11 11 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT .SetUTCHours 11 11 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT .SetDate 11 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT .SetUTCDate 11 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT .SetMonth 11 11 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT .SetUTCMonth 11 11 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT .SetFullYear 2013 | print
+oldT print
+
+oldT := oldTime date
+oldT print
+oldT .SetUTCFullYear 2013 | print
+oldT print
+
+oldT .ToUTCString | print
+oldT .ToISOString | print
+oldT .ToJSON 'date' | print
+'end' print

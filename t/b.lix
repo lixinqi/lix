@@ -1,5 +1,0 @@
-#!/usr/local/bin/node lix
-
-a := undefined or 0
-a print
-

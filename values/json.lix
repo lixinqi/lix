@@ -1,0 +1,6 @@
+#!/usr/local/lix
+
+"[1, 2, 3]" | JSON.Parse | print
+
+[1 2 3] | JSON.Stringify | print
+

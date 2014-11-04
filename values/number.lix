@@ -1,0 +1,20 @@
+#!/usr/local/node
+
+Number.MAX_VALUE | print
+Number.MIN_VALUE | print
+Number.NaN | print
+Number.NEGATIVE_INFINITY | print
+Number.POSITIVE_INFINITY | print
+
+1789 | .ToString | print
+1789 | .ValueOf | print
+
+1000000000000000128 | .ToString | print
+1000000000000000128 | .ToFixed 0 | print
+
+1000000000000000128.9123 | .ToFixed 1 | print
+
+1000000000000000128.9123 | .ToExponential 1 | print
+
+100000128.9123 | .ToPrecision 1 | print
+

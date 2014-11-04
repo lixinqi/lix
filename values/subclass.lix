@@ -1,18 +1,18 @@
 #!/usr/local/bin/node
 
 subclass := (parent config)->{
-	class := parent object_create
+	class := parent Object.Create
 	if (config) {
 		class config
 	}
 	class
 }
 
-instance := object_create
+instance := Object.Create
 
-Object := {}
+MyObject := {}
 
-Person := Object subclass (pub)->{
+Person := MyObject subclass (pub)->{
 
 	pub.__class__ = 'Person'
 

@@ -1,0 +1,44 @@
+#!/usr/local/bin/node
+
+obj := {
+	.a 'nice'
+	.b 'good'
+}
+
+obj | .Keys | print
+
+obj | .GetPrototypeOf | print
+
+obj | .GetOwnPropertyDescriptor | print
+
+obj | .GetOwnPropertyNames | print
+
+newObj := obj .Create
+
+newObj .DefineProperty 'c' { .value 'ok' }
+
+newObj.c | print
+
+newObj .DefineProperties {
+	.d { .value 'property-d' }
+	.e { .value 'property-e' }
+}
+
+newObj.d | print
+newObj.e | print
+
+obj := {
+	.a 'value-a'
+	.b 'value-b'
+	.c 'value-c'
+	.d 'value-d'
+}
+
+obj .Keys | print
+
+obj .ValueOf | print
+
+obj .HasOwnProperty 'b' | print
+newObj .HasOwnProperty 'd' | print
+newObj .HasOwnProperty 'z' | print
+

@@ -1,0 +1,20 @@
+#!/usr/local/bin/node ./lix.js
+
+sleep := (ms)->{
+	cc call (brk)->{
+		ms timeout ()->{
+			'timeout' print
+			brk call
+		}
+	}
+}
+
+i := 0
+while (i < 10) {
+	500 sleep
+	i print
+	i = i + 1
+}
+
+'end' print
+

@@ -1,0 +1,6 @@
+#!/usr/local/node
+
+true .ToString | print
+false .ToString | print
+true .ValueOf | print
+false .ValueOf | print

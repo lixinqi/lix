@@ -1,0 +1,32 @@
+#!/usr/local/bin/node
+
+String.FromCharCode call 65 65 66 67 | print
+null | String.FromCharCode 65 65 66 67 | print
+"good" | .ToString | print
+"good" | .ValueOf | print
+'good' | .CharAt 3 | print 
+'good' | .CharCodeAt 3 | print 
+
+'good' | .Concat ' ' 'nice' | print
+
+'good' | .IndexOf 'd' | print
+'good' | .LastIndexOf 'o' | print
+'good' | .Replace 'oo' 'nice' | print
+
+'good' | .Slice 1 5 | print
+
+'good' | .Substring 1 5 | print
+
+'StrIng' | .ToLowerCase | print
+'StrIng' | .ToLocaleLowerCase | print
+'StrIng' | .ToUpperCase | print
+
+"a b c d\ne f g h\n" | .Trim | print
+"a b c d\ne f g h\n" | .length | print
+
+"a b c d\ne f g h\n" | .Search "d\ne" | print
+
+"a b c d\ne f g h\n" | .Match "d\ne" | print
+
+"a b c d e f g h" | .Split " " | print
+'end' print

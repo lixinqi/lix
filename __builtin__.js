@@ -68,11 +68,6 @@
 		return _self;
 	}
 
-	this.LIX_array_join = function (arr, glue) {
-		return function () {
-			return arr.join(glue)
-		}
-	}
 	this.LIX_print = function (x) {
 		return function () {
 			return console.log(x); 
@@ -225,113 +220,104 @@
 		return _15;
 	};
 
-	this.LIX_array_isArray = function (arr) {
+	this.LIX_Array = Array.prototype;
+
+	Array.prototype.Join = function (arr, glue) {
+		return function () {
+			return arr.join(glue)
+		}
+	}
+
+	Array.prototype.IsArray = function (arr) {
 		return function () {
 			return Array.isArray(arr);
 		};
 	}
 
-	var array_toString = Array.prototype.toString.unCurrying();
-	this.LIX_array_toString = function (arr) {
+	Array.prototype.ToString = function (arr) {
 		return function () {
-			return array_toString(arr);
+			return arr.toString();
 		};
 	}
 
-	var array_toLocaleString = Array.prototype.toLocaleString.unCurrying();
-	this.LIX_array_toLocaleString = function (arr) {
+	Array.prototype.ToLocaleString = function (arr) {
 		return function () {
-			return array_toLocaleString(arr);
+			return arr.toLocaleString();
 		};
 	}
 
-	var array_concat = Array.prototype.concat.unCurrying();
-	this.LIX_array_concat = function (a, b) {
+	Array.prototype.Concat = function (a, b) {
 		return function () {
-			return array_concat(a, b);
+			return a.concat(b);
 		};
 	}
 
-	var array_join = Array.prototype.join.unCurrying();
-	this.LIX_array_join = function (a, b) {
+	Array.prototype.Push = function (a, b) {
 		return function () {
-			return array_join(a, b);
+			return a.push(b);
 		};
 	}
 
-	var array_push = Array.prototype.push.unCurrying(); 
-	this.LIX_array_push = function (a, b) {
+	Array.prototype.Unshift = function (a, b) {
 		return function () {
-			return array_push(a, b);
+			return a.unshift(b);
 		};
 	}
 
-	var array_unshift = Array.prototype.unshift.unCurrying();
-	this.LIX_array_unshift = function (a, b) {
+	Array.prototype.Pop = function (a) {
 		return function () {
-			return array_unshift(a, b);
+			return a.pop();
 		};
 	}
 
-	var array_pop = Array.prototype.pop.unCurrying();
-	this.LIX_array_pop = function (a) {
+	Array.prototype.Shift = function (a) {
 		return function () {
-			return array_pop(a);
+			return a.shift();
 		};
 	}
 
-	var array_shift = Array.prototype.shift.unCurrying();
-	this.LIX_array_shift = function (a) {
+	Array.prototype.Reverse = function (a) {
 		return function () {
-			return array_shift(a);
+			return a.reverse();
 		};
 	}
 
-	var array_reverse = Array.prototype.reverse.unCurrying();
-	this.LIX_array_reverse = function (a) {
+	Array.prototype.Slice = function (a, start, end) {
 		return function () {
-			return array_reverse(a);
+			return a.slice(start, end);
 		};
 	}
 
-	var array_slice = Array.prototype.slice.unCurrying();
-	this.LIX_array_slice = function (a, start, end) {
+	Array.prototype.IndexOf = function (a, elem, start) {
 		return function () {
-			return array_slice(a, start, end);
+			return a.indexOf(elem, start);
 		};
 	}
 
-	var array_indexOf = Array.prototype.indexOf.unCurrying();
-	this.LIX_array_indexOf = function (a, elem, start) {
-		return function () {
-			return array_indexOf(a, elem, start);
-		};
-	}
-
-	var array_lastIndexOf = Array.prototype.lastIndexOf.unCurrying();
-	this.LIX_array_lastIndexOf = function (a, elem, start) {
+	Array.prototype.LastIndexOf = function (a, elem, start) {
 		if (arguments.length == 2) {
 			start = a.length
 		}
 		return function () {
-			return array_lastIndexOf(a, elem, start);
+			return a.lastIndexOf(elem, start);
 		};
 	}
 
-	this.LIX_array_length = function (a) {
+	Array.prototype.Length = function (a) {
 		return function () {
 			return a.length;
 		};
 	}
-
-	this.LIX_array_splice = function (a) {
+	var array_slice = Array.prototype.slice.unCurrying();
+	Array.prototype.Splice = function (a) {
 		var args = array_slice(arguments, 1);
 		return function () {
 			return Array.prototype.splice.apply(a, args);
 		};
 	}
 
-	this.LIX_object_keys = function (a) {
+	this.LIX_Object = Object.prototype;
+	Object.prototype.Keys = function (a) {
 		return function () {
 			try {
 				return Object.keys(a);
@@ -341,7 +327,7 @@
 		};
 	}
 
-	this.LIX_object_getPrototypeOf = function (a) {
+	Object.prototype.GetPrototypeOf = function (a) {
 		return function () {
 			try {
 				return Object.getPrototypeOf(a);
@@ -351,7 +337,7 @@
 		};
 	}
 
-	this.LIX_object_getOwnPropertyDescriptor = function (o, p) {
+	Object.prototype.GetOwnPropertyDescriptor = function (o, p) {
 		return function () {
 			try {
 				return Object.getOwnPropertyDescriptor(o, p);
@@ -361,7 +347,7 @@
 		};
 	}
 
-	this.LIX_object_getOwnPropertyNames = function (o) {
+	Object.prototype.GetOwnPropertyNames = function (o) {
 		return function () {
 			try {
 				return Object.getOwnPropertyNames(o);
@@ -371,7 +357,7 @@
 		};
 	}
 
-	this.LIX_object_create = function (o) {
+	Object.prototype.Create = function (o) {
 		return function () {
 			try {
 				return Object.create(o);
@@ -381,7 +367,7 @@
 		};
 	}
 
-	this.LIX_object_defineProperty = function (o, p, attribute) {
+	Object.prototype.DefineProperty = function (o, p, attribute) {
 		return function () {
 			try {
 				return Object.defineProperty(o, p, attribute);
@@ -391,7 +377,7 @@
 		};
 	}
 
-	this.LIX_object_defineProperties = function (o, properties) {
+	Object.prototype.DefineProperties = function (o, properties) {
 		return function () {
 			try {
 				return Object.defineProperties(o, properties);
@@ -401,7 +387,7 @@
 		};
 	}
 
-	this.LIX_object_seal = function (o) {
+	Object.prototype.Seal = function (o) {
 		return function () {
 			try {
 				return Object.seal(o);
@@ -411,7 +397,7 @@
 		};
 	}
 
-	this.LIX_object_freeze = function (o) {
+	Object.prototype.Freeze = function (o) {
 		return function () {
 			try {
 				return Object.freeze(o);
@@ -421,7 +407,7 @@
 		};
 	}
 
-	this.LIX_object_preventExtensions = function (o) {
+	Object.prototype.PreventExtensions = function (o) {
 		return function () {
 			try {
 				return Object.preventExtensions(o);
@@ -431,7 +417,7 @@
 		};
 	}
 
-	this.LIX_object_isSealed = function (o) {
+	Object.prototype.IsSealed = function (o) {
 		return function () {
 			try {
 				return Object.isSealed(o);
@@ -441,7 +427,7 @@
 		};
 	}
 
-	this.LIX_object_isFrozen = function (o) {
+	Object.prototype.IsFrozen = function (o) {
 		return function () {
 			try {
 				return Object.isFrozen(o);
@@ -451,7 +437,7 @@
 		};
 	}
 
-	this.LIX_object_isExtensible = function (o) {
+	Object.prototype.IsExtensible = function (o) {
 		return function () {
 			try {
 				return Object.isExtensible(o);
@@ -461,403 +447,358 @@
 		};
 	}
 
-	var object_toString = Object.prototype.toString.unCurrying();
-	this.LIX_object_toString = function (o) {
+	Object.prototype.ToString = function (o) {
 		return function () {
 			try {
-				return object_toString(o);
+				return o.toString();
 			} catch (e) {
 				return e;
 			}
 		};
 	}
 
-	var object_toLocaleString = Object.prototype.toString.unCurrying();
-	this.LIX_object_toLocaleString = function (o) {
+	Object.prototype.ToLocaleString = function (o) {
 		return function () {
 			try {
-				return object_toLocaleString(o);
+				return o.toLocaleString();
 			} catch (e) {
 				return e;
 			}
 		};
 	}
 
-	var object_valueOf = Object.prototype.valueOf.unCurrying();
-	this.LIX_object_valueOf = function (o) {
+	Object.prototype.ValueOf = function (o) {
 		return function () {
 			try {
-				return object_valueOf(o);
+				return o.valueOf();
 			} catch (e) {
 				return e;
 			}
 		};
 	}
 
-	var object_hasOwnProperty = Object.prototype.hasOwnProperty.unCurrying();
-	this.LIX_object_hasOwnProperty = function (o, v) {
+	Object.prototype.HasOwnProperty = function (o, v) {
 		return function () {
 			try {
-				return object_hasOwnProperty(o, v);
+				return o.hasOwnProperty(v);
 			} catch (e) {
 				return e;
 			}
 		};
 	}
 
-	var object_isPrototypeOf = Object.prototype.isPrototypeOf.unCurrying();
-	this.LIX_object_isPrototypeOf = function (o, v) {
+	Object.prototype.IsPrototypeOf = function (o, v) {
 		return function () {
 			try {
-				return object_isPrototypeOf(o, v);
+				return o.isPrototypeOf(v);
 			} catch (e) {
 				return e;
 			}
 		};
 	}
 
-	var object_propertyIsEnumerable = Object.prototype.propertyIsEnumerable.unCurrying();
-	this.LIX_object_propertyIsEnumerable = function (o, v) {
+	Object.prototype.PropertyIsEnumerable = function (o, v) {
 		return function () {
 			try {
-				return object_propertyIsEnumerable(o, v);
+				return o.propertyIsEnumerable(v);
 			} catch (e) {
 				return e;
 			}
 		};
 	}
 
-	var string_fromCharCode = String.fromCharCode;
-	this.LIX_string_fromCharCode = function () {
+	this.LIX_String = String.prototype
+
+	String.prototype.FromCharCode = function () {
 		var args = array_slice(arguments);
 		return function () {
-			return string_fromCharCode.apply(string_fromCharCode, args);
+			return String.fromCharCode.apply(null, args);
 		};
 	};
 
-	var string_toString = String.prototype.toString.unCurrying();
-	this.LIX_string_toString = function (a) {
+	String.prototype.ToString = function (a) {
 		return function () {
-			return string_toString(a);
+			return a.toString();
 		}
 	}
 
-	var string_valueOf = String.prototype.valueOf.unCurrying();
-	this.LIX_string_valueOf = function (a) {
+	String.prototype.ValueOf = function (a) {
 		return function () {
-			return string_valueOf(a);
+			return a.valueOf();
 		}
 	}
 
-	var string_charAt = String.prototype.charAt.unCurrying();
-	this.LIX_string_charAt = function (a, pos) {
+	String.prototype.CharAt = function (a, pos) {
 		return function () {
-			return string_charAt(a, pos);
+			return a.charAt(pos);
 		}
 	}
 
-	var string_charCodeAt = String.prototype.charCodeAt.unCurrying();
-	this.LIX_string_charCodeAt = function (a, pos) {
+	String.prototype.CharCodeAt = function (a, pos) {
 		return function () {
-			return string_charCodeAt(a, pos);
+			return a.charCodeAt(pos);
 		}
 	}
 
-	var string_concat = String.prototype.concat.unCurrying();
-	this.LIX_string_concat = function () {
-		var args = array_slice(arguments);
+	String.prototype.Concat = function (str) {
+		var args = array_slice(arguments, 1);
 		return function () {
-			return string_concat.apply(string_concat, args);
+			return str.concat.apply(str, args);
 		}
 	}
 
-	var string_indexOf = String.prototype.indexOf.unCurrying();
-	this.LIX_string_indexOf = function (str, pos) {
+	String.prototype.IndexOf = function (str, pos) {
 		return function () {
-			return string_indexOf(str, pos);
+			return str.indexOf(pos);
 		}
 	}
 
-	var string_lastIndexOf = String.prototype.lastIndexOf.unCurrying();
-	this.LIX_string_lastIndexOf = function (str, pos) {
+	String.prototype.LastIndexOf = function (str, pos) {
 		return function () {
-			return string_lastIndexOf(str, pos);
+			return str.lastIndexOf(pos);
 		}
 	}
 
-	var string_localeCompare = String.prototype.localeCompare.unCurrying();
-	this.LIX_string_localeCompare = function (str, pos) {
+	String.prototype.LocaleCompare = function (str, pos) {
 		return function () {
-			return string_localeCompare(str, pos);
+			return str.localeCompare(pos);
 		}
 	}
 
-	var string_match = String.prototype.match.unCurrying();
-	this.LIX_string_match = function (str, r) {
+	String.prototype.Match = function (str, r) {
 		return function () {
-			return string_match(str, r);
+			return str.match(r);
 		}
 	}
 
-	var string_replace = String.prototype.replace.unCurrying();
-	this.LIX_string_replace = function (str, searchValue, replaceValue) {
+	String.prototype.Replace = function (str, searchValue, replaceValue) {
 		return function () {
-			return string_replace(str, searchValue, replaceValue);
+			return str.replace(searchValue, replaceValue);
 		}
 	}
 
-	var string_search = String.prototype.search.unCurrying();
-	this.LIX_string_search = function (str, r) {
+	String.prototype.Search = function (str, r) {
 		return function () {
-			return string_search(str, r);
+			return str.search(r);
 		}
 	}
 
-	var string_slice = String.prototype.slice.unCurrying();
-	this.LIX_string_slice = function (str, start, end) {
+	String.prototype.Slice = function (str, start, end) {
 		return function () {
-			return string_slice(str, start, end);
+			return str.slice(start, end);
 		}
 	}
 
-	var string_split = String.prototype.split.unCurrying();
-	this.LIX_string_split = function (str, separator, limit) {
+	String.prototype.Split = function (str, separator, limit) {
 		return function () {
-			return string_split(str, separator, limit);
+			return str.split(separator, limit);
 		}
 	}
 
-	var string_substring = String.prototype.substring.unCurrying();
-	this.LIX_string_substring = function (str, start, end) {
+	String.prototype.Substring = function (str, start, end) {
 		return function () {
-			return string_substring(str, start, end);
+			return str.substring(start, end);
 		}
 	}
 
-	var string_toLowerCase = String.prototype.toLowerCase.unCurrying();
-	this.LIX_string_toLowerCase = function (str) {
+	String.prototype.ToLowerCase = function (str) {
 		return function () {
-			return string_toLowerCase(str);
+			return str.toLowerCase();
 		}
 	}
 
-	var string_toLocaleLowerCase = String.prototype.toLocaleLowerCase.unCurrying();
-	this.LIX_string_toLocaleLowerCase = function (str) {
+	String.prototype.ToLocaleLowerCase = function (str) {
 		return function () {
-			return string_toLocaleLowerCase(str);
+			return str.toLocaleLowerCase();
 		}
 	}
 
-	var string_toUpperCase = String.prototype.toUpperCase.unCurrying();
-	this.LIX_string_toUpperCase = function (str) {
+	String.prototype.ToUpperCase = function (str) {
 		return function () {
-			return string_toUpperCase(str);
+			return str.toUpperCase();
 		}
 	}
 
-	var string_toLocaleUpperCase = String.prototype.toLocaleUpperCase.unCurrying();
-	this.LIX_string_toLocaleUpperCase = function (str) {
+	String.prototype.ToLocaleUpperCase = function (str) {
 		return function () {
-			return string_toLocaleUpperCase(str);
+			return str.toLocaleUpperCase();
 		}
 	}
 
-	var string_trim = String.prototype.trim.unCurrying();
-	this.LIX_string_trim = function (str) {
+	String.prototype.Trim = function (str) {
 		return function () {
-			return string_trim(str);
+			return str.trim();
 		}
 	}
 
-	this.LIX_string_length = function (str) {
+	String.prototype.Length = function (str) {
 		return function () {
 			return str.length;
 		}
 	}
 
-	var boolean_toString = Boolean.prototype.toString.unCurrying();
-	this.LIX_boolean_toString = function (str) {
+	Boolean.prototype.ToString = function (b) {
 		return function () {
-			return boolean_toString(str);
+			return b.toString();
 		}
 	}
 
-	var boolean_valueOf = Boolean.prototype.valueOf.unCurrying();
-	this.LIX_boolean_valueOf = function (str) {
+	Boolean.prototype.ValueOf = function (v) {
 		return function () {
-			return boolean_valueOf(str);
+			return v.valueOf();
 		}
 	}
 
-	this.LIX_number_MAX_VALUE = Number.MAX_VALUE
-	this.LIX_number_MIN_VALUE = Number.MIN_VALUE
-	this.LIX_number_NaN = Number.NaN
-	this.LIX_number_NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY
-	this.LIX_number_POSITIVE_INFINITY = Number.POSITIVE_INFINITY
+	this.LIX_Number = Number.prototype;
+  Number.prototype.MAX_VALUE = Number.MAX_VALUE
+  Number.prototype.MIN_VALUE = Number.MIN_VALUE
+  Number.prototype.NaN = Number.NaN
+  Number.prototype.NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY
+  Number.prototype.POSITIVE_INFINITY = Number.POSITIVE_INFINITY
 
-	var number_toString = Number.prototype.toString.unCurrying();
-	this.LIX_number_toString = function (str) {
+	Number.prototype.ToString = function (v) {
 		return function () {
-			return number_toString(str);
+			return v.toString();
 		}
 	}
 
-	var number_toLocaleString = Number.prototype.toLocaleString.unCurrying();
-	this.LIX_number_toLocaleString = function (str) {
+	Number.prototype.ToLocaleString = function (v) {
 		return function () {
-			return number_toLocaleString(str);
+			return v.toLocaleString();
 		}
 	}
 
-	var number_valueOf = Number.prototype.valueOf.unCurrying();
-	this.LIX_number_valueOf = function (str) {
+	Number.prototype.ValueOf = function (v) {
 		return function () {
-			return number_valueOf(str);
+			return v.valueOf();
 		}
 	}
 
-	var number_toFixed = Number.prototype.toFixed.unCurrying();
-	this.LIX_number_toFixed = function (str, fractionDigits) {
+	Number.prototype.ToFixed = function (v, fractionDigits) {
 		return function () {
-			return number_toFixed(str, fractionDigits);
+			return v.toFixed(fractionDigits);
 		}
 	}
 
-	var number_toExponential = Number.prototype.toExponential.unCurrying();
-	this.LIX_number_toExponential = function (str, fractionDigits) {
+	Number.prototype.ToExponential = function (v, fractionDigits) {
 		return function () {
-			return number_toExponential(str, fractionDigits);
+			return v.toExponential(fractionDigits);
 		}
 	}
 
-	var number_toPrecision = Number.prototype.toPrecision.unCurrying();
-	this.LIX_number_toPrecision = function (str, precision) {
+	Number.prototype.ToPrecision = function (v, precision) {
 		return function () {
-			return number_toPrecision(str, precision);
+			return v.toPrecision(v, precision);
 		}
 	}
 
-	var number_toPrecision = Number.prototype.toPrecision.unCurrying();
-	this.LIX_number_toPrecision = function (str, precision) {
-		return function () {
-			return number_toPrecision(str, precision);
-		}
-	}
+	this.LIX_Math = Math;
 
-	this.LIX_math_E = Math.E
-	this.LIX_math_LN10 = Math.LN10
-	this.LIX_math_LN2 = Math.LN2
-	this.LIX_math_LOG2E = Math.LOG2E
-	this.LIX_math_LOG10E = Math.LOG10E
-	this.LIX_math_PI = Math.PI
-	this.LIX_math_SQRT1_2 = Math.SQRT1_2
-	this.LIX_math_SQRT2 = Math.SQRT2
-
-	this.LIX_math_abs = function (x) {
+	Math.Abs = function (x) {
 		return function () {
 			return Math.abs(x);
 		}
 	}
 
-	this.LIX_math_acos = function (x) {
+	Math.Acos = function (x) {
 		return function () {
 			return Math.acos(x);
 		}
 	}
 
-	this.LIX_math_asin = function (x) {
+	Math.Asin = function (x) {
 		return function () {
 			return Math.asin(x);
 		}
 	}
 
-	this.LIX_math_atan = function (x) {
+	Math.Atan = function (x) {
 		return function () {
 			return Math.atan(x);
 		}
 	}
 
-	this.LIX_math_atan2 = function (y, x) {
+	Math.Atan2 = function (y, x) {
 		return function () {
 			return Math.atan2(y, x);
 		}
 	}
 
-	this.LIX_math_ceil = function (x) {
+	Math.Ceil = function (x) {
 		return function () {
 			return Math.ceil(x);
 		}
 	}
 
-	this.LIX_math_cos = function (x) {
+	Math.Cos = function (x) {
 		return function () {
 			return Math.cos(x);
 		}
 	}
 
-	this.LIX_math_exp = function (x) {
+	Math.Exp = function (x) {
 		return function () {
 			return Math.exp(x);
 		}
 	}
 
-	this.LIX_math_floor = function (x) {
+	Math.Floor = function (x) {
 		return function () {
 			return Math.floor(x);
 		}
 	}
 
-	this.LIX_math_log = function (x) {
+	Math.Log = function (x) {
 		return function () {
 			return Math.log(x);
 		}
 	}
 
-	this.LIX_math_max = function () {
+	Math.Max = function () {
 		var args = array_slice(arguments);
 		return function () {
 			return Math.max.apply(null, args);
 		}
 	}
 
-	this.LIX_math_min = function () {
+	Math.Min = function () {
 		var args = array_slice(arguments);
 		return function () {
 			return Math.min.apply(null, args);
 		}
 	}
 
-	this.LIX_math_pow = function (x, y) {
+	Math.Pow = function (x, y) {
 		return function () {
 			return Math.pow(x, y);
 		}
 	}
 
-	this.LIX_math_random = function () {
+	Math.Random = function () {
 		return function () {
 			return Math.random();
 		}
 	}
 
-	this.LIX_math_round = function (x) {
+	Math.Round = function (x) {
 		return function () {
 			return Math.round(x);
 		}
 	}
 
-	this.LIX_math_sin = function (x) {
+	Math.Sin = function (x) {
 		return function () {
 			return Math.sin(x);
 		}
 	}
 
-	this.LIX_math_sqrt = function (x) {
+	Math.Sqrt = function (x) {
 		return function () {
 			return Math.sqrt(x);
 		}
 	}
 
-	this.LIX_math_tan = function (x) {
+	Math.Tan = function (x) {
 		return function () {
 			return Math.tan(x);
 		}
@@ -888,340 +829,298 @@
 		}
 	}
 
-	this.LIX_date_parse = function (str) {
+	this.LIX_Date = Date.prototype;
+
+	Date.prototype.Parse = function (str) {
 		return function () {
 			return Date.parse(str);
 		}
 	}
 
-	this.LIX_date_UTC = function () {
+	Date.prototype.UTC = function () {
 		var args = array_slice(arguments);
 		return function () {
 			return Date.UTC.apply(null, args);
 		}
 	}
 
-	this.LIX_date_now = function () {
+	Date.prototype.Now = function () {
 		return function () {
 			return Date.now();
 		}
 	}
 
-	var date_toString = Date.prototype.toString.unCurrying();
-	this.LIX_date_toString = function (x) {
+	Date.prototype.ToString = function (x) {
 		return function () {
-			return date_toString(x);
+			return x.toString();
 		}
 	}
 
-	var date_toDateString = Date.prototype.toDateString.unCurrying();
-	this.LIX_date_toDateString = function (x) {
+	Date.prototype.ToDateString = function (x) {
 		return function () {
-			return date_toDateString(x);
+			return x.toDateString();
 		}
 	}
 
-	var date_toTimeString = Date.prototype.toTimeString.unCurrying();
-	this.LIX_date_toTimeString = function (x) {
+	Date.prototype.ToTimeString = function (x) {
 		return function () {
-			return date_toTimeString(x);
+			return x.toTimeString();
 		}
 	}
 
-	var date_toLocaleString = Date.prototype.toLocaleString.unCurrying();
-	this.LIX_date_toLocaleString = function (x) {
+	Date.prototype.ToLocaleString = function (x) {
 		return function () {
-			return date_toLocaleString(x);
+			return x.toLocaleString();
 		}
 	}
 
-	var date_toLocaleDateString = Date.prototype.toLocaleDateString.unCurrying();
-	this.LIX_date_toLocaleDateString = function (x) {
+	Date.prototype.ToLocaleDateString = function (x) {
 		return function () {
-			return date_toLocaleDateString(x);
+			return x.toLocaleDateString();
 		}
 	}
 
-	var date_toLocaleTimeString = Date.prototype.toLocaleTimeString.unCurrying();
-	this.LIX_date_toLocaleTimeString = function (x) {
+	Date.prototype.ToLocaleTimeString = function (x) {
 		return function () {
-			return date_toLocaleTimeString(x);
+			return x.toLocaleTimeString();
 		}
 	}
 
-	var date_valueOf = Date.prototype.valueOf.unCurrying();
-	this.LIX_date_valueOf = function (x) {
+	Date.prototype.ValueOf = function (x) {
 		return function () {
-			return date_valueOf(x);
+			return x.valueOf();
 		}
 	}
 
-	var date_getTime = Date.prototype.getTime.unCurrying();
-	this.LIX_date_getTime = function (x) {
+	Date.prototype.GetTime = function (x) {
 		return function () {
-			return date_getTime(x);
+			return x.getTime();
 		}
 	}
 
-	var date_getFullYear = Date.prototype.getFullYear.unCurrying();
-	this.LIX_date_getFullYear = function (x) {
+	Date.prototype.GetFullYear = function (x) {
 		return function () {
-			return date_getFullYear(x);
+			return x.getFullYear();
 		}
 	}
 
-	var date_getUTCFullYear = Date.prototype.getUTCFullYear.unCurrying();
-	this.LIX_date_getUTCFullYear = function (x) {
+	Date.prototype.GetUTCFullYear = function (x) {
 		return function () {
-			return date_getUTCFullYear(x);
+			return x.getUTCFullYear();
 		}
 	}
 
-	var date_getMonth = Date.prototype.getMonth.unCurrying();
-	this.LIX_date_getMonth = function (x) {
+	Date.prototype.GetMonth = function (x) {
 		return function () {
-			return date_getMonth(x);
+			return x.getMonth();
 		}
 	}
 
-	var date_getUTCMonth = Date.prototype.getUTCMonth.unCurrying();
-	this.LIX_date_getUTCMonth = function (x) {
+	Date.prototype.GetUTCMonth = function (x) {
 		return function () {
-			return date_getUTCMonth(x);
+			return x.getUTCMonth();
 		}
 	}
 
-	var date_getDate = Date.prototype.getDate.unCurrying();
-	this.LIX_date_getDate = function (x) {
+	Date.prototype.GetDate = function (x) {
 		return function () {
-			return date_getDate(x);
+			return x.getDate();
 		}
 	}
 
-	var date_getUTCDate = Date.prototype.getUTCDate.unCurrying();
-	this.LIX_date_getUTCDate = function (x) {
+	Date.prototype.GetUTCDate = function (x) {
 		return function () {
-			return date_getUTCDate(x);
+			return x.getUTCDate();
 		}
 	}
 
-	var date_getDay = Date.prototype.getDay.unCurrying();
-	this.LIX_date_getDay = function (x) {
+	Date.prototype.GetDay = function (x) {
 		return function () {
-			return date_getDay(x);
+			return x.getDay();
 		}
 	}
 
-	var date_getUTCDay = Date.prototype.getUTCDay.unCurrying();
-	this.LIX_date_getUTCDay = function (x) {
+	Date.prototype.GetUTCDay = function (x) {
 		return function () {
-			return date_getUTCDay(x);
+			return x.getUTCDay();
 		}
 	}
 
-	var date_getHours = Date.prototype.getHours.unCurrying();
-	this.LIX_date_getHours = function (x) {
+	Date.prototype.GetHours = function (x) {
 		return function () {
-			return date_getHours(x);
+			return x.getHours();
 		}
 	}
 
-	var date_getUTCHours = Date.prototype.getUTCHours.unCurrying();
-	this.LIX_date_getUTCHours = function (x) {
+	Date.prototype.GetUTCHours = function (x) {
 		return function () {
-			return date_getUTCHours(x);
+			return x.getUTCHours();
 		}
 	}
 
-	var date_getMinutes = Date.prototype.getMinutes.unCurrying();
-	this.LIX_date_getMinutes = function (x) {
+	Date.prototype.GetMinutes = function (x) {
 		return function () {
-			return date_getMinutes(x);
+			return x.getMinutes();
 		}
 	}
 
-	var date_getUTCMinutes = Date.prototype.getUTCMinutes.unCurrying();
-	this.LIX_date_getUTCMinutes = function (x) {
+	Date.prototype.GetUTCMinutes = function (x) {
 		return function () {
-			return date_getUTCMinutes(x);
+			return x.getUTCMinutes();
 		}
 	}
 
-	var date_getSeconds = Date.prototype.getSeconds.unCurrying();
-	this.LIX_date_getSeconds = function (x) {
+	Date.prototype.GetSeconds = function (x) {
 		return function () {
-			return date_getSeconds(x);
+			return x.getSeconds();
 		}
 	}
 
-	var date_getUTCSeconds = Date.prototype.getUTCSeconds.unCurrying();
-	this.LIX_date_getUTCSeconds = function (x) {
+	Date.prototype.GetUTCSeconds = function (x) {
 		return function () {
-			return date_getUTCSeconds(x);
+			return x.getUTCSeconds();
 		}
 	}
 
-	var date_getMilliseconds = Date.prototype.getMilliseconds.unCurrying();
-	this.LIX_date_getMilliseconds = function (x) {
+	Date.prototype.GetMilliseconds = function (x) {
 		return function () {
-			return date_getMilliseconds(x);
+			return x.getMilliseconds();
 		}
 	}
 
-	var date_getUTCMilliseconds = Date.prototype.getUTCMilliseconds.unCurrying();
-	this.LIX_date_getUTCMilliseconds = function (x) {
+	Date.prototype.GetUTCMilliseconds = function (x) {
 		return function () {
-			return date_getUTCMilliseconds(x);
+			return x.getUTCMilliseconds();
 		}
 	}
 
-	var date_getTimezoneOffset = Date.prototype.getTimezoneOffset.unCurrying();
-	this.LIX_date_getTimezoneOffset = function (x) {
+	Date.prototype.GetTimezoneOffset = function (x) {
 		return function () {
-			return date_getTimezoneOffset(x);
+			return x.getTimezoneOffset();
 		}
 	}
 
-	var date_setTime = Date.prototype.setTime.unCurrying();
-	this.LIX_date_setTime = function (x, v) {
+	Date.prototype.SetTime = function (x, v) {
 		return function () {
-			return date_setTime(x, v);
+			return x.setTime(v);
 		}
 	}
 
-	var date_setMilliseconds = Date.prototype.setMilliseconds.unCurrying();
-	this.LIX_date_setMilliseconds = function (x, v) {
+	Date.prototype.SetMilliseconds = function (x, v) {
 		return function () {
-			return date_setMilliseconds(x, v);
+			return x.setMilliseconds(v);
 		}
 	}
 
-	var date_setMilliseconds = Date.prototype.setMilliseconds.unCurrying();
-	this.LIX_date_setMilliseconds = function (x, v) {
+	Date.prototype.SetMilliseconds = function (x, v) {
 		return function () {
-			return date_setMilliseconds(x, v);
+			return x.setMilliseconds(v);
 		}
 	}
 
-	var date_setUTCMilliseconds = Date.prototype.setUTCMilliseconds.unCurrying();
-	this.LIX_date_setUTCMilliseconds = function (x, v) {
+	Date.prototype.SetUTCMilliseconds = function (x, v) {
 		return function () {
-			return date_setUTCMilliseconds(x, v);
+			return x.setUTCMilliseconds(v);
 		}
 	}
 
-	var date_setSeconds = Date.prototype.setSeconds;
-	this.LIX_date_setSeconds = function (x) {
+	Date.prototype.SetSeconds = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
-			return date_setSeconds.apply(x, args);
+			return x.setSeconds.apply(x, args);
 		}
 	}
 
-	var date_setUTCSeconds = Date.prototype.setUTCSeconds;
-	this.LIX_date_setUTCSeconds = function (x) {
+	Date.prototype.SetUTCSeconds = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
-			return date_setUTCSeconds.apply(x, args);
+			return x.setUTCSeconds.apply(x, args);
 		}
 	}
 
-	var date_setMinutes = Date.prototype.setMinutes;
-	this.LIX_date_setMinutes = function (x) {
+	Date.prototype.SetMinutes = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
-			return date_setMinutes.apply(x, args);
+			return x.setMinutes.apply(x, args);
 		}
 	}
 
-	var date_setUTCMinutes = Date.prototype.setUTCMinutes;
-	this.LIX_date_setUTCMinutes = function (x) {
+	Date.prototype.SetUTCMinutes = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
-			return date_setUTCMinutes.apply(x, args);
+			return x.setUTCMinutes.apply(x, args);
 		}
 	}
 
-	var date_setHours = Date.prototype.setHours;
-	this.LIX_date_setHours = function (x) {
+	Date.prototype.SetHours = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
-			return date_setHours.apply(x, args);
+			return x.setHours.apply(x, args);
 		}
 	}
 
-	var date_setUTCHours = Date.prototype.setUTCHours;
-	this.LIX_date_setUTCHours = function (x) {
+	Date.prototype.SetUTCHours = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
-			return date_setUTCHours.apply(x, args);
+			return x.setUTCHours.apply(x, args);
 		}
 	}
 
-	var date_setDate = Date.prototype.setDate.unCurrying();
-	this.LIX_date_setDate = function (x, v) {
+	Date.prototype.SetDate = function (x, v) {
 		return function () {
-			return date_setDate(x, v);
+			return x.setDate(v);
 		}
 	}
 
-	var date_setUTCDate = Date.prototype.setUTCDate.unCurrying();
-	this.LIX_date_setUTCDate = function (x, v) {
+	Date.prototype.SetUTCDate = function (x, v) {
 		return function () {
-			return date_setUTCDate(x, v);
+			return x.setUTCDate(v);
 		}
 	}
 
-	var date_setMonth = Date.prototype.setMonth
-	this.LIX_date_setMonth = function (x) {
+	Date.prototype.SetMonth = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
-			return date_setMonth.apply(x, args);
+			return x.setMonth.apply(x, args);
 		}
 	}
 
-	var date_setUTCMonth = Date.prototype.setUTCMonth;
-	this.LIX_date_setUTCMonth = function (x) {
+	Date.prototype.SetUTCMonth = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
-			return date_setUTCMonth.apply(x, args);
+			return x.setUTCMonth.apply(x, args);
 		}
 	}
 
-	var date_setFullYear = Date.prototype.setFullYear
-	this.LIX_date_setFullYear = function (x) {
+	Date.prototype.SetFullYear = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
-			return date_setFullYear.apply(x, args);
+			return x.setFullYear.apply(x, args);
 		}
 	}
 
-	var date_setUTCFullYear = Date.prototype.setUTCFullYear;
-	this.LIX_date_setUTCFullYear = function (x) {
+	Date.prototype.SetUTCFullYear = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
-			return date_setUTCFullYear.apply(x, args);
+			return x.setUTCFullYear.apply(x, args);
 		}
 	}
 
-	var date_toUTCString = Date.prototype.toUTCString.unCurrying();
-	this.LIX_date_toUTCString = function (x) {
+	Date.prototype.ToUTCString = function (x) {
 		return function () {
-			return date_toUTCString(x);
+			return x.toUTCString();
 		}
 	}
 
-	var date_toISOString = Date.prototype.toISOString.unCurrying();
-	this.LIX_date_toISOString = function (x) {
+	Date.prototype.ToISOString = function (x) {
 		return function () {
-			return date_toISOString(x);
+			return x.toISOString();
 		}
 	}
 
-	var date_toJSON = Date.prototype.toJSON.unCurrying();
-	this.LIX_date_toJSON = function (x, key) {
+	Date.prototype.ToJSON = function (x, key) {
 		return function () {
-			return date_toJSON(x, key);
+			return x.toJSON(key);
 		}
 	}
 
@@ -1239,56 +1138,26 @@
 		}
 	}
 
-	var regexp_exec = RegExp.prototype.exec.unCurrying();
-	this.LIX_regexp_exec = function (r, str) {
+	this.LIX_RegExp = RegExp.prototype
+
+	RegExp.prototype.Exec = function (r, str) {
 		return function () {
-			return regexp_exec(r, str);
+			return r.exec(str);
 		}
 	}
 
-	var regexp_test = RegExp.prototype.test.unCurrying();
-	this.LIX_regexp_test = function (r, str) {
+	RegExp.prototype.Test = function (r, str) {
 		return function () {
-			return regexp_test(r, str);
+			return r.test(str);
 		}
 	}
 
-	var regexp_toString = RegExp.prototype.toString.unCurrying();
-	this.LIX_regexp_toString = function (r) {
+	RegExp.prototype.ToString = function (r) {
 		return function () {
-			return regexp_toString(r);
+			return r.toString();
 		}
 	}
 
-	this.LIX_regexp_source = function (r) {
-		return function () {
-			return r.source;
-		}
-	}
-
-	this.LIX_regexp_global = function (r) {
-		return function () {
-			return r.global;
-		}
-	}
-
-	this.LIX_regexp_ignoreCase = function (r) {
-		return function () {
-			return r.ignoreCase;
-		}
-	}
-
-	this.LIX_regexp_multiline = function (r) {
-		return function () {
-			return r.multiline;
-		}
-	}
-
-	this.LIX_regexp_lastIndex = function (r) {
-		return function () {
-			return r.lastIndex;
-		}
-	}
 
 	this.LIX_error = function (message) {
 		return function () {
@@ -1296,22 +1165,9 @@
 		}
 	}
 
-	this.LIX_error_name = function (e) {
+	Error.prototype.ToString = function (e) {
 		return function () {
-			return e.name;
-		}
-	}
-
-	this.LIX_error_message = function (e) {
-		return function () {
-			return e.message;
-		}
-	}
-
-	var error_toString = Error.prototype.toString.unCurrying();
-	this.LIX_error_toString = function (e) {
-		return function () {
-			return error_toString(e);
+			return e.toString();
 		}
 	}
 
@@ -1322,14 +1178,15 @@
 	this.LIX_TypeError = TypeError.prototype;
 	this.LIX_URIError = URIError.prototype;
 
-	this.LIX_JSON_parse = function () {
+	this.LIX_JSON = JSON
+	JSON.Parse = function () {
 		var args = array_slice(arguments);
 		return function () {
 			return JSON.parse.apply(null, args);
 		}
 	}
 
-	this.LIX_JSON_stringify = function () {
+	JSON.Stringify = function () {
 		var args = array_slice(arguments);
 		return function () {
 			return JSON.stringify.apply(null, args);
