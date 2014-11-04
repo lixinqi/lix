@@ -4,13 +4,13 @@
 		return this.call.bind(this);
 	};
 	
-	this.LIX_instanceof = function (obj, type) {
+	this.Linstanceof = function (obj, type) {
 		return function () {
 			return Object.getPrototypeOf(obj) == type;
 		}
 	}
 
-	this.LIX_is = function (obj, type) {
+	this.Lis = function (obj, type) {
 		return function () {
 			while (obj) {
 				if (obj == type) {
@@ -22,7 +22,7 @@
 		}
 	}
 
-	this.LIX_timeout = function (secs, ctx) {
+	this.Ltimeout = function (secs, ctx) {
 		return function () {
 			setTimeout(function () {
 				try {
@@ -32,7 +32,7 @@
 			}, secs);
 		}
 	}
-	this.LIX_immediately = function (ctx) {
+	this.Limmediately = function (ctx) {
 		return function () {
 			setImmediate(function () {
 				try {
@@ -42,7 +42,7 @@
 			});
 		}
 	}
-	this.LIX_cc = function (ctx) {
+	this.Lcc = function (ctx) {
 		function _self(cb, step, cont, a) {
 			var brk = function (ret) {
 				function _self(_cb, step, cont, a) {
@@ -68,101 +68,101 @@
 		return _self;
 	}
 
-	this.LIX_print = function (x) {
+	this.Lprint = function (x) {
 		return function () {
 			return console.log(x); 
 		}
 	}
-	this.LIX_not = function (x) {
+	this.Lnot = function (x) {
 		return function () {
 			return !x; 
 		}
 	}
-	this.LIX__instance_ = function _instance_(x) {
+	this.L_instance_ = function _instance_(x) {
 		return function () {
 			return new x(); 
 		}
 	}
-	this.LIX___add__ = function __add__(x, y) {
+	this.L__add__ = function __add__(x, y) {
 		return function () {
 			return x + y;
 		}
 	}
-	this.LIX___sub__ = function __sub__(x, y) {
+	this.L__sub__ = function __sub__(x, y) {
 		return function () {
 			return x - y;
 		}
 	}
-	this.LIX___mul__ = function __mul__(x, y) {
+	this.L__mul__ = function __mul__(x, y) {
 		return function () {
 			return x * y;
 		}
 	}
-	this.LIX___div__ = function __div__(x, y) {
+	this.L__div__ = function __div__(x, y) {
 		return function () {
 			return x / y;
 		}
 	}
-	this.LIX___mod__ = function __mod__(x, y) {
+	this.L__mod__ = function __mod__(x, y) {
 		return function () {
 			return x % y;
 		}
 	}
-	this.LIX___gt__ = function __gt__(x, y) {
+	this.L__gt__ = function __gt__(x, y) {
 		return function () {
 			return x > y;
 		}
 	}
-	this.LIX___ge__ = function __ge__(x, y) {
+	this.L__ge__ = function __ge__(x, y) {
 		return function () {
 			return x >= y;
 		}
 	}
-	this.LIX___eq__ = function __eq__(x, y) {
+	this.L__eq__ = function __eq__(x, y) {
 		return function () {
 			return x == y;
 		}
 	}
-	this.LIX___ne__ = function __ne__(x, y) {
+	this.L__ne__ = function __ne__(x, y) {
 		return function () {
 			return x != y;
 		}
 	}
-	this.LIX___le__ = function __le__(x, y) {
+	this.L__le__ = function __le__(x, y) {
 		return function () {
 			return x <= y;
 		}
 	}
-	this.LIX___lt__ = function __lt__(x, y) {
+	this.L__lt__ = function __lt__(x, y) {
 		return function () {
 			return x < y;
 		}
 	}
-	this.LIX_isFunction = function isFunction(x) {
+	this.LisFunction = function isFunction(x) {
 		return function () {
 			return typeof x === 'function';
 		}
 	}
-	this.LIX_isArray = function isArray(x) {
+	this.LisArray = function isArray(x) {
 		return function () {
 			return x instanceof Array;
 		}
 	}
 
-	this.LIX_apply = function (fn, args) {
+	this.Lapply = function (fn, args) {
 		return fn.apply(fn, args);
 	};
 
-	this.LIX_call = function (fn) {
+	this.Lcall = function (fn) {
 		return fn.apply(fn, array_slice(arguments, 1));
 	};
 
-	this.LIX_foreach = function (LIX_arr, LIX_cb) {
-		var LIX_i, _ret, _0, _1, _2, _3;
+	this.Lforeach = function (Larr, Lcb) {
+		var Li, _ret, _0, _1, _2, _3;
 		function _16(_cb, _step, _cont, _ret) {
 			switch (_step) {
 				case 0:
-					_ret = LIX_cb(LIX_arr[LIX_i], LIX_i)(function (_ret) {
+					_ret = Lcb(Larr[Li], Li)(function (_ret) {
 						return _16(_cb, 1, true, _ret);
 					}, 0);
 				case 1:
@@ -170,15 +170,15 @@
 				case 2:
 					_2;
 				case 3:
-					_ret = LIX___add__(LIX_i, 1)(function (_ret) {
+					_ret = L__add__(Li, 1)(function (_ret) {
 						return _16(_cb, 4, true, _ret);
 					}, 0);
 				case 4:
 					_3 = _ret;
 				case 5:
-					LIX_i = _3;
+					Li = _3;
 				case 6:
-					_ret = LIX___lt__(LIX_i, LIX_arr.length)(function (_ret) {
+					_ret = L__lt__(Li, Larr.length)(function (_ret) {
 						return _16(_cb, 7, true, _ret);
 					}, 0);
 				case 7:
@@ -194,9 +194,9 @@
 		function _15(_cb, _step, _cont, _ret) {
 			switch (_step) {
 				case 0:
-					LIX_i = 0;
+					Li = 0;
 				case 4:
-					_ret = LIX___lt__(LIX_i, LIX_arr.length)(function (_ret) {
+					_ret = L__lt__(Li, Larr.length)(function (_ret) {
 						return _15(_cb, 5, true, _ret);
 					}, 0);
 				case 5:
@@ -220,7 +220,7 @@
 		return _15;
 	};
 
-	this.LIX_Array = Array.prototype;
+	this.LArray = Array.prototype;
 
 	Array.prototype.Join = function (arr, glue) {
 		return function () {
@@ -284,7 +284,7 @@
 
 	Array.prototype.Slice = function (a, start, end) {
 		return function () {
-			return a.slice(start, end);
+			return array_slice(a, start, end);
 		};
 	}
 
@@ -316,7 +316,7 @@
 		};
 	}
 
-	this.LIX_Object = Object.prototype;
+	this.LObject = Object.prototype;
 	Object.prototype.Keys = function (a) {
 		return function () {
 			try {
@@ -507,7 +507,7 @@
 		};
 	}
 
-	this.LIX_String = String.prototype
+	this.LString = String.prototype
 
 	String.prototype.FromCharCode = function () {
 		var args = array_slice(arguments);
@@ -649,7 +649,7 @@
 		}
 	}
 
-	this.LIX_Number = Number.prototype;
+	this.LNumber = Number.prototype;
   Number.prototype.MAX_VALUE = Number.MAX_VALUE
   Number.prototype.MIN_VALUE = Number.MIN_VALUE
   Number.prototype.NaN = Number.NaN
@@ -692,7 +692,7 @@
 		}
 	}
 
-	this.LIX_Math = Math;
+	this.LMath = Math;
 
 	Math.Abs = function (x) {
 		return function () {
@@ -804,7 +804,7 @@
 		}
 	}
 
-	this.LIX_date = function () {
+	this.Ldate = function () {
 		var args = arguments;
 		return function () {
 			switch (args.length) {
@@ -829,7 +829,7 @@
 		}
 	}
 
-	this.LIX_Date = Date.prototype;
+	this.LDate = Date.prototype;
 
 	Date.prototype.Parse = function (str) {
 		return function () {
@@ -1124,7 +1124,7 @@
 		}
 	}
 
-	this.LIX_regexp = function () {
+	this.Lregexp = function () {
 		var args = array_slice(arguments);
 		return function () {
 			switch (args.length) {
@@ -1138,7 +1138,7 @@
 		}
 	}
 
-	this.LIX_RegExp = RegExp.prototype
+	this.LRegExp = RegExp.prototype
 
 	RegExp.prototype.Exec = function (r, str) {
 		return function () {
@@ -1159,7 +1159,7 @@
 	}
 
 
-	this.LIX_error = function (message) {
+	this.Lerror = function (message) {
 		return function () {
 			return new Error(message);
 		}
@@ -1171,14 +1171,14 @@
 		}
 	}
 
-	this.LIX_Error = Error.prototype;
-	this.LIX_EvalError = EvalError.prototype;
-	this.LIX_ReferenceError = ReferenceError.prototype;
-	this.LIX_SyntaxError = SyntaxError.prototype;
-	this.LIX_TypeError = TypeError.prototype;
-	this.LIX_URIError = URIError.prototype;
+	this.LError = Error.prototype;
+	this.LEvalError = EvalError.prototype;
+	this.LReferenceError = ReferenceError.prototype;
+	this.LSyntaxError = SyntaxError.prototype;
+	this.LTypeError = TypeError.prototype;
+	this.LURIError = URIError.prototype;
 
-	this.LIX_JSON = JSON
+	this.LJSON = JSON
 	JSON.Parse = function () {
 		var args = array_slice(arguments);
 		return function () {
