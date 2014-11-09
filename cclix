@@ -4,8 +4,17 @@ var parser = require('./grammer.js');
 var lib = require('./cclib.lix.js');
 var fs = require('fs');
 
-var file = fs.readFileSync(process.argv[2], 'utf-8');
+var file = fs.readFileSync(process.argv[3], 'utf-8');
 
 var ret = parser.parse(file);
 
-lib.compile(ret);
+if (process.argv[2] == 'run') {
+	isMakingModule = false
+} else if (process.argv[2] == 'm' || process.argv[2] == 'module') {
+	isMakingModule = true
+} else {
+	'Command Not Support Yet!'
+	process.exit(-1);
+}
+
+lib.compile(ret, isMakingModule);

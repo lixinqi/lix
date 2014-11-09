@@ -309,15 +309,23 @@ GenerateDefNew := ()->{
 	}
 }
 
-generateStart := (expr env ctx def)->{
+generateStart := (expr env ctx def isMakingModule)->{
 	def := GenerateDefNew call
 	body := expr.0 generate env ctx def
-	body := [
-		'try {\n'
-			body '(function(x){return x;}, 0)\n'
-		'} catch (e) {\n'
-		'}'
-	] join
+	if (isMakingModule) {
+		body := [
+			'module.exports = function () {\n'
+					'return ' body '\n'
+			'}\n'
+		] join
+	} else {
+		body := [
+			'try {\n'
+				body '(function(x){return x;}, 0)\n'
+			'} catch (e) {\n'
+			'}'
+		] join
+	}
 	[(def.defineVar call) ";\n" (def.appendExpr call) ";\n" body] join
 }
 
@@ -377,14 +385,7 @@ generate := (expr env ctx def)->{
 
 env0 := {
 	.exports 				null
-	.require 				([
-										"function load (filename) {"
-											"return function () {"
-												"return require (filename);"
-											"}"
-										"}"
-									] .join '\n')
-	.__builtin__		"load('/lib/lix/__builtin__.js')();"
+	.__builtin__		"require('/lib/lix/__builtin__.js');"
 }
 
 env_new := (env)->{
@@ -663,9 +664,12 @@ seqFuncParamsName := {
 	.ret '_ret'
 }
 
-exports.compile = (expr)->{
+compile := (expr isMakingModule)->{
 	libs := env0 | map (i)->{i} | .join "\n"
-	code := expr | flatten (i)->{} (i)->{i} | generate (env_new call) ctx0 def0
+	flattenExpr = expr | flatten (i)->{} (i)->{i}
+	code := flattenExpr generateStart (env_new call) ctx0 def0 isMakingModule
 	[libs "\n" code] join | console.log
 }
 
+exports.compile = compile
+compile
