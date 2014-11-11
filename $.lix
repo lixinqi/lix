@@ -1,0 +1,7 @@
+#!/usr/bin/env lix
+
+$[./node_modules/a.js] | print
+# $a
+# $a.name
+# $a.name | print
+# $a | print

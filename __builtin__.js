@@ -1204,7 +1204,7 @@
 		function _5(_cb, _step, _cont, _ret) {
 			switch (_step) {
 				case 0:
-					_ret = L__add__(Lname, '.js')(function (_ret) {
+					_ret = L__add__(Lname, '')(function (_ret) {
 						return _5(_cb, 1, true, _ret);
 					}, 0);
 				case 1:

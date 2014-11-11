@@ -33,6 +33,8 @@
 '.''/'+													{	return 'CURRENT_PATH'; }
 '/''/'+													{	return 'ROOT'; }
 
+'$'															{ return '$'; }
+
 
 \'(\\.|[^\\'])*\'|\"(\\.|[^\\"])*\"			{ return 'STRING_LITERAL'; }	
 
@@ -148,6 +150,14 @@ Object
 			{
 				$$ = [$1, '{atomic}', '{var}'];
 			}
+		| '$' VAR
+			{
+				$$ = [$2, '{module}', '{var}'];
+			}
+		| '$' '[' MultiLineExpr ']'
+			{
+				$$ = [makeExpr($3), '{module}', '{index}'];
+			} 
 		| Object '.' Field
 			{
 				$$ = [$1, '{.}', $3];

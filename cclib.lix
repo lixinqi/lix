@@ -348,12 +348,18 @@ generatePath := (expr env ctx def)->{
 	['[' path '].join("/")'] | join
 }
 
+generateModule := (expr env ctx def)->{
+	name := [(['"' expr.0 '"'] .join '') '{atomic}']
+	moduleExpr := [name ['module' '{atomic}' '{var}']]
+}
+
 generateOpTable := {
 	.['{start}'] 							generateStart
 	.['{seq}'] 								generateSeq
 	.['{mono}'] 							generateMono
 	.['{atomic}']							generateAtomic
 	.['{.}'] 									generateFieldAccess
+	.['{module}'] 						generateModule
 	.['{func}'] 							generateFunc
 	.['{array}'] 							generateArray
 	.['{object}'] 						generateObjectLiteral
@@ -545,6 +551,8 @@ flattenFieldAccess := (expr define)->{
 	if (expr.1 == '{.}') {
 		expr.0 = expr.0 flattenFieldAccess define
 		expr.2 = expr.2 flattenField define
+	} else {
+		expr = expr flatten	define
 	}
 	expr
 }
@@ -570,7 +578,6 @@ statementFlattenGenerator := ()->{
 			tmpRet := [seqFuncParamsName.ret '{atomic}' '{var}' 'aux']
 			data .push [tmpRet ':=' statement]
 			data .push [lixVar ':=' tmpRet]
-#			data .push [lixVar ':=' statement]
 			lixVar
 		}
 	}
@@ -615,12 +622,23 @@ flattenStart := (expr define)->{
 	[ret '{start}']
 }
 
+flattenModule := (expr define)->{
+	if (expr.2 == '{var}') {
+		name := [(['"' expr.0 '"'] .join '') '{atomic}']
+	} else if (expr.2 == '{index}') {
+		name := expr.0 flatten define
+	}
+	moduleExpr := [name ['module' '{atomic}' '{var}']]
+	moduleExpr define
+}
+
 flattenOpTable := {
 	.['{start}'] 							flattenStart
 	.['{seq}'] 								flattenSeq
 	.['{mono}'] 							flattenMono
 	.['{atomic}']							flattenAtomic
 	.['{.}'] 									flattenFieldAccess
+	.['{module}'] 						flattenModule
 	.['{func}'] 							flattenFunc
 	.['{array}'] 							flattenArray
 	.['{object}'] 						flattenObjectLiteral
