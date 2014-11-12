@@ -1,0 +1,13 @@
+#!/usr/bin/env lix m
+{
+	.Compose (f0 f1)->{
+		(i)->{ i | f0 | f1 }
+	}
+	.Partial (fn)->{
+		args := arguments Array.Slice 0
+		(i)->{
+			args.0 = i
+			fn apply args
+		}
+	}
+}
