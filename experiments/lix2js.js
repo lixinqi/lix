@@ -1,7 +1,7 @@
 exports.require = function (filename) {
 	return function (cb) {
 		try {
-			var ret = require(filename)()(cb, 0);
+			var ret = require(filename)(cb, 0);
 			cb(ret);
 		} catch (e) {
 		}
