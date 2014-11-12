@@ -267,7 +267,7 @@ objectBody;
 return join(["{\n", objectBody, "\n}"]);
 };_uniq_var_42.__lix_func__ = true;return _uniq_var_42;})();
 generateObjectLiteral;
-var transformVarName = (function () {var _uniq_var_43 = function (name) {if (((((__ne__(name, 'exports') && __ne__(name, 'undefined')) && __ne__(name, 'null')) && __ne__(name, 'true')) && __ne__(name, 'false'))) {
+var transformVarName = (function () {var _uniq_var_43 = function (name) {if ((((((__ne__(name, 'exports') && __ne__(name, 'undefined')) && __ne__(name, 'null')) && __ne__(name, 'true')) && __ne__(name, 'false')) && __ne__(name, 'require'))) {
 (name = __add__('L', name));
 
 };
@@ -468,7 +468,7 @@ def;
 var body = generate(expr[0], env, ctx, def);
 body;
 if (isMakingModule) {
-var body = join(['module.exports = function () {\n', 'return ', body, '\n', '}\n']);
+var body = join(['module.exports = ', body, '\n']);
 body;
 
 } else {
@@ -895,7 +895,7 @@ var name = flatten(expr[0], define);
 name;
 
 };
-var moduleExpr = [name, ['module', '{atomic}', '{var}']];
+var moduleExpr = [name, ['require', '{atomic}', '{var}']];
 moduleExpr;
 return define(moduleExpr);
 };_uniq_var_163.__lix_func__ = true;return _uniq_var_163;})();

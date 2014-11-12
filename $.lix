@@ -1,7 +1,10 @@
 #!/usr/bin/env lix
 
-$[./node_modules/a.js] | print
-# $a
-# $a.name
-# $a.name | print
-# $a | print
+./node_modules/a.js require | print
+
+$a
+$a.name
+$a.name | print
+$a | print
+
+$a .hi

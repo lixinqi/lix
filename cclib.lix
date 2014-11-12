@@ -157,7 +157,8 @@ generateObjectLiteral := (expr env ctx def)->{
 
 transformVarName := (name)->{
 	if ((name != 'exports') | and (name != 'undefined') |
-			and (name != 'null') | and (name != 'true') | and (name != 'false')) {
+			and (name != 'null') | and (name != 'true') | and (name != 'false') |
+			and (name != 'require')) {
 		name = 'L' + name
 	}
 	name
@@ -314,9 +315,7 @@ generateStart := (expr env ctx def isMakingModule)->{
 	body := expr.0 generate env ctx def
 	if (isMakingModule) {
 		body := [
-			'module.exports = function () {\n'
-					'return ' body '\n'
-			'}\n'
+			'module.exports = ' body '\n'
 		] join
 	} else {
 		body := [
@@ -628,7 +627,7 @@ flattenModule := (expr define)->{
 	} else if (expr.2 == '{index}') {
 		name := expr.0 flatten define
 	}
-	moduleExpr := [name ['module' '{atomic}' '{var}']]
+	moduleExpr := [name ['require' '{atomic}' '{var}']]
 	moduleExpr define
 }
 

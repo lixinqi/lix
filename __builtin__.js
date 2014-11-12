@@ -1193,45 +1193,5 @@
 		}
 	}
 
-	this.Lrequire = function (filename) {
-		return function () {
-			return require(filename);
-		}
-	}
-
-	this.Lmodule = (function (Lname) {
-		var _ret, _0, _1, Lx, _2;
-		function _5(_cb, _step, _cont, _ret) {
-			switch (_step) {
-				case 0:
-					_ret = L__add__(Lname, '')(function (_ret) {
-						return _5(_cb, 1, true, _ret);
-					}, 0);
-				case 1:
-					_0 = _ret;
-				case 2:
-					_ret = Lrequire(_0)(function (_ret) {
-						return _5(_cb, 3, true, _ret);
-					}, 0);
-				case 3:
-					_1 = _ret;
-				case 4:
-					_ret = Lx = _1;
-				case 5:
-					_ret = Lcall(Lx)(function (_ret) {
-						return _5(_cb, 6, true, _ret);
-					}, 0);
-				case 6:
-					_2 = _ret
-				default:
-			}
-			if (_cont) {
-				_cb(_ret)
-			} else {
-				return _ret
-			}
-		};
-		return _5;
-	})
 })();
 
