@@ -970,7 +970,7 @@ libs;
 };_uniq_var_174.__lix_func__ = true;return _uniq_var_174;})()));
 var code = generateStart(flattenExpr, call(env_new), ctx0, def0, isMakingModule);
 code;
-return console.log(join([libs, "\n", code]));
+return join([libs, "\n", code]);
 };_uniq_var_175.__lix_func__ = true;return _uniq_var_175;})();
 compile;
 (exports.compile = compile);

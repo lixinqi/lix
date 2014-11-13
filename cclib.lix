@@ -685,7 +685,7 @@ compile := (expr isMakingModule)->{
 	libs := env0 | map (i)->{i} | .join "\n"
 	flattenExpr = expr | flatten (i)->{} (i)->{i}
 	code := flattenExpr generateStart (env_new call) ctx0 def0 isMakingModule
-	[libs "\n" code] join | console.log
+	[libs "\n" code] join
 }
 
 exports.compile = compile
