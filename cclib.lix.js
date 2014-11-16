@@ -895,7 +895,9 @@ var name = flatten(expr[0], define);
 name;
 
 };
-var moduleExpr = [name, ['require', '{atomic}', '{var}']];
+var jsName = define([name, ['__add__', '{atomic}', '{var}'], ['"-lix"', '{atomic}']]);
+jsName;
+var moduleExpr = [jsName, ['require', '{atomic}', '{var}']];
 moduleExpr;
 return define(moduleExpr);
 };_uniq_var_163.__lix_func__ = true;return _uniq_var_163;})();

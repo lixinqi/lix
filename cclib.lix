@@ -627,7 +627,8 @@ flattenModule := [expr define]->{
 	} else if (expr.2 == '{index}') {
 		name := expr.0 flatten define
 	}
-	moduleExpr := [name ['require' '{atomic}' '{var}']]
+	jsName := [name ['__add__' '{atomic}' '{var}'] ['"-lix"' '{atomic}']] define
+	moduleExpr := [jsName ['require' '{atomic}' '{var}']]
 	moduleExpr define
 }
 

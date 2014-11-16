@@ -39,7 +39,7 @@ function getLixContent(filename)
 
 function saveJsCode(inputName, jsCode)
 {
-	var outputFileName = inputName.substr(0, inputName.length - 4) + '.js'; 
+	var outputFileName = inputName.substr(0, inputName.length - 4) + '-lix.js'; 
 	require('fs').writeFileSync(outputFileName, jsCode);
 	return outputFileName;
 }
