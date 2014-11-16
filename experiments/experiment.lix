@@ -4,15 +4,15 @@
 
 root := /var/www
 
-/[root]/nice
+/(root)/nice
 
 subpath := "src"
 
-/[root]/[subpath]
+/(root)/[subpath]
 
 subpath := "nice/nice"
 
-/[root]/nice/ok/[subpath]
+/(root)/nice/ok/(subpath)
 
 /redis
 

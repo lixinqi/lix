@@ -19,9 +19,9 @@
 %%
 <<EOF>>   											{ return 'EOF'; }
 
-"/"+"["\s*(("#".*)?\n+)*\s*			{ return 'DIRITEM_BRACKET'; }
-'.''/'+"["\s*(("#".*)?\n+)*\s*	{ return 'CURRENT_DIRITEM_BRACKET'; }
-'..''/'+"["\s*(("#".*)?\n+)*\s*	{ return 'PARENT_DIRITEM_BRACKET'; }
+"/"+"("\s*(("#".*)?\n+)*\s*			{ return 'DIRITEM_PARAN'; }
+'.''/'+"("\s*(("#".*)?\n+)*\s*	{ return 'CURRENT_DIRITEM_PARAN'; }
+'..''/'+"("\s*(("#".*)?\n+)*\s*	{ return 'PARENT_DIRITEM_PARAN'; }
 
 '/'+[\-.\u4e00-\u9fa5_a-zA-Z0-9]+	{	return 'DIRITEM'; }
 '/'+'..' 												{	return 'DIRITEM'; }
@@ -116,11 +116,11 @@ PropertyField
 			{
 				$$ = [$1, "{atomic}"];
 			}
-		| '[' STRING_LITERAL ']'
+		| OPENPARAN STRING_LITERAL CLOSEPARAN
 			{
 				$$ = [[$2, '{atomic}'], '{index}'];
 			}
-		| '[' NAT ']'
+		| OPENPARAN NAT CLOSEPARAN
 			{
 				$$ = [[$2, '{atomic}'], '{index}'];
 			}
@@ -135,7 +135,7 @@ Field
 			{
 				$$ = [$1, '{atomic}'];
 			}
-		| '[' MultiLineExpr ']'
+		| OPENPARAN MultiLineExpr CLOSEPARAN
 			{
 				$$ = [makeExpr($2), '{index}'];
 			}
@@ -154,7 +154,7 @@ Object
 			{
 				$$ = [$2, '{module}', '{var}'];
 			}
-		| '$' '[' MultiLineExpr ']'
+		| '$' OPENPARAN MultiLineExpr CLOSEPARAN
 			{
 				$$ = [makeExpr($3), '{module}', '{index}'];
 			} 
@@ -198,15 +198,15 @@ DirItem
 			{
 				$$ = [$1, '{path_item}'];
 			}
-		| CURRENT_DIRITEM_BRACKET MultiLineExpr ']'
+		| CURRENT_DIRITEM_PARAN MultiLineExpr CLOSEPARAN
 			{
 				$$ = [makeExpr($MultiLineExpr), '{path_arg_item}', './'];
 			}
-		| PARENT_DIRITEM_BRACKET MultiLineExpr ']'
+		| PARENT_DIRITEM_PARAN MultiLineExpr CLOSEPARAN
 			{
 				$$ = [makeExpr($MultiLineExpr), '{path_arg_item}', '../'];
 			}
-		| DIRITEM_BRACKET MultiLineExpr ']'
+		| DIRITEM_PARAN MultiLineExpr CLOSEPARAN
 			{
 				$$ = [makeExpr($MultiLineExpr), '{path_arg_item}', ''];
 			}
@@ -247,11 +247,19 @@ Path
 		;
 
 PrimaryExpr
-		: OPENPARAN MultiLineExpr CLOSEPARAN FUNC_ARROW '{' FUNC_BODY '}'
+		: '[' ']'
 			{
-				$$ = [$MultiLineExpr, '{func}', $FUNC_BODY];
+				$$ = [[], '{array}'];
 			}
-		| OPENPARAN CLOSEPARAN FUNC_ARROW '{' FUNC_BODY '}'
+		| '[' ArrayLiteral ']'
+			{
+				$$ = [$ArrayLiteral, '{array}'];
+			}
+		| '[' ArrayLiteral ']' FUNC_ARROW '{' FUNC_BODY '}'
+			{
+				$$ = [$ArrayLiteral, '{func}', $FUNC_BODY];
+			}
+		| '[' ']' FUNC_ARROW '{' FUNC_BODY '}'
 			{
 				$$ = [[], '{func}', $FUNC_BODY];
 			}
@@ -266,14 +274,6 @@ PrimaryExpr
 		| '{' PropertyList '}'
 			{
 				$$ = [$2, '{object}'];
-			}
-		| '[' ']'
-			{
-				$$ = [[], '{array}'];
-			}
-		| '[' ArrayLiteral ']'
-			{
-				$$ = [$ArrayLiteral, '{array}'];
 			}
 		| '.' PropertyField
 			{

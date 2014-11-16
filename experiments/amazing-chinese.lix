@@ -2,43 +2,43 @@
 
 输出到终端 := print
 
-并且 := (attr0 attr1)->{
-	(i)->{ (i attr0) and (i attr1) }
+并且 := [attr0 attr1]->{
+	[i]->{ (i attr0) and (i attr1) }
 }
 
-或者 := (attr0 attr1)->{
-	(i)->{ (i attr0) or (i attr1) }
+或者 := [attr0 attr1]->{
+	[i]->{ (i attr0) or (i attr1) }
 }
 
-大于 := (attr x)->{
-	(i)->{ (i attr) > x }
+大于 := [attr x]->{
+	[i]->{ (i attr) > x }
 }
 
-大于等于 := (attr x)->{
-	(i)->{ (i attr) >= x }
+大于等于 := [attr x]->{
+	[i]->{ (i attr) >= x }
 }
 
-等于 := (attr x)->{
-	(i)->{ (i attr) == x }
+等于 := [attr x]->{
+	[i]->{ (i attr) == x }
 }
 
-小于等于 := (attr x)->{
-	(i)->{ (i attr) <= x }
+小于等于 := [attr x]->{
+	[i]->{ (i attr) <= x }
 }
 
-小于 := (attr x)->{
-	(i)->{ (i attr) < x }
+小于 := [attr x]->{
+	[i]->{ (i attr) < x }
 }
 
-介于 := (attr range)->{
+介于 := [attr range]->{
 	(attr 大于 range.0) 并且 (attr 小于 range.1)
 }
 
-到 := (x y)->{
+到 := [x y]->{
 	[x y]
 }
 
-区间每个 := (range cb)->{
+区间每个 := [range cb]->{
 	start := range.0
 	end := range.1
 	if (start < end) {
@@ -48,7 +48,7 @@
 	0
 }
 
-直到返回假地迭代区间每个 := (range cb)->{
+直到返回假地迭代区间每个 := [range cb]->{
 	start := range.0
 	end := range.1
 	ret := true
@@ -61,31 +61,31 @@
 	ret
 }
 
-直到返回假地迭代每个 := (arr cb)->{
+直到返回假地迭代每个 := [arr cb]->{
 	l := arr.length
-	0 到 l | 直到返回假地迭代区间每个 (i)->{
-		arr.[i] | cb i
+	0 到 l | 直到返回假地迭代区间每个 [i]->{
+		arr.(i) | cb i
 	}
 }
 
-直到返回真地迭代每个 := (arr cb)->{
-	arr 直到返回假地迭代每个 (i)->{ i | cb | not } | not
+直到返回真地迭代每个 := [arr cb]->{
+	arr 直到返回假地迭代每个 [i]->{ i | cb | not } | not
 }
 
-push := (arr value)->{
+push := [arr value]->{
 	arr.[arr.length] = value
 	arr
 }
 
-同学 := ()->{true}
+同学 := []->{true}
 
 男的 := (.性别 等于 0)
 女的 := .性别 等于 1
 
-平均 := (数组 某属性)->{
+平均 := [数组 某属性]->{
 	total := 0
 	count := 0
-	数组 foreach (i)->{
+	数组 foreach [i]->{
 		total = total + (i 某属性)
 		count = count + 1
 	}
@@ -97,9 +97,9 @@ push := (arr value)->{
 }
 
 
-所有 := (arr 被选中)->{
+所有 := [arr 被选中]->{
 	ret := []
-	arr foreach (i)->{
+	arr foreach [i]->{
 		if (i 被选中) {
 			ret push i
 		}
@@ -108,20 +108,20 @@ push := (arr value)->{
 }
 
 
-自身 := (i)->{i}
+自身 := [i]->{i}
 
 
-存在 := (attr judge value)->{
-	(arr)->{
-		arr 直到返回真地迭代每个 (i)->{
+存在 := [attr judge value]->{
+	[arr]->{
+		arr 直到返回真地迭代每个 [i]->{
 			i (attr judge value)
 		}
 	}
 }
 
-都 := (attr judge value)->{
-	(arr)->{
-		arr 直到返回假地迭代每个 (i)->{
+都 := [attr judge value]->{
+	[arr]->{
+		arr 直到返回假地迭代每个 [i]->{
 			i (attr judge value)
 		}
 	}
@@ -224,12 +224,12 @@ _101班 := [
 # 
 # "_101班 若其 (.成绩 都 大于 60)" | 输出到终端
 # 
-#  平方 := (i)->{
+#  平方 := [i]->{
 #  	i * i
 #  }
 #  
-#  再 := (f0 f1)->{
-#  	(i)->{ i | f0 | f1 }
+#  再 := [f0 f1]->{
+#  	[i]->{ i | f0 | f1 }
 #  }
 #  
 #  四次方 := 平方 再 平方

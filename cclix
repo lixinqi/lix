@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cmd="./cclix.js run $1"
+jsFile=$($cmd)
+node $jsFile

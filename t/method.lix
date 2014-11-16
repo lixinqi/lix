@@ -1,18 +1,18 @@
 #!/usr/local/bin/node ./lix.js
 
 obj := {
-	.name (self)->{
+	.name [self]->{
 		self._name
 	}
-	.setName (self value)->{
+	.setName [self value]->{
 		self._name = value
 		self
 	}
 
-	.age (self)->{
+	.age [self]->{
 		self._age
 	}
-	.setAge (self value)->{
+	.setAge [self value]->{
 		self._age = value
 		self
 	}
@@ -26,20 +26,20 @@ obj := {
 #obj .name | print
 #obj .age | print
 
-obj | (i)->{
+obj | [i]->{
 			i | .name | print
 			i | .age | print
 			i
-	} | (i)->{
+	} | [i]->{
 			i | .setName "fine"  | .setAge 43
-	} | (i)->{
+	} | [i]->{
 			i | .name | print
 			i | .age | print
 			i
 	}
 
 
-# obj .['name'] | print
+# obj .('name') | print
 # 
 # obj | .name | print
 # 
@@ -48,19 +48,19 @@ obj | (i)->{
 # obj | .name | print
 # 
 arr := [
- 	(self)->{
+ 	[self]->{
  		self.1
  	}
 
  	"good"
 
-	(self)->{
+	[self]->{
 		self
 	}
 ]
 
  
-arr | .[2] | .[0] | print
+arr | .(2) | .(0) | print
 # 
 # arr := [
 # 	print
@@ -68,10 +68,10 @@ arr | .[2] | .[0] | print
 # 	"nice"
 # ]
 # 
-# arr .[0]
+# arr .(0)
 
-compose := (f0 f1)->{
-	(i)->{ i | f0 | f1 }
+compose := [f0 f1]->{
+	[i]->{ i | f0 | f1 }
 }
 
 obj := {
@@ -86,7 +86,7 @@ obj .name "oh yeah"
 
 obj | namePrint
 
-obj .name ()->{ "function changed" }
+obj .name []->{ "function changed" }
 
 obj | namePrint
 

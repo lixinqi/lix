@@ -1,17 +1,17 @@
 #!/usr/local/bin/node ./lix.js
-join := (arr)->{ arr .join "" }
+join := [arr]->{ arr .join "" }
 
-map := (arr cb)->{
+map := [arr cb]->{
 	ret := []
-	arr foreach (i index)->{
+	arr foreach [i index]->{
 		ret .push (i cb index)
 	}
 	ret
 }
 
-counterGenerator := ()->{
+counterGenerator := []->{
 	counter := 0
-	()->{
+	[]->{
 		ret := counter
 		counter = counter + 1
 		ret
@@ -20,42 +20,42 @@ counterGenerator := ()->{
 
 getCount := counterGenerator call
 
-getUniqVarName := ()->{ '_uniq_var_' + (getCount call) }
+getUniqVarName := []->{ '_uniq_var_' + (getCount call) }
 
-generateFuncArgs := (args env ctx)->{
-	args map (i)->{
+generateFuncArgs := [args env ctx]->{
+	args map [i]->{
 		varname := i.0
-		env.[varname] = true
+		env.(varname) = true
 		varname
 	} | .join ', '
 }
 
-ctx0 := (x)->{x}
+ctx0 := [x]->{x}
 
-generateSeq := (expr env ctx)->{
-	last := expr.[0].length - 1
-	seqCtx := (index)->{
+generateSeq := [expr env ctx]->{
+	last := expr.(0).length - 1
+	seqCtx := [index]->{
 		if (index < last) {
 			ctx0
 		} else {
 			ctx
 		}
 	}
-	expr.0 map (item index)->{
+	expr.0 map [item index]->{
 		item generate env (index seqCtx)
 	} | .join ";\n" | + ";\n"
 }
 
-generateOr := (expr env ctx)->{
+generateOr := [expr env ctx]->{
 	['(' (expr.0 generate env ctx0) " || " (expr.2 generate env ctx0) ')'] | join | ctx
 }
 
-generateAnd := (expr env ctx)->{
+generateAnd := [expr env ctx]->{
 	['(' (expr.0 generate env ctx0) " && " (expr.2 generate env ctx0) ')'] | join | ctx
 }
 
-generateIf := (expr env ctx)->{
-	expr.0 map (i)->{
+generateIf := [expr env ctx]->{
+	expr.0 map [i]->{
 		if (i.1 == 'else') {
 			['{\n' (i.0 generate env ctx) '\n}'] join
 		} (i.1 == 'if') {
@@ -70,24 +70,24 @@ generateIf := (expr env ctx)->{
 }
 
 operateFuncName := {
-	.["+"] 				'__add__'
-	.["-"] 				'__sub__'
-	.["*"] 				'__mul__'
-	.["/"] 				'__div__'
-	.["%"] 				'__mod__'
-	.[">="] 			'__ge__'
-	.[">"] 				'__gt__'
-	.["=="] 			'__eq__'
-	.["!="] 			'__ne__'
-	.["<"] 				'__lt__'
-	.["<="] 			'__le__'
+	.("+") 				'__add__'
+	.("-") 				'__sub__'
+	.("*") 				'__mul__'
+	.("/") 				'__div__'
+	.("%") 				'__mod__'
+	.(">=") 			'__ge__'
+	.(">") 				'__gt__'
+	.("==") 			'__eq__'
+	.("!=") 			'__ne__'
+	.("<") 				'__lt__'
+	.("<=") 			'__le__'
 }
 
-generateAtomic := (expr env ctx)->{
+generateAtomic := [expr env ctx]->{
 	ret := expr.0
 	if (expr.2 == '{var}') {
-		if (operateFuncName.[expr.0]) {
-			ret = operateFuncName.[expr.0]
+		if (operateFuncName.(expr.0)) {
+			ret = operateFuncName.(expr.0)
 		} else {
 			ret = expr.0 transformVarName
 		}
@@ -95,7 +95,7 @@ generateAtomic := (expr env ctx)->{
 	ret ctx
 }
 
-generatePropertyName := (expr env ctx)->{
+generatePropertyName := [expr env ctx]->{
 	if (expr.1 == '{atomic}') {
 		expr generateAtomic env ctx0 | ctx
 	} (expr.1 == '{index}') {
@@ -103,22 +103,22 @@ generatePropertyName := (expr env ctx)->{
 	}
 }
 
-generateProperty := (expr env ctx)->{
+generateProperty := [expr env ctx]->{
 	propertyName := expr.0 generatePropertyName env ctx0
 	propertyValue := expr.2 generate env ctx0
 	[propertyName ": " propertyValue] | join
 }
 
-generateObjectLiteral := (expr env ctx)->{
-	objectBody := expr.0 map (i)->{
+generateObjectLiteral := [expr env ctx]->{
+	objectBody := expr.0 map [i]->{
 		(i generateProperty env ctx0)
 	} | .join ",\n"
 	["{\n" objectBody "\n}"] | join | ctx
 }
 
-transformVarName := (name)->{ name }
+transformVarName := [name]->{ name }
 
-getVarName := (expr)->{
+getVarName := [expr]->{
 	if (expr.1 == '{atomic}') {
 		expr generateAtomic {} ctx0
 	} (expr.1 == '{.}') {
@@ -126,7 +126,7 @@ getVarName := (expr)->{
 	}
 }
 
-generateField := (expr env ctx)->{
+generateField := [expr env ctx]->{
 	if (expr.1 == '{atomic}') {
 		'.' + (expr generateAtomic env ctx0)
 	} (expr.1 == '{index}') {
@@ -135,7 +135,7 @@ generateField := (expr env ctx)->{
 }
 
 
-generateFieldAccess := (expr env ctx)->{
+generateFieldAccess := [expr env ctx]->{
 	if (expr.1 == '{atomic}') {
 		expr generateAtomic env ctx0 | ctx
 	} (expr.1 == '{.}') {
@@ -145,14 +145,14 @@ generateFieldAccess := (expr env ctx)->{
 	}
 }
 
-generateArray := (expr env ctx)->{
-	arrayBody := expr.0 map (i)->{
+generateArray := [expr env ctx]->{
+	arrayBody := expr.0 map [i]->{
 		(i generate env ctx0)
 	} | .join ', '
 	['[' arrayBody ']'] | join | ctx
 }
 
-generateMethod := (expr env ctx)->{
+generateMethod := [expr env ctx]->{
 	localVarName := getUniqVarName call
 	localValueName := getUniqVarName call
 	method := localVarName + (expr.0 generateField env ctx0)
@@ -177,34 +177,34 @@ generateMethod := (expr env ctx)->{
 }
 
 
-generateWhile := (expr env ctx)->{
+generateWhile := [expr env ctx]->{
 	['while (' (expr.0 generate env ctx0) ') {\n'
 			(expr.2 generate env ctx0)
 		"}\n"
 		('null' ctx)] join
 }
 
-generateBreak := (expr env ctx)->{
+generateBreak := [expr env ctx]->{
 	'break'
 }
 
-generateEmpty := (expr env ctx)->{
+generateEmpty := [expr env ctx]->{
 	0 ctx
 }
 
-generateDef := (expr env ctx)->{
-	varname := expr.[0].[0]
+generateDef := [expr env ctx]->{
+	varname := expr.(0).(0)
 	ret := [
 		'var ' varname ' = ' (expr.2 generate env ctx0) ";\n"
 		(varname ctx)
 	] | join
-	env.[varname] = true
+	env.(varname) = true
 	ret
 }
 
-generateAssign := (expr env ctx)->{
+generateAssign := [expr env ctx]->{
 	varname := expr.0 getVarName
-	if (env.[varname] == undefined) {
+	if (env.(varname) == undefined) {
 		varname console.log
 		"var undefined" console.log
 	}
@@ -214,10 +214,10 @@ generateAssign := (expr env ctx)->{
 	")"] | join | ctx
 }
 
-generateFunc := (expr env ctx)->{
+generateFunc := [expr env ctx]->{
 	funcEnv := env env_new
 	args := expr.0 generateFuncArgs funcEnv ctx0
-	body := expr.2 generate funcEnv (v)->{
+	body := expr.2 generate funcEnv [v]->{
 		'return ' + v
 	}
 	tmpVar := (getUniqVarName call)
@@ -228,10 +228,10 @@ generateFunc := (expr env ctx)->{
 	'})()'] | join | ctx
 }
 
-generateExpr := (expr env ctx)->{
+generateExpr := [expr env ctx]->{
 	func := (expr.1 generate env ctx0)
 	args := (expr.0 generate env ctx0)
-	expr foreach (item index)->{
+	expr foreach [item index]->{
 		if (index > 1) {
 			args = [args ', ' (item generate env ctx0)] join
 		}
@@ -239,61 +239,61 @@ generateExpr := (expr env ctx)->{
 	[func '(' args ')'] | join | ctx
 }
 
-generateStart := (expr env ctx)->{
+generateStart := [expr env ctx]->{
 	expr.0 generate env ctx
 }
 
-generateMono := (expr env ctx)->{
+generateMono := [expr env ctx]->{
 	expr.0 generate env ctx
 }
 
-generatePathItem := (expr env ctx)->{
+generatePathItem := [expr env ctx]->{
 	['"' expr.0 '"'] | join | ctx
 }
 
-generatePathArgItem := (expr env ctx)->{
+generatePathArgItem := [expr env ctx]->{
 	['("' expr.2 '" + ' (expr.0 generate env ctx0) ')'] | join | ctx
 }
 
-generatePath := (expr env ctx)->{
-	path := expr.0 map (i)->{
+generatePath := [expr env ctx]->{
+	path := expr.0 map [i]->{
 		i generate env ctx0
 	} | .join ','
 	['[' path '].join("/")'] | join | ctx
 }
 
 generateOpTable := {
-	.['{start}'] 							generateStart
-	.['{seq}'] 								generateSeq
-	.['{mono}'] 							generateMono
-	.['{atomic}']							generateAtomic
-	.['{.}'] 									generateFieldAccess
-	.['{func}'] 							generateFunc
-	.['{array}'] 							generateArray
-	.['{object}'] 						generateObjectLiteral
-	.['{method}'] 						generateMethod
-	.['{empty}'] 							generateEmpty
-	.['{path}'] 							generatePath
-	.['{path_item}'] 					generatePathItem
-	.['{path_arg_item}']			generatePathArgItem
-	.[':=']										generateDef
-	.['='] 										generateAssign
-	.['if']										generateIf
-	.['and']									generateAnd
-	.['or'] 									generateOr
-	.['while']								generateWhile
-	.['break'] 								generateBreak
+	.('{start}') 							generateStart
+	.('{seq}') 								generateSeq
+	.('{mono}') 							generateMono
+	.('{atomic}')							generateAtomic
+	.('{.}') 									generateFieldAccess
+	.('{func}') 							generateFunc
+	.('{array}') 							generateArray
+	.('{object}') 						generateObjectLiteral
+	.('{method}') 						generateMethod
+	.('{empty}') 							generateEmpty
+	.('{path}') 							generatePath
+	.('{path_item}') 					generatePathItem
+	.('{path_arg_item}')			generatePathArgItem
+	.(':=')										generateDef
+	.('=') 										generateAssign
+	.('if')										generateIf
+	.('and')									generateAnd
+	.('or') 									generateOr
+	.('while')								generateWhile
+	.('break') 								generateBreak
 }
 
-generateOp := (hint)->{
-	if (generateOpTable.[hint]) {
-		generateOpTable.[hint]
+generateOp := [hint]->{
+	if (generateOpTable.(hint)) {
+		generateOpTable.(hint)
 	} else {
 		generateExpr
 	}
 }
 
-generate := (expr env ctx)->{
+generate := [expr env ctx]->{
 	expr (expr.1 generateOp) env ctx
 }
 
@@ -325,41 +325,41 @@ env0 := {
 	.apply 					"function apply(fn) {\n return fn.apply(fn, arguments[1]); \n}"
 }
 
-env_new := (env)->{
+env_new := [env]->{
 	env = env or env0
-	Env := ()->{}
+	Env := []->{}
 	Env.prototype = env
 	Env _instance_
 }
 
-flattenExpr := (expr define)->{
-	expr map (item)->{
+flattenExpr := [expr define]->{
+	expr map [item]->{
 		item flatten define
 	} | define
 }
 
-flattenBreak := (expr define)->{
+flattenBreak := [expr define]->{
 	expr
 }
 
-flattenWhile := (expr define)->{
+flattenWhile := [expr define]->{
 		whileDefine := statementFlattenGenerator call
 		expr.0 = expr.0 flatten whileDefine
 		expr.2 = expr.2 flatten define0
-		expr.[2].[0] = expr.[2].[0] .concat (whileDefine call)
+		expr.(2).(0) = expr.(2).(0) .concat (whileDefine call)
 
-		whileDefine call | foreach (i)->{
+		whileDefine call | foreach [i]->{
 			i define true
 		}
 		expr
 }
 
-flattenOr := (expr define)->{
+flattenOr := [expr define]->{
 	ret := expr.0 flatten define
 	if (ret.2 != 'var') {
 		ret := ret define
 	}
-	getAndOpSeq := ()->{
+	getAndOpSeq := []->{
 		AndDefine := statementFlattenGenerator call
 		seqRet := expr.2 flatten AndDefine
 		seq := (AndDefine call)
@@ -370,12 +370,12 @@ flattenOr := (expr define)->{
 	ret
 }
 
-flattenAnd := (expr define)->{
+flattenAnd := [expr define]->{
 	ret := expr.0 flatten define
 	if (ret.2 != 'var') {
 		ret := ret define
 	}
-	getAndOpSeq := ()->{
+	getAndOpSeq := []->{
 		AndDefine := statementFlattenGenerator call
 		seqRet := expr.2 flatten AndDefine
 		seq := (AndDefine call)
@@ -386,8 +386,8 @@ flattenAnd := (expr define)->{
 	ret
 }
 
-_flattenIf := (expr define tmpVar ctx)->{
-	expr.0 foreach (i)->{
+_flattenIf := [expr define tmpVar ctx]->{
+	expr.0 foreach [i]->{
 		if (i.1 == 'else') {
 			elseSeq := i.0 flatten define0 ctx
 			[[[tmpVar elseSeq]] 'if'] define true
@@ -403,84 +403,84 @@ _flattenIf := (expr define tmpVar ctx)->{
 	}
 }
 
-flattenIf := (expr define)->{
+flattenIf := [expr define]->{
 	tmpVar := ['true' '{atomic}'] define
 	retVar := ['null' '{atomic}'] define
-	ctx := (i)->{
+	ctx := [i]->{
 		[retVar '=' i]
 	}
 	expr _flattenIf define tmpVar ctx
 	retVar
 }
 
-flattenAssign := (expr define)->{
+flattenAssign := [expr define]->{
 	expr.2 = expr.2 flatten define
 	expr
 }
 
-flattenDef := (expr define)->{
+flattenDef := [expr define]->{
 	expr.2 = expr.2 flatten define
 	expr define true
 	expr.0
 }
 
-flattenPathArgItem := (expr define)->{
+flattenPathArgItem := [expr define]->{
 	expr.0 = expr.0 flatten define
 	expr
 }
 
-flattenPathItem := (expr define)->{
+flattenPathItem := [expr define]->{
 	expr
 }
 
-flattenPath := (expr define)->{
-	expr.0 = expr.0 map (i)->{
+flattenPath := [expr define]->{
+	expr.0 = expr.0 map [i]->{
 		i flatten define
 	}
 	expr
 }
 
-flattenEmpty := (expr define)->{
+flattenEmpty := [expr define]->{
 	expr
 }
 
-flattenField := (expr define)->{
+flattenField := [expr define]->{
 	if (expr.1 == '{index}') {
 		expr.0 = expr.0 flatten define
 	}
 	expr
 }
 
-flattenMethod := (expr define)->{
+flattenMethod := [expr define]->{
 	expr.0 = expr.0 flattenField define
 	expr
 }
 
-flattenProperty := (expr define)->{
+flattenProperty := [expr define]->{
 	expr.2 = expr.2 flatten define
 	expr
 }
 
-flattenObjectLiteral := (expr define)->{
-	expr.0 = expr.0 map (i)->{
+flattenObjectLiteral := [expr define]->{
+	expr.0 = expr.0 map [i]->{
 		i flattenProperty define
 	}
 	expr
 }
 
-flattenArray := (expr define)->{
-	expr.0 = expr.0 map (i)->{
+flattenArray := [expr define]->{
+	expr.0 = expr.0 map [i]->{
 		i flatten define
 	}
 	expr
 }
 
-flattenFunc := (expr define)->{
+flattenFunc := [expr define]->{
 	expr.2 = expr.2 flatten define
 	expr
 }
 
-flattenFieldAccess := (expr define)->{
+flattenFieldAccess := [expr define]->{
 	if (expr.1 == '{.}') {
 		expr.0 = expr.0 flattenFieldAccess define
 		expr.2 = expr.2 flattenField define
@@ -488,17 +488,17 @@ flattenFieldAccess := (expr define)->{
 	expr
 }
 
-flattenAtomic := (expr define)->{
+flattenAtomic := [expr define]->{
 	expr
 }
 
-flattenMono := (expr define)->{
+flattenMono := [expr define]->{
 	expr.0 flatten define
 }
 
-statementFlattenGenerator := ()->{
+statementFlattenGenerator := []->{
 	data := []
-	(statement onlyPush)->{
+	[statement onlyPush]->{
 		if (statement == undefined) {
 			data
 		} (onlyPush) {
@@ -512,16 +512,16 @@ statementFlattenGenerator := ()->{
 	}
 }
 
-flattenSeq := (expr define seqCtx)->{
+flattenSeq := [expr define seqCtx]->{
 	ret := []
-	ctx := (stmt index)->{
+	ctx := [stmt index]->{
 		ret := stmt
-		if (seqCtx and ((index parseInt) == (expr.[0].length - 1))) {
+		if (seqCtx and ((index parseInt) == (expr.(0).length - 1))) {
 			ret := stmt seqCtx
 		}
 		ret
 	}
-	expr.0 foreach (item index)->{
+	expr.0 foreach [item index]->{
 		exprDefine := statementFlattenGenerator call
 		itemRet := item flatten exprDefine
 		ret = ret .concat (exprDefine call)
@@ -531,50 +531,50 @@ flattenSeq := (expr define seqCtx)->{
 	expr
 }
 
-flattenStart := (expr define)->{
+flattenStart := [expr define]->{
 	ret := expr.0 flatten define
 	[ret '{start}']
 }
 
 flattenOpTable := {
-	.['{start}'] 							flattenStart
-	.['{seq}'] 								flattenSeq
-	.['{mono}'] 							flattenMono
-	.['{atomic}']							flattenAtomic
-	.['{.}'] 									flattenFieldAccess
-	.['{func}'] 							flattenFunc
-	.['{array}'] 							flattenArray
-	.['{object}'] 						flattenObjectLiteral
-	.['{method}'] 						flattenMethod
-	.['{empty}'] 							flattenEmpty
-	.['{path}'] 							flattenPath
-	.['{path_item}'] 					flattenPathItem
-	.['{path_arg_item}']			flattenPathArgItem
-	.[':=']										flattenDef
-	.['='] 										flattenAssign
-	.['if']										flattenIf
-	.['and']									flattenAnd
-	.['or'] 									flattenOr
-	.['while']								flattenWhile
-	.['break'] 								flattenBreak
+	.('{start}') 							flattenStart
+	.('{seq}') 								flattenSeq
+	.('{mono}') 							flattenMono
+	.('{atomic}')							flattenAtomic
+	.('{.}') 									flattenFieldAccess
+	.('{func}') 							flattenFunc
+	.('{array}') 							flattenArray
+	.('{object}') 						flattenObjectLiteral
+	.('{method}') 						flattenMethod
+	.('{empty}') 							flattenEmpty
+	.('{path}') 							flattenPath
+	.('{path_item}') 					flattenPathItem
+	.('{path_arg_item}')			flattenPathArgItem
+	.(':=')										flattenDef
+	.('=') 										flattenAssign
+	.('if')										flattenIf
+	.('and')									flattenAnd
+	.('or') 									flattenOr
+	.('while')								flattenWhile
+	.('break') 								flattenBreak
 }
 
-flattenOp := (hint)->{
-	if (flattenOpTable.[hint]) {
-		flattenOpTable.[hint]
+flattenOp := [hint]->{
+	if (flattenOpTable.(hint)) {
+		flattenOpTable.(hint)
 	} else {
 		flattenExpr
 	}
 }
 
-flatten := (expr define ctx)->{
+flatten := [expr define ctx]->{
 	expr (expr.1 flattenOp) define ctx
 }
 
-define0 := (i)->{i}
+define0 := [i]->{i}
 
-exports.compile = (expr)->{
-	libs := env0 | map (i)->{i} | .join "\n"
-	code := expr | flatten (i)->{} | generate (env_new call) ctx0
+exports.compile = [expr]->{
+	libs := env0 | map [i]->{i} | .join "\n"
+	code := expr | flatten [i]->{} | generate (env_new call) ctx0
 	[libs "\n" code] join | console.log
 }

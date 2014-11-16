@@ -1,6 +1,6 @@
 #!/usr/local/bin/node
 
-subclass := (parent config)->{
+subclass := [parent config]->{
 	class := parent Object.Create
 	if (config) {
 		class config
@@ -12,29 +12,29 @@ instance := Object.Create
 
 MyObject := {}
 
-Person := MyObject subclass (pub)->{
+Person := MyObject subclass [pub]->{
 
 	pub.__class__ = 'Person'
 
 	pub.name = 'lix'
 
-	pub.__init__ = (self name age)->{
+	pub.__init__ = [self name age]->{
 		self.name = name
 	}
 
-	pub.hi = (self)->{
+	pub.hi = [self]->{
 		self.name print
 	}
 
-	sleep := (secs)->{
-		cc call (brk)->{
-			secs * 1000 | timeout ()->{
+	sleep := [secs]->{
+		cc call [brk]->{
+			secs * 1000 | timeout []->{
 				brk call
 			}
 		}
 	}
 
-	timesRepeat := (count fn)->{
+	timesRepeat := [count fn]->{
 		i := 0
 		while (i < count) {
 			fn call
@@ -42,15 +42,15 @@ Person := MyObject subclass (pub)->{
 		}
 	}
 
-	periodically := (count secs fn)->{
-		count timesRepeat ()->{
+	periodically := [count secs fn]->{
+		count timesRepeat []->{
 			secs sleep
 			fn call
 		}
 	}
 
-	pub.periodicallyHi = (self)->{
-		periodically call 5 1 ()->{
+	pub.periodicallyHi = [self]->{
+		periodically call 5 1 []->{
 			self .hi
 		}
 	}
@@ -58,14 +58,14 @@ Person := MyObject subclass (pub)->{
 
 person := Person instance
 
-Student := Person subclass (pub)->{
-	pub.hi = (self)->{
+Student := Person subclass [pub]->{
+	pub.hi = [self]->{
 		'Im\' a student' | print
 	}
 }
 
-Teacher := Person subclass (pub)->{
-	pub.hi = (self)->{
+Teacher := Person subclass [pub]->{
+	pub.hi = [self]->{
 		'Im\' a teacher' | print
 	}
 }

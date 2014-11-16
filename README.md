@@ -41,9 +41,9 @@ a.js:
 
 a.lix:
 
-    sleep := (ms)->{
-      cc call (brk)->{
-        ms timeout ()->{
+    sleep := [ms]->{
+      cc call [brk]->{
+        ms timeout []->{
           brk call
         }
       }

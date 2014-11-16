@@ -22,17 +22,17 @@ fs := 'fs' require
 # 
 # '----------' print
 # 
-# ../lix/./ | fs.readdirSync | foreach (filename)->{
+# ../lix/./ | fs.readdirSync | foreach [filename]->{
 # 		filename console.log
 # }
 # 
-# ../ fs.readdir (err filenames)->{
-# 	filenames foreach (filename)->{
+# ../ fs.readdir [err filenames]->{
+# 	filenames foreach [filename]->{
 # 		filename console.log
 # 	}
 # }
 
-# ../ | $ls | foreach (filename)->{
+# ../ | $ls | foreach [filename]->{
 # 	filename console.log
 # }
 
@@ -45,24 +45,24 @@ fs := 'fs' require
 # ../book
 # 
 # 
-# /[good.b]/path/to/[file]
+# /(good.b)/path/to/(file)
 
 # home := /home/lixinqi
 # 
 # tmp := "tmp"
 # 
-# /[home]/[tmp]/ | console.log
+# /(home)/(tmp)/ | console.log
 # 
 # 
 # cur := './'
 # 
 # tmp := 'lix'
 # 
-# ../[tmp] | fs.readdirSync | .join '\t' | print
+# ../(tmp) | fs.readdirSync | .join '\t' | print
 
-process.env.PATH | .split ':' | foreach (path)->{
-	/[path]/node | fs.existsSync | (exists)->{
-		[/[path]/node exists] print	
+process.env.PATH | .split ':' | foreach [path]->{
+	/(path)/node | fs.existsSync | [exists]->{
+		[/(path)/node exists] print	
 	}
 }
 

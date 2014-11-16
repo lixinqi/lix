@@ -1,13 +1,13 @@
 #!/usr/local/bin/node ./lix.js
-call := (fn)->{
+call := [fn]->{
 	0 fn
 }
 
-()->{
+[]->{
 	["Hello world"]
 } | call | print
 
-()->{
+[]->{
 	ret := {
 		.hi "Hello world"
 	}

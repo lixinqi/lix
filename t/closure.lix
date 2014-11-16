@@ -1,13 +1,13 @@
 #!/usr/local/bin/node ./lix.js
-counterGenerator := (counter)->{
-	()->{
+counterGenerator := [counter]->{
+	[]->{
 		ret := counter
 		counter = (counter + 1)
 		ret
 	}
 }
 
-go := (fn)->{
+go := [fn]->{
 	0 fn
 }
 

@@ -1,37 +1,37 @@
 #!/usr/bin/env lix
-Compose := (f0 f1)->{
-	(i)->{ i | f0 | f1 }
+Compose := [f0 f1]->{
+	[i]->{ i | f0 | f1 }
 }
 
-Partial := (fn)->{
+Partial := [fn]->{
 	args := arguments Array.Slice 0
-	(i)->{
+	[i]->{
 		args.0 = i
 		fn apply args
 	}
 }
 
-map := (arr attr)->{
+map := [arr attr]->{
 	ret := []
-	arr foreach (item index)->{
+	arr foreach [item index]->{
 		ret .Push (item attr index)
 	}
 	ret
 }
 
-vectorCall := (arr fnVector)->{
-	arr map (i index)->{
+vectorCall := [arr fnVector]->{
+	arr map [i index]->{
 		ret := i
-		if (fnVector.[index]) {
-			ret = i fnVector.[index]
+		if (fnVector.(index)) {
+			ret = i fnVector.(index)
 		}
 		ret
 	}
 }
 
-Decorate := (fn)->{
+Decorate := [fn]->{
 	funcWrappers := arguments Array.Slice 1
-	()->{
+	[]->{
 		args := arguments Array.Slice 0
 		fn apply (args vectorCall funcWrappers)
 	}
@@ -42,17 +42,17 @@ inc2 := + Partial 2
 
 inc3 := inc1 Compose inc2
 
-square := (i)->{ i * i }
+square := [i]->{ i * i }
 
 addSquare := + Decorate square square
 
 # 3 addSquare 4 | print
 
-foreachSquare := (arr cb)->{
+foreachSquare := [arr cb]->{
 	arr foreach (square Compose cb)
 }
 
-[1 2 3 4] foreachSquare (i)->{
+[1 2 3 4] foreachSquare [i]->{
 	i print
 }
 

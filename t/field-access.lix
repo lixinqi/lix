@@ -1,8 +1,8 @@
 #!/usr/local/bin/node ./lix.js
 a := {}
 a.a
-a.["a"]
-a.[a]
+a.("a")
+a.(a)
 a.0
 a.1
 a.[
@@ -25,4 +25,4 @@ x := {
 x.y.z | print
 
 #x.0.12.3
-x.[0].[12].[3] | print
+x.(0).(12).(3) | print

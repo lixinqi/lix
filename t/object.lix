@@ -3,19 +3,19 @@ a := {
 	.1 									'ok'
 	.a 									"good"
 	.b 									"nice"
-	.["hello world"] 		'good'
-	.[9527] 						'fine'
+	.("hello world") 		'good'
+	.(9527) 						'fine'
 }
 
 a | print
 a.1 | print 
-a.[1] | print 
-a.["1"] | print 
+a.(1) | print 
+a.("1") | print 
 a.a | print
-a.["a"] | print
+a.("a") | print
 a.b | print
 index := "hello world"
-index | + ": " | + a.[index] | print
+index | + ": " | + a.(index) | print
 
 b := {}
 
@@ -27,12 +27,12 @@ b.1 = 28
 b print
 
 list := {
-	.length (i)->{
+	.length [i]->{
 		i.length
 	}
 
-	.append (l x)->{
-		l.[l.length] = x
+	.append [l x]->{
+		l.(l.length) = x
 		l
 	}
 
@@ -40,19 +40,19 @@ list := {
 
 [1 2 3 4 ] | list.length | print
 
-pipe := (i fn)->{
+pipe := [i fn]->{
 	i fn
 	i
 }
 
 [0 1 2 3] | list.append 30 | pipe print | list.length | print
 
-A := (self name)->{
+A := [self name]->{
 	self.name = name
 	self
 }
 
-_new := (Class args)->{
+_new := [Class args]->{
 	obj := {}
 	obj Class args
 }
@@ -63,43 +63,43 @@ obj := A _new "good"
 
 obj.name | print
 
-ext := (Class config)->{
+ext := [Class config]->{
 	newClassObj := {}
 	newClassObj config
-	newClass := ()->{
+	newClass := []->{
 		this
 	}
 	newClass.prototype = newClassObj
 	newClass
 }
 
-A := {} ext (pub)->{
+A := {} ext [pub]->{
 	pub._name = "lixinqi"
 	pub._age = 20
 
-	pub.construct = (self)->{
+	pub.construct = [self]->{
 		self
 	}
 
-	pub.name = (self value)->{
+	pub.name = [self value]->{
 		if (value == undefined) {
 			self._name
 		} else {
 			self._name = value
 		}
 	}
-	pub.age = (self)->{
+	pub.age = [self]->{
 		self._age
 	}
 }
 
-instance := (Class args)->{
+instance := [Class args]->{
 	obj := Class _instance_
 	obj Class.prototype.construct
 	obj
 }
 
-go := (fn)->{
+go := [fn]->{
 	0 fn
 }
 

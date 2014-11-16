@@ -1,0 +1,5 @@
+
+inc1 := (i)->{ i + 1 }
+inc2 := (i)->{ i + 2 }
+
+3 | (inc1 $Compose inc2) | print
