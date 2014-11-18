@@ -1,5 +1,7 @@
 #!/usr/local/bin/node
 
+var fs = require('fs');
+
 function parseOptions(cbs)
 {
 	if (process.argv.length == 3) {
@@ -36,10 +38,33 @@ function getLixContent(filename)
 	return require('fs').readFileSync(filename, 'utf-8');
 }
 
+function cachedFn(fn, cache)
+{
+	cache = cache || {}
+	return function (id) {
+		if (cache[id] === undefined) {
+			cache[id] = fn(id);
+		}
+		return cache[id];
+	}
+}
+
+var mkdirCache = {}
+
+function mkdirP(inputName)
+{
+	var func = cachedFn(function (inputName) {
+		var dirname = inputName.substr(0, inputName.length - 4) + '-lix';
+		require('mkdirp').sync(dirname);
+		return dirname;
+	}, mkdirCache);
+	return func(inputName);
+}
 
 function saveJsCode(inputName, jsCode)
 {
-	var outputFileName = inputName.substr(0, inputName.length - 4) + '-lix.js'; 
+	var outputDir = mkdirP(inputName);
+	var outputFileName = outputDir + '/index.js'; 
 	require('fs').writeFileSync(outputFileName, jsCode);
 	return outputFileName;
 }
@@ -50,12 +75,24 @@ function compile(lixContent, filename, isMakingModule) {
 	return lib.compile(parser.parse(lixContent), isMakingModule);
 }
 
+function saveLixCode(inputFileName)
+{
+	fs.readFile(inputFileName, function (err, data) {
+		if (err) {
+			return ;
+		}
+		var dir = mkdirP(inputFileName);
+		fs.writeFileSync(dir + '/index.lix', data);
+	});
+}
+
 function compileAndSave(inputFileName, isMakingModule)
 {
 	checkInputFile(inputFileName);
 	var content = getLixContent(inputFileName);
 	var jsCode = compile(content, inputFileName, isMakingModule);
 	var outputFileName = saveJsCode(inputFileName, jsCode);
+	saveLixCode(inputFileName);
 	return outputFileName
 }
 
