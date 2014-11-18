@@ -5,13 +5,13 @@
 # inc3 := inc1 $Compose inc2
 # 1 inc3 | print
 
-# ReadFile := [filename options]->{
-# 	cc call [brk]->{
-# 		filename $fs.ReadFileAsync options [err data]->{
-# 			brk call data
-# 		}
-# 	}
-# }
+ReadFile := [filename options]->{
+	cc call [brk]->{
+		filename $fs.ReadFileAsync options [err data]->{
+			brk call data
+		}
+	}
+}
 
 # ./t.lix | $fs.ReadFileAsync 'utf-8' [err data]->{
 # }
@@ -24,8 +24,8 @@
 
 WriteFile := [filename data options]->{
 	cc call [brk]->{
-		filename $fs.WriteFileAsync data options [err]->{
-			brk call err
+		filename $fs.WriteFileAsync data options [err data]->{
+			brk call filename
 		}
 	}
 }
@@ -33,13 +33,13 @@ WriteFile := [filename data options]->{
 AppendFile := [filename data options]->{
 	cc call [brk]->{
 		filename $fs.AppendFileAsync data options [err]->{
-			brk call err
+			brk call filename
 		}
 	}
 }
 
 
-/tmp/a | WriteFile 'gooooooooooooood' | print
-/tmp/a | AppendFile '\nnice' | print
+/tmp/a | WriteFile 'gooooooooooooood' | ReadFile 'utf-8' | print
+/tmp/a | AppendFile '\nnice' | ReadFile 'utf-8' | print
 
 $a | print
