@@ -22,24 +22,35 @@ ReadFile := [filename options]->{
 # 	err print
 # }
 
-WriteFile := [filename data options]->{
-	cc call [brk]->{
-		filename $fs.WriteFileAsync data options [err data]->{
-			brk call filename
-		}
-	}
+# WriteFile := [filename data options]->{
+# 	cc call [brk]->{
+# 		filename $fs.WriteFileAsync data options [err data]->{
+# 			brk call filename
+# 		}
+# 	}
+# }
+# 
+# AppendFile := [filename data options]->{
+# 	cc call [brk]->{
+# 		filename $fs.AppendFileAsync data options [err]->{
+# 			brk call filename
+# 		}
+# 	}
+# }
+# 
+# 
+# /tmp/a | WriteFile 'gooooooooooooood' | ReadFile 'utf-8' | print
+# /tmp/a | AppendFile '\nnice' | ReadFile 'utf-8' | print
+# 
+# $a | print
+
+
+'==' $test [assert]->{
+	(0 == 0) assert
+	(1 == 0) assert
 }
 
-AppendFile := [filename data options]->{
-	cc call [brk]->{
-		filename $fs.AppendFileAsync data options [err]->{
-			brk call filename
-		}
-	}
+'!=' $test [assert]->{
+	(0 != 0) assert
+	(1 != 0) assert
 }
-
-
-/tmp/a | WriteFile 'gooooooooooooood' | ReadFile 'utf-8' | print
-/tmp/a | AppendFile '\nnice' | ReadFile 'utf-8' | print
-
-$a | print
