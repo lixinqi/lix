@@ -44,13 +44,4 @@ ReadFile := [filename options]->{
 # 
 # $a | print
 
-
-'==' $test [assert]->{
-	(0 == 0) assert
-	(1 == 0) assert
-}
-
-'!=' $test [assert]->{
-	(0 != 0) assert
-	(1 != 0) assert
-}
+/etc/passwd $fs.ReadFile 'utf-8' | .1 | print
