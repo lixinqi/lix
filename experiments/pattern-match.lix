@@ -1,0 +1,16 @@
+(0 fib)->{ 1 }
+(1 fib)->{ 1 }
+(x fib)->{ (x - 1 | fib) + (x - 2 | fib) }
+((x :(x < 0)) fib)->{ Error new 'x < 0' | raise }
+
+/tmp/a.txt $fs.ReadFile | 打印到终端 | tee ret
+
+((e :Error) 打印到终端)->{ e raise } 
+ret
+
+((filename :string) Cat)->{
+
+	((error :Error) handleError)->{ error raise }
+	filename $fs.ReadFile | handleError
+}
+

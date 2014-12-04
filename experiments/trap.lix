@@ -1,0 +1,45 @@
+try := [tryBlock catchBlock]->{
+	cc call [brk]->{
+		trapList .Push [e]->{
+			catchBlock call e
+			brk call
+		}
+
+		tryBlock call
+
+		trapList .Pop
+		brk call
+	}
+}
+
+raise := [e]->{
+	trapList .Pop | tee cont
+	cont call e
+}
+
+try call []->{
+
+	try call []->{
+		Error new | raise
+	} [e]->{
+		e .message | print
+		e raise
+	}
+
+} [e]->{
+	e .message | print
+}
+
+$try call []->{
+
+	$try call []->{
+		Error new | $raise
+	} [e]->{
+		e .message | print
+		e raise
+	}
+
+} [e]->{
+	e .message | print
+}
+
