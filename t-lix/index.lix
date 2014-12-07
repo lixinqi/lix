@@ -45,4 +45,3 @@ ReadFile := [filename options]->{
 # $a | print
 
 /etc/passwd $fs.ReadFile 'utf-8' | .1 | print
-/etc/passwd $fs.ReadFile 'utf-8' | .0 | print
