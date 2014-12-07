@@ -1,5 +1,33 @@
 (function () {
 
+	require.lixCache = {}
+
+	this._require = function (__require) {
+		return function (name) {
+			var path = name;
+			try {
+				path = __require.resolve(name);
+			} catch (e) {
+				return function () {
+					return null;
+				}
+			}
+			if (require.lixCache[path] === undefined) {
+				var f = __require(name);
+				return function (cb, step, cont, a) {
+					require.lixCache[path] = f(function (ret) {
+						require.lixCache[path] = ret;
+						cb(ret);
+					}, step, cont, a);
+					return require.lixCache[path];
+				}
+			}
+			return function () {
+				return __require.lixCache[path];
+			}
+		}
+	}
+
 	Function.prototype.unCurrying = function() {
 		return this.call.bind(this);
 	};

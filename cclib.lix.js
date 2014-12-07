@@ -267,7 +267,10 @@ objectBody;
 return join(["{\n", objectBody, "\n}"]);
 };_uniq_var_42.__lix_func__ = true;return _uniq_var_42;})();
 generateObjectLiteral;
-var transformVarName = (function () {var _uniq_var_43 = function (name) {if ((((((__ne__(name, 'exports') && __ne__(name, 'undefined')) && __ne__(name, 'null')) && __ne__(name, 'true')) && __ne__(name, 'false')) && __ne__(name, 'require'))) {
+var transformVarName = (function () {var _uniq_var_43 = function (name) {if (__eq__(name, 'require')) {
+(name = '_require(require)');
+
+} else if (((((__ne__(name, 'exports') && __ne__(name, 'undefined')) && __ne__(name, 'null')) && __ne__(name, 'true')) && __ne__(name, 'false'))) {
 (name = __add__('L', name));
 
 };

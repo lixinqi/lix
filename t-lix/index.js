@@ -10,7 +10,7 @@ return _13(_cb, 1, true, _ret);
 case 1:
 _0 = _ret;
 case 2:
-_ret = require(_0)(function (_ret) {
+_ret = _require(require)(_0)(function (_ret) {
 return _13(_cb, 3, true, _ret);
 }, 0);
 case 3:
@@ -22,7 +22,7 @@ return _13(_cb, 5, true, _ret);
 case 5:
 _2 = _ret;
 case 6:
-_ret = require(_2)(function (_ret) {
+_ret = _require(require)(_2)(function (_ret) {
 return _13(_cb, 7, true, _ret);
 }, 0);
 case 7:
@@ -34,7 +34,7 @@ return _13(_cb, 9, true, _ret);
 case 9:
 _4 = _ret;
 case 10:
-_ret = require(_4)(function (_ret) {
+_ret = _require(require)(_4)(function (_ret) {
 return _13(_cb, 11, true, _ret);
 }, 0);
 case 11:
@@ -46,7 +46,7 @@ return _13(_cb, 13, true, _ret);
 case 13:
 _6 = _ret;
 case 14:
-_ret = require(_6)(function (_ret) {
+_ret = _require(require)(_6)(function (_ret) {
 return _13(_cb, 15, true, _ret);
 }, 0);
 case 15:
@@ -70,7 +70,7 @@ return _17(_cb, 1, true, _ret);
 case 1:
 _8 = _ret;
 case 2:
-_ret = require(_8)(function (_ret) {
+_ret = _require(require)(_8)(function (_ret) {
 return _17(_cb, 3, true, _ret);
 }, 0);
 case 3:
