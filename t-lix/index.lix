@@ -1,5 +1,10 @@
 #!/usr/bin/env lix
 
+$a
+$a
+$a
+$a
+
 # inc1 := + $Partial 1
 # inc2 := + $Partial 2
 # inc3 := inc1 $Compose inc2
@@ -44,4 +49,4 @@ ReadFile := [filename options]->{
 # 
 # $a | print
 
-/etc/passwd $fs.ReadFile 'utf-8' | .1 | print
+# /etc/passwd $fs.ReadFile 'utf-8' | .1 | print

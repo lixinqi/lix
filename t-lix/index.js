@@ -1,44 +1,92 @@
 
 require('/lib/lix/__builtin__.js');
-var LReadFile, _ret, _5, _6, _7, _8, _9;
-function _10(_cb, _step, _cont, _ret) {
+var _ret, _0, _1, _2, _3, _4, _5, _6, _7, LReadFile;
+function _13(_cb, _step, _cont, _ret) {
 switch (_step) {
 case 0:
-_ret = LReadFile = (function (Lfilename, Loptions) {
-var Larguments = arguments;
-var _ret, _4;
-function _12(_cb, _step, _cont, _ret) {
-switch (_step) {
-case 0:
-_ret = Lcall(Lcc, (function (Lbrk) {
-var Larguments = arguments;
-var _ret, _0, _1, _3;
-function _14(_cb, _step, _cont, _ret) {
-switch (_step) {
-case 0:
-_ret = L__add__("fs", "-lix")(function (_ret) {
-return _14(_cb, 1, true, _ret);
+_ret = L__add__("a", "-lix")(function (_ret) {
+return _13(_cb, 1, true, _ret);
 }, 0);
 case 1:
 _0 = _ret;
 case 2:
 _ret = require(_0)(function (_ret) {
-return _14(_cb, 3, true, _ret);
+return _13(_cb, 3, true, _ret);
 }, 0);
 case 3:
 _1 = _ret;
 case 4:
-_ret = _1.ReadFileAsync(Lfilename, Loptions, (function (Lerr, Ldata) {
+_ret = L__add__("a", "-lix")(function (_ret) {
+return _13(_cb, 5, true, _ret);
+}, 0);
+case 5:
+_2 = _ret;
+case 6:
+_ret = require(_2)(function (_ret) {
+return _13(_cb, 7, true, _ret);
+}, 0);
+case 7:
+_3 = _ret;
+case 8:
+_ret = L__add__("a", "-lix")(function (_ret) {
+return _13(_cb, 9, true, _ret);
+}, 0);
+case 9:
+_4 = _ret;
+case 10:
+_ret = require(_4)(function (_ret) {
+return _13(_cb, 11, true, _ret);
+}, 0);
+case 11:
+_5 = _ret;
+case 12:
+_ret = L__add__("a", "-lix")(function (_ret) {
+return _13(_cb, 13, true, _ret);
+}, 0);
+case 13:
+_6 = _ret;
+case 14:
+_ret = require(_6)(function (_ret) {
+return _13(_cb, 15, true, _ret);
+}, 0);
+case 15:
+_7 = _ret;
+case 16:
+_ret = LReadFile = (function (Lfilename, Loptions) {
 var Larguments = arguments;
-var _ret, _2;
-function _16(_cb, _step, _cont, _ret) {
+var _ret, _12;
+function _15(_cb, _step, _cont, _ret) {
+switch (_step) {
+case 0:
+_ret = Lcall(Lcc, (function (Lbrk) {
+var Larguments = arguments;
+var _ret, _8, _9, _11;
+function _17(_cb, _step, _cont, _ret) {
+switch (_step) {
+case 0:
+_ret = L__add__("fs", "-lix")(function (_ret) {
+return _17(_cb, 1, true, _ret);
+}, 0);
+case 1:
+_8 = _ret;
+case 2:
+_ret = require(_8)(function (_ret) {
+return _17(_cb, 3, true, _ret);
+}, 0);
+case 3:
+_9 = _ret;
+case 4:
+_ret = _9.ReadFileAsync(Lfilename, Loptions, (function (Lerr, Ldata) {
+var Larguments = arguments;
+var _ret, _10;
+function _19(_cb, _step, _cont, _ret) {
 switch (_step) {
 case 0:
 _ret = Lcall(Lbrk, Ldata)(function (_ret) {
-return _16(_cb, 1, true, _ret);
+return _19(_cb, 1, true, _ret);
 }, 0);
 case 1:
-_2 = _ret
+_10 = _ret
 default:
 }
 if (_cont) {
@@ -47,12 +95,12 @@ _cb(_ret)
 return _ret
 }
 };
-return _16;
+return _19;
 }))(function (_ret) {
-return _14(_cb, 5, true, _ret);
+return _17(_cb, 5, true, _ret);
 }, 0);
 case 5:
-_3 = _ret
+_11 = _ret
 default:
 }
 if (_cont) {
@@ -61,12 +109,12 @@ _cb(_ret)
 return _ret
 }
 };
-return _14;
+return _17;
 }))(function (_ret) {
-return _12(_cb, 1, true, _ret);
+return _15(_cb, 1, true, _ret);
 }, 0);
 case 1:
-_4 = _ret
+_12 = _ret
 default:
 }
 if (_cont) {
@@ -75,51 +123,8 @@ _cb(_ret)
 return _ret
 }
 };
-return _12;
-});
-case 1:
-_ret = L__add__("fs", "-lix")(function (_ret) {
-return _10(_cb, 2, true, _ret);
-}, 0);
-case 2:
-_5 = _ret;
-case 3:
-_ret = require(_5)(function (_ret) {
-return _10(_cb, 4, true, _ret);
-}, 0);
-case 4:
-_6 = _ret;
-case 5:
-_ret = _6.ReadFile(["/etc","/passwd"].join("/"), 'utf-8')(function (_ret) {
-return _10(_cb, 6, true, _ret);
-}, 0);
-case 6:
-_7 = _ret;
-case 7:
-_ret = (function (_17, _18) {
-if (typeof _17[1] === 'function') {
-arguments = Array.prototype.slice.call(arguments, 0, arguments.length);
-return _17[1].apply(_17, arguments);
-} else if (_17[1] !== undefined) {
-if (_18 === undefined) {
-return function (_ret) {
-return _17[1];
-}
-}
-return function (_ret) {
-_17[1] = _18;
-}
-}})(_7)(function (_ret) {
-return _10(_cb, 8, true, _ret);
-}, 0);
-case 8:
-_8 = _ret;
-case 9:
-_ret = Lprint(_8)(function (_ret) {
-return _10(_cb, 10, true, _ret);
-}, 0);
-case 10:
-_9 = _ret
+return _15;
+})
 default:
 }
 if (_cont) {
@@ -128,4 +133,4 @@ _cb(_ret)
 return _ret
 }
 };
-module.exports = _10
+module.exports = _13
