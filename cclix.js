@@ -54,7 +54,7 @@ var mkdirCache = {}
 function mkdirP(inputName)
 {
 	var func = cachedFn(function (inputName) {
-		var dirname = require('path').dirname(__filename);
+		var dirname = require('path').dirname(__filename) + '/';
 		dirname += inputName.substr(0, inputName.length - 4) + '-lix';
 		require('mkdirp').sync(dirname);
 		return dirname;

@@ -2,4 +2,5 @@
 
 cmd="./cclix.js run $1"
 jsFile=$($cmd)
+# echo $jsFile
 ./lix-run.js $jsFile
