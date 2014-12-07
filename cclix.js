@@ -54,7 +54,8 @@ var mkdirCache = {}
 function mkdirP(inputName)
 {
 	var func = cachedFn(function (inputName) {
-		var dirname = inputName.substr(0, inputName.length - 4) + '-lix';
+		var dirname = require('path').dirname(__filename);
+		dirname += inputName.substr(0, inputName.length - 4) + '-lix';
 		require('mkdirp').sync(dirname);
 		return dirname;
 	}, mkdirCache);
@@ -86,10 +87,12 @@ function saveLixCode(inputFileName)
 	});
 }
 
+var lix = require('lix2js');
 function compileAndSave(inputFileName, isMakingModule)
 {
 	checkInputFile(inputFileName);
 	var content = getLixContent(inputFileName);
+	isMakingModule = true;
 	var jsCode = compile(content, inputFileName, isMakingModule);
 	var outputFileName = saveJsCode(inputFileName, jsCode);
 	saveLixCode(inputFileName);
