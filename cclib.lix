@@ -310,21 +310,12 @@ GenerateDefNew := []->{
 	}
 }
 
-generateStart := [expr env ctx def isMakingModule]->{
+generateStart := [expr env ctx def]->{
 	def := GenerateDefNew call
 	body := expr.0 generate env ctx def
-	if (isMakingModule) {
-		body := [
-			'module.exports = ' body '\n'
-		] join
-	} else {
-		body := [
-			'try {\n'
-				body '(function(x){return x;}, 0)\n'
-			'} catch (e) {\n'
-			'}'
-		] join
-	}
+	body := [
+		'module.exports = ' body '\n'
+	] join
 	[(def.defineVar call) ";\n" (def.appendExpr call) ";\n" body] join
 }
 
@@ -682,10 +673,10 @@ seqFuncParamsName := {
 	.ret '_ret'
 }
 
-compile := [expr isMakingModule]->{
+compile := [expr]->{
 	libs := env0 | map [i]->{i} | .join "\n"
 	flattenExpr = expr | flatten [i]->{} [i]->{i}
-	code := flattenExpr generateStart (env_new call) ctx0 def0 isMakingModule
+	code := flattenExpr generateStart (env_new call) ctx0 def0
 	[libs "\n" code] join
 }
 

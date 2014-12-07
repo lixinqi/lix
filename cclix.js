@@ -70,10 +70,10 @@ function saveJsCode(inputName, jsCode)
 	return outputFileName;
 }
 
-function compile(lixContent, filename, isMakingModule) {
+function compile(lixContent, filename) {
 	var parser = require('./grammer.js');
 	var lib = require('./cclib.lix.js');
-	return lib.compile(parser.parse(lixContent), isMakingModule);
+	return lib.compile(parser.parse(lixContent));
 }
 
 function saveLixCode(inputFileName)
@@ -88,12 +88,11 @@ function saveLixCode(inputFileName)
 }
 
 var lix = require('lix2js');
-function compileAndSave(inputFileName, isMakingModule)
+function compileAndSave(inputFileName)
 {
 	checkInputFile(inputFileName);
 	var content = getLixContent(inputFileName);
-	isMakingModule = true;
-	var jsCode = compile(content, inputFileName, isMakingModule);
+	var jsCode = compile(content, inputFileName);
 	var outputFileName = saveJsCode(inputFileName, jsCode);
 	saveLixCode(inputFileName);
 	return outputFileName
@@ -110,15 +109,15 @@ function exec(jsFileName) {
 
 parseOptions({
 	run: function (filename) {
-		var jsFileName = compileAndSave(filename, false);
+		var jsFileName = compileAndSave(filename);
 		console.log(jsFileName);
 //		exec(jsFileName);
 	},
 	module: function (filename) {
-		compileAndSave(filename, true);
+		compileAndSave(filename);
 	},
 	js: function (filename) {
-		var jsFileName = compileAndSave(filename, false);
+		var jsFileName = compileAndSave(filename);
 		console.log(require('fs').readFileSync(jsFileName, 'utf-8'));
 	}
 })
