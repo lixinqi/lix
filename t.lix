@@ -1,9 +1,9 @@
 #!/usr/bin/env lix
 
-$a
-$a
-$a
-$a
+$a print
+$a print
+$a print
+$a print
 
 # inc1 := + $Partial 1
 # inc2 := + $Partial 2

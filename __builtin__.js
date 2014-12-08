@@ -1,6 +1,7 @@
 (function () {
 
 	require.lixCache = {}
+	require.lixLoadingCache = {}
 
 	this._require = function (__require) {
 		return function (name) {
@@ -12,18 +13,28 @@
 					return null;
 				}
 			}
+
 			if (require.lixCache[path] === undefined) {
+				if (require.lixLoadingCache[path]) {
+					return function () {
+						return undefined;
+					}
+				}
+				require.lixLoadingCache[path] = true;
 				var f = __require(name);
-				return function (cb, step, cont, a) {
+				return function (cb) {
 					require.lixCache[path] = f(function (ret) {
 						require.lixCache[path] = ret;
+						require.lixLoadingCache[path] = undefined;
 						cb(ret);
-					}, step, cont, a);
+					}, 0);
+					require.lixLoadingCache[path] = undefined;
 					return require.lixCache[path];
 				}
 			}
+
 			return function () {
-				return __require.lixCache[path];
+				return require.lixCache[path];
 			}
 		}
 	}
