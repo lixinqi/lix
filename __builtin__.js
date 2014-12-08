@@ -9,6 +9,7 @@
 			try {
 				path = __require.resolve(name);
 			} catch (e) {
+				console.log(e);
 				return function () {
 					return null;
 				}
