@@ -197,69 +197,6 @@
 		return fn.apply(fn, array_slice(arguments, 1));
 	};
 
-	this.Lforeach = function (Larr, Lcb) {
-		var Li, _ret, _0, _1, _2, _3;
-		function _16(_cb, _step, _cont, _ret) {
-			switch (_step) {
-				case 0:
-					_ret = Lcb(Larr[Li], Li)(function (_ret) {
-						return _16(_cb, 1, true, _ret);
-					}, 0);
-				case 1:
-					_2 = _ret;
-				case 2:
-					_2;
-				case 3:
-					_ret = L__add__(Li, 1)(function (_ret) {
-						return _16(_cb, 4, true, _ret);
-					}, 0);
-				case 4:
-					_3 = _ret;
-				case 5:
-					Li = _3;
-				case 6:
-					_ret = L__lt__(Li, Larr.length)(function (_ret) {
-						return _16(_cb, 7, true, _ret);
-					}, 0);
-				case 7:
-					_1 = _ret
-				default:
-			}
-			if (_cont) {
-				_cb(_ret)
-			} else {
-				return _ret
-			}
-		};
-		function _15(_cb, _step, _cont, _ret) {
-			switch (_step) {
-				case 0:
-					Li = 0;
-				case 4:
-					_ret = L__lt__(Li, Larr.length)(function (_ret) {
-						return _15(_cb, 5, true, _ret);
-					}, 0);
-				case 5:
-					_1 = _ret;
-				case 6:
-					while (_1) {
-						_16(function (_ret) {
-							return _15(_cb, 6, true, _ret);
-						}, 0)
-					};
-				case 7:
-
-				default:
-			}
-			if (_cont) {
-				_cb(_ret)
-			} else {
-				return _ret
-			}
-		};
-		return _15;
-	};
-
 	this.LArray = Array.prototype;
 
 	Array.prototype.Join = function (arr, glue) {
@@ -1232,6 +1169,8 @@
 			return JSON.stringify.apply(null, args);
 		}
 	}
+
+	this.LFunction = Function.prototype;
 
 })();
 

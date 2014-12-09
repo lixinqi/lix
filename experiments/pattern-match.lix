@@ -1,0 +1,74 @@
+#!/usr/bin/env node
+
+(arr :Array
+| foreach cb)->{
+
+	i := 0
+	while (i < arr.length) {
+		arr.(i) cb i
+		i = i + 1
+	}
+}
+
+(obj :Object
+| foreach cb)->{
+
+	keys := obj .Keys
+	i := 0
+	while (i < keys.length) {
+		obj.(keys.(i)) cb keys.(i)
+		i = i + 1
+	}
+}
+
+foreach ifMatchFail $doNothing 
+
+
+Base $extend (pub)->{
+
+	(x :self
+	| pub.name)->{
+
+	}
+
+}
+
+([x y] :((x is Object) and (y is Object))
+| withSameKeys)->{
+
+	(x .Keys) Array.equal2 (y .Keys)
+}
+
+withSameKeys matchFailed $returnFalse
+
+(x :Array
+| like y)->{
+
+	x.length == y.length
+}
+
+(x :Object
+
+| like y)->{
+
+	(y :Object | likeX)->{
+		[x y] withSameKeys
+	}
+
+	likeX ifMatchFail $returnFalse
+	
+	y likeX
+}
+
+(x :(x like [_ _])
+| fst)->{
+
+	x.0
+}
+
+(x :(x like {.first _ .second _})
+| fst)->{
+
+	x.first
+}
+

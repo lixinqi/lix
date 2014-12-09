@@ -412,7 +412,7 @@ flattenWhile := [expr define]->{
 			i define true
 		}
 		expr define true
-		['' '{empty}']
+		['undefined' '{atomic}']
 }
 
 flattenOr := [expr define]->{

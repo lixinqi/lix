@@ -587,7 +587,7 @@ _uniq_var_97.concat = _uniq_var_98;
 foreach(call(whileDefine), (function () {var _uniq_var_100 = function (i) {return define(i, true);
 };_uniq_var_100.__lix_func__ = true;return _uniq_var_100;})());
 define(expr, true);
-return ['', '{empty}'];
+return ['undefined', '{atomic}'];
 };_uniq_var_101.__lix_func__ = true;return _uniq_var_101;})();
 flattenWhile;
 var flattenOr = (function () {var _uniq_var_106 = function (expr, define) {var ret = flatten(expr[0], define);
