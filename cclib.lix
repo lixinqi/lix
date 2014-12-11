@@ -624,6 +624,10 @@ flattenModule := [expr define]->{
 	moduleExpr define
 }
 
+flattenDefer := [expr define]->{
+	['undefined' '{atomic}']
+}
+
 flattenOpTable := {
 	.('{start}') 							flattenStart
 	.('{seq}') 								flattenSeq
@@ -646,6 +650,7 @@ flattenOpTable := {
 	.('or') 									flattenOr
 	.('while')								flattenWhile
 	.('break') 								flattenBreak
+	.('defer') 								flattenDefer
 }
 
 flattenOp := [hint]->{
