@@ -33,7 +33,6 @@
 '.''/'+													{	return 'CURRENT_PATH'; }
 '/''/'+													{	return 'ROOT'; }
 
-'$'															{ return '$'; }
 
 
 \'(\\.|[^\\'])*\'|\"(\\.|[^\\"])*\"			{ return 'STRING_LITERAL'; }	
@@ -68,6 +67,9 @@
 
 [+-]?[0-9]+("."[0-9]*)?([Ee][+-]?[0-9]+)?  		{ return 'NAT'; }
 [\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'var'; }
+
+'$'"("\s*(("#".*)?\n+)*\s* 				{ return 'DOLLAR_PARAN'; }
+'$'[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'DOLLAR_STR'; }
 
 "+"														{ return 'var'; }
 "*"														{ return 'var'; }
@@ -151,11 +153,11 @@ Object
 			{
 				$$ = [$1, '{atomic}', '{var}'];
 			}
-		| '$' VAR
+		| DOLLAR_STR
 			{
-				$$ = [$2, '{module}', '{var}'];
+				$$ = [($1).substr(1), '{module}', '{var}'];
 			}
-		| '$' OPENPARAN MultiLineExpr CLOSEPARAN
+		| DOLLAR_PARAN MultiLineExpr CLOSEPARAN
 			{
 				$$ = [makeExpr($3), '{module}', '{index}'];
 			} 
