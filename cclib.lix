@@ -58,7 +58,10 @@ generateSeq := [expr env ctx def]->{
 			[	v '(function (' seqFuncParamsName.ret ') {\n'
 				'return ' funcName '(' seqFuncParamsName.cb ', '
 				next ', true, ' seqFuncParamsName.ret ', ' seqFuncParamsName.chainDefer ');\n'
-			'}, 0, false, undefined, ' seqFuncParamsName.chainDefer ')'] join
+#			'}, 0, false, undefined, '
+#			seqFuncParamsName.chainDefer '(' seqFuncParamsName.defer ')' ')'
+			'}, 0)'
+			] join
 		}
 	}
 	body := expr.0 map [item index]->{
@@ -276,9 +279,10 @@ generateFunc := [expr env ctx def]->{
 		'var ' ('arguments' transformVarName) ' = arguments;\n'
 		'var defer_stack = [];\n'
 		'function ' seqFuncParamsName.chainDefer '() {\n'
-			'thisDefer(defer_stack)(function () {\n'
-			seqFuncParamsName.defer '();\n'
-#			seqFuncParamsName.defer ' && ' seqFuncParamsName.defer '();\n'
+			'thisDefer(defer_stack)(function (' ') {\n'
+#			'thisDefer(defer_stack)(function (' seqFuncParamsName.defer ') {\n'
+#			seqFuncParamsName.defer '();\n'
+			seqFuncParamsName.defer ' && ' seqFuncParamsName.defer '();\n'
 			'}, 0);\n'
 		'}\n'
 		(def.defineVar call) ";\n"

@@ -40,20 +40,6 @@
 		}
 	}
 
-	this.chainDefer = function (defer_stack, last) {
-		return function () {
-			thisDefer(defer_stack);
-			last();
-		}
-	}
-
-//	function thisDefer(defer_stack) {
-//		while (defer_stack.length) {
-//			var fn = defer_stack.pop();
-//			fn()(function () {}, 0);
-//		}
-//	}
-
 	this.thisDefer = function (LdeferList) {
 		var Larguments = arguments;
 		var defer_stack = [];
@@ -67,6 +53,8 @@
 					}, 0);
 				case 1:
 					_0 = _ret;
+//					console.log('pop:');
+//					console.log(_0.toString());
 				case 2:
 					_ret = Lcall(_0)(function (_ret) {
 						return _5(_cb, 3, true, _ret, chain_defer);
@@ -106,10 +94,11 @@
 		return function (cb) {
 			return function () {
 				defer_stack.push(cb);
+//				console.log('push:');
+//				console.log(cb.toString());
 			}
 		}
 	}
-
 
 	Function.prototype.unCurrying = function() {
 		return this.call.bind(this);
@@ -157,13 +146,13 @@
 		function _self(cb, step, cont, a, cb_defer) {
 			var brk = function (ret) {
 				function _self(_cb, step, cont, a, cb_defer) {
-					cb_defer();
-//					cb_defer && cb_defer();
+//					cb_defer();
+					cb_defer && cb_defer();
 					setImmediate(function () {
 						try {
 							cb(ret);
 						} catch (e) {
-//							console.log(e);
+							console.log(e);
 						}
 					});
 					throw 0;
@@ -175,7 +164,7 @@
 				try {
 					a = ctx(brk)(function (x) {return x;}, 0);
 				} catch (e) {
-//					console.log(e);
+					console.log(e);
 				}
 			});
 			throw 0;
