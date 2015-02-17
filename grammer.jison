@@ -59,7 +59,6 @@
 'while'												{ return 'WHILE'; }
 'true'												{ return 'TRUE'; }
 'false'												{ return 'FALSE'; }
-'defer'												{ return 'DEFER'; }
 "and"\s*											{ return 'AND'; }
 "or"\s*												{ return 'OR'; }
 \s+"and"\s+										{ return 'AND'; }
@@ -503,13 +502,6 @@ WhileStatement
 			}
 		;
 
-DeferStatement
-		: DEFER SEP Expr NEWLINE
-			{
-				$$ = [[[], '{func}', [[makeExpr($Expr)], '{seq}']], "defer"]
-			}
-		;
-
 Statement
 		: ExprStatement
 		| AssignStatement
@@ -517,7 +509,6 @@ Statement
 		| IfStatement
 		| WhileStatement
 		| EmptyStatement
-		| DeferStatement
 		;
 
 NullableSourceElements

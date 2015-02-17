@@ -1,4 +1,4 @@
 f := []->{
 	'good' print
-	defer ('yes' print)
+	defer call []->{ ('yes' print) }
 }

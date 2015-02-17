@@ -40,10 +40,81 @@
 		}
 	}
 
+	this.chainDefer = function (defer_stack, last) {
+		return function () {
+			thisDefer(defer_stack);
+			last();
+		}
+	}
+
+//	function thisDefer(defer_stack) {
+//		while (defer_stack.length) {
+//			var fn = defer_stack.pop();
+//			fn()(function () {}, 0);
+//		}
+//	}
+
+	this.thisDefer = function (LdeferList) {
+		var Larguments = arguments;
+		var defer_stack = [];
+		var chain_defer = undefined;
+		var _ret, _0, _1;
+		function _5(_cb, _step, _cont, _ret, cb_defer) {
+			switch (_step) {
+				case 0:
+					_ret = LdeferList.Pop(LdeferList)(function (_ret) {
+						return _5(_cb, 1, true, _ret, chain_defer);
+					}, 0);
+				case 1:
+					_0 = _ret;
+				case 2:
+					_ret = Lcall(_0)(function (_ret) {
+						return _5(_cb, 3, true, _ret, chain_defer);
+					}, 0);
+				case 3:
+					_1 = _ret
+				default:
+			}
+			if (_cont) {
+				_cb(_ret);
+			} else {
+				return _ret;
+			}
+		};
+		function _4(_cb, _step, _cont, _ret, cb_defer) {
+			switch (_step) {
+				case 0:
+					while (LdeferList.length) {
+						_5(function (_ret) {
+							return _4(_cb, 0, true, _ret, chain_defer);
+						}, 0)
+					};
+				case 1:
+					_ret = undefined
+				default:
+			}
+			if (_cont) {
+				_cb(_ret);
+			} else {
+				return _ret;
+			}
+		};
+		return _4;
+	}; 
+
+	this._defer = function (defer_stack) {
+		return function (cb) {
+			return function () {
+				defer_stack.push(cb);
+			}
+		}
+	}
+
+
 	Function.prototype.unCurrying = function() {
 		return this.call.bind(this);
 	};
-	
+
 	this.Linstanceof = function (obj, type) {
 		return function () {
 			return Object.getPrototypeOf(obj) == type;
@@ -83,13 +154,16 @@
 		}
 	}
 	this.Lcc = function (ctx) {
-		function _self(cb, step, cont, a) {
+		function _self(cb, step, cont, a, cb_defer) {
 			var brk = function (ret) {
-				function _self(_cb, step, cont, a) {
+				function _self(_cb, step, cont, a, cb_defer) {
+					cb_defer();
+//					cb_defer && cb_defer();
 					setImmediate(function () {
 						try {
 							cb(ret);
 						} catch (e) {
+//							console.log(e);
 						}
 					});
 					throw 0;
@@ -101,6 +175,7 @@
 				try {
 					a = ctx(brk)(function (x) {return x;}, 0);
 				} catch (e) {
+//					console.log(e);
 				}
 			});
 			throw 0;
@@ -486,12 +561,12 @@
 
 	this.LString = String.prototype
 
-	String.prototype.FromCharCode = function () {
-		var args = array_slice(arguments);
-		return function () {
-			return String.fromCharCode.apply(null, args);
+		String.prototype.FromCharCode = function () {
+			var args = array_slice(arguments);
+			return function () {
+				return String.fromCharCode.apply(null, args);
+			};
 		};
-	};
 
 	String.prototype.ToString = function (a) {
 		return function () {
@@ -627,17 +702,17 @@
 	}
 
 	this.LNumber = Number.prototype;
-  Number.prototype.MAX_VALUE = Number.MAX_VALUE
-  Number.prototype.MIN_VALUE = Number.MIN_VALUE
-  Number.prototype.NaN = Number.NaN
-  Number.prototype.NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY
-  Number.prototype.POSITIVE_INFINITY = Number.POSITIVE_INFINITY
+	Number.prototype.MAX_VALUE = Number.MAX_VALUE
+		Number.prototype.MIN_VALUE = Number.MIN_VALUE
+		Number.prototype.NaN = Number.NaN
+		Number.prototype.NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY
+		Number.prototype.POSITIVE_INFINITY = Number.POSITIVE_INFINITY
 
-	Number.prototype.ToString = function (v) {
-		return function () {
-			return v.toString();
+		Number.prototype.ToString = function (v) {
+			return function () {
+				return v.toString();
+			}
 		}
-	}
 
 	Number.prototype.ToLocaleString = function (v) {
 		return function () {
@@ -1117,11 +1192,11 @@
 
 	this.LRegExp = RegExp.prototype
 
-	RegExp.prototype.Exec = function (r, str) {
-		return function () {
-			return r.exec(str);
+		RegExp.prototype.Exec = function (r, str) {
+			return function () {
+				return r.exec(str);
+			}
 		}
-	}
 
 	RegExp.prototype.Test = function (r, str) {
 		return function () {
@@ -1156,12 +1231,12 @@
 	this.LURIError = URIError.prototype;
 
 	this.LJSON = JSON
-	JSON.Parse = function () {
-		var args = array_slice(arguments);
-		return function () {
-			return JSON.parse.apply(null, args);
+		JSON.Parse = function () {
+			var args = array_slice(arguments);
+			return function () {
+				return JSON.parse.apply(null, args);
+			}
 		}
-	}
 
 	JSON.Stringify = function () {
 		var args = array_slice(arguments);

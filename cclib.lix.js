@@ -154,7 +154,7 @@ if (__eq__(loop, undefined)) {
 (next = __add__(next, 1));
 
 };
-return join([v, '(function (', seqFuncParamsName.ret, ') {\n', 'return ', funcName, '(', seqFuncParamsName.cb, ', ', next, ', true, ', seqFuncParamsName.ret, ');\n', '}, 0)']);
+return join([v, '(function (', seqFuncParamsName.ret, ') {\n', 'return ', funcName, '(', seqFuncParamsName.cb, ', ', next, ', true, ', seqFuncParamsName.ret, ', ', seqFuncParamsName.chainDefer, ');\n', '}, 0, false, undefined, ', seqFuncParamsName.chainDefer, ')']);
 };_uniq_var_21.__lix_func__ = true;return _uniq_var_21;})();
 };_uniq_var_22.__lix_func__ = true;return _uniq_var_22;})();
 ctx;
@@ -175,7 +175,7 @@ var stmt = join(['case ', current, ':\n', stmt]);
 return stmt;
 };_uniq_var_26.__lix_func__ = true;return _uniq_var_26;})()), ";\n");
 body;
-def.appendExpr(join(['function ', funcName, '(', seqFuncParamsName.cb, ', ', seqFuncParamsName.step, ', ', seqFuncParamsName.cont, ', ', seqFuncParamsName.ret, ') {\n', 'switch (', seqFuncParamsName.step, ') {\n', body, '\n', 'default:\n', '}\n', 'if (', seqFuncParamsName.cont, ') {\n', seqFuncParamsName.cb, '(', seqFuncParamsName.ret, ')\n', '} else {\n', 'return ', seqFuncParamsName.ret, '\n', '}\n', '}']));
+def.appendExpr(join(['function ', funcName, '(', seqFuncParamsName.cb, ', ', seqFuncParamsName.step, ', ', seqFuncParamsName.cont, ', ', seqFuncParamsName.ret, ', ', seqFuncParamsName.defer, ') {\n', 'switch (', seqFuncParamsName.step, ') {\n', body, '\n', 'default:\n', '}\n', 'thisDefer(defer_stack)(function () {\n', seqFuncParamsName.cb, '(', seqFuncParamsName.ret, ');\n', '}, 0);\n', 'if (', seqFuncParamsName.cont, ') {\n', seqFuncParamsName.cb, '(', seqFuncParamsName.ret, ');\n', '} else {\n', 'return ', seqFuncParamsName.ret, ';\n', '}\n', '}']));
 return funcName;
 };_uniq_var_27.__lix_func__ = true;return _uniq_var_27;})();
 generateSeq;
@@ -269,6 +269,9 @@ return join(["{\n", objectBody, "\n}"]);
 generateObjectLiteral;
 var transformVarName = (function () {var _uniq_var_43 = function (name) {if (__eq__(name, 'require')) {
 (name = '_require(require)');
+
+} else if (__eq__(name, 'defer')) {
+(name = '_defer(defer_stack)');
 
 } else if (((((__ne__(name, 'exports') && __ne__(name, 'undefined')) && __ne__(name, 'null')) && __ne__(name, 'true')) && __ne__(name, 'false'))) {
 (name = __add__('L', name));
@@ -389,7 +392,7 @@ return _uniq_var_58.join;
 }
 _uniq_var_58.join = _uniq_var_59;
 }return _uniq_var_58;
-};_uniq_var_60.__lix_func__ = true;return _uniq_var_60;})()(['(function (', args, ') {\n', 'var ', transformVarName('arguments'), ' = arguments;\n', call(def.defineVar), ";\n", call(def.appendExpr), ";\n", 'return ', body, ";\n", '})'], '');
+};_uniq_var_60.__lix_func__ = true;return _uniq_var_60;})()(['(function (', args, ') {\n', 'var ', transformVarName('arguments'), ' = arguments;\n', 'var defer_stack = [];\n', 'function ', seqFuncParamsName.chainDefer, '() {\n', 'thisDefer(defer_stack)(function () {\n', seqFuncParamsName.defer, '();\n', '}, 0);\n', '}\n', call(def.defineVar), ";\n", call(def.appendExpr), ";\n", 'return ', body, ";\n", '})'], '');
 };_uniq_var_61.__lix_func__ = true;return _uniq_var_61;})();
 generateFunc;
 var generateExpr = (function () {var _uniq_var_63 = function (expr, env, ctx, def) {var func = generate(expr[1], env, ctx0, def);
@@ -472,7 +475,7 @@ var body = generate(expr[0], env, ctx, def);
 body;
 var body = join(['module.exports = ', body, '\n']);
 body;
-return join([call(def.defineVar), ";\n", call(def.appendExpr), ";\n", body]);
+return join(['var defer_stack = [];\n', 'function ', seqFuncParamsName.chainDefer, '() {\n', 'thisDefer(defer_stack)(function(){return;}, 0);\n', '}\n', call(def.defineVar), ";\n", call(def.appendExpr), ";\n", body]);
 };_uniq_var_77.__lix_func__ = true;return _uniq_var_77;})();
 generateStart;
 var generateMono = (function () {var _uniq_var_78 = function (expr, env, ctx, def) {return generate(expr[0], env, ctx, def);
@@ -952,7 +955,10 @@ var seqFuncParamsName = {
 cb: '_cb',
 step: '_step',
 cont: '_cont',
-ret: '_ret'
+ret: '_ret',
+defer: 'cb_defer',
+thisDefer: 'this_defer',
+chainDefer: 'chain_defer'
 };
 seqFuncParamsName;
 var compile = (function () {var _uniq_var_176 = function (expr) {var libs = (function () {var _uniq_var_172 = function (_uniq_var_170, _uniq_var_171) {

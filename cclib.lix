@@ -57,8 +57,8 @@ generateSeq := [expr env ctx def]->{
 			}
 			[	v '(function (' seqFuncParamsName.ret ') {\n'
 				'return ' funcName '(' seqFuncParamsName.cb ', '
-				next ', true, ' seqFuncParamsName.ret ');\n'
-			'}, 0)'] join
+				next ', true, ' seqFuncParamsName.ret ', ' seqFuncParamsName.chainDefer ');\n'
+			'}, 0, false, undefined, ' seqFuncParamsName.chainDefer ')'] join
 		}
 	}
 	body := expr.0 map [item index]->{
@@ -68,17 +68,22 @@ generateSeq := [expr env ctx def]->{
 	} | .join ";\n"
 
 	[
-		'function ' funcName '(' seqFuncParamsName.cb ', ' seqFuncParamsName.step ', '
-			seqFuncParamsName.cont ', ' seqFuncParamsName.ret ') {\n'
+		'function ' funcName '('
+		seqFuncParamsName.cb ', ' seqFuncParamsName.step ', '
+		seqFuncParamsName.cont ', ' seqFuncParamsName.ret ', '
+		seqFuncParamsName.defer ') {\n'
 		'switch (' seqFuncParamsName.step ') {\n'
 			body
 			'\n'
 			'default:\n'
 			'}\n'
+			'thisDefer(defer_stack)(function () {\n'
+				seqFuncParamsName.cb '(' seqFuncParamsName.ret ');\n' 
+			'}, 0);\n'
 			'if (' seqFuncParamsName.cont ') {\n'
-				seqFuncParamsName.cb '(' seqFuncParamsName.ret ')\n'
+				seqFuncParamsName.cb '(' seqFuncParamsName.ret ');\n'
 			'} else {\n'
-				'return ' seqFuncParamsName.ret '\n'
+				'return ' seqFuncParamsName.ret ';\n'
 			'}\n'
 		'}'
 	] | join | def.appendExpr
@@ -158,6 +163,8 @@ generateObjectLiteral := [expr env ctx def]->{
 transformVarName := [name]->{
 	if (name == 'require') {
 		name = '_require(require)'
+	} (name == 'defer') {
+		name = '_defer(defer_stack)'
 	} ((name != 'exports') | and (name != 'undefined') |
 			and (name != 'null') | and (name != 'true') | and (name != 'false')) {
 		name = 'L' + name
@@ -267,6 +274,13 @@ generateFunc := [expr env ctx def]->{
 	body := expr.2 generate funcEnv ctx0 def
 	['(function (' args ') {\n'
 		'var ' ('arguments' transformVarName) ' = arguments;\n'
+		'var defer_stack = [];\n'
+		'function ' seqFuncParamsName.chainDefer '() {\n'
+			'thisDefer(defer_stack)(function () {\n'
+			seqFuncParamsName.defer '();\n'
+#			seqFuncParamsName.defer ' && ' seqFuncParamsName.defer '();\n'
+			'}, 0);\n'
+		'}\n'
 		(def.defineVar call) ";\n"
 		(def.appendExpr call) ";\n"
 		'return ' body ";\n"
@@ -317,7 +331,16 @@ generateStart := [expr env ctx def]->{
 	body := [
 		'module.exports = ' body '\n'
 	] join
-	[(def.defineVar call) ";\n" (def.appendExpr call) ";\n" body] join
+
+	[
+		'var defer_stack = [];\n'
+		'function ' seqFuncParamsName.chainDefer '() {\n'
+			'thisDefer(defer_stack)(function(){return;}, 0);\n'
+		'}\n'
+		(def.defineVar call) ";\n"
+		(def.appendExpr call) ";\n"
+		body
+	] join
 }
 
 generateMono := [expr env ctx def]->{
@@ -677,6 +700,9 @@ seqFuncParamsName := {
 	.step '_step'
 	.cont '_cont'
 	.ret '_ret'
+	.defer 'cb_defer'
+	.thisDefer 'this_defer'
+	.chainDefer 'chain_defer'
 }
 
 compile := [expr]->{
