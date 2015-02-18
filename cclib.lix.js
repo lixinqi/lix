@@ -148,7 +148,7 @@ var generateSeq = (function () {var _uniq_var_27 = function (expr, env, ctx, def
 funcName;
 var getCount = call(counterGenerator);
 getCount;
-var chainDefer = join(['function () {\n', 'thisDefer(defer_stack)(function (', ') {\n', seqFuncParamsName.defer, ' && ', seqFuncParamsName.defer, '();\n', '}, 0);\n', '}\n']);
+var chainDefer = join(['function () {\n', 'thisDefer(defer_stack, true)(function (', ') {\n', seqFuncParamsName.defer, ' && ', seqFuncParamsName.defer, '();\n', '}, 0);\n', seqFuncParamsName.defer, ' && ', seqFuncParamsName.defer, '();\n', '}\n']);
 chainDefer;
 var ctx = (function () {var _uniq_var_22 = function (current) {return (function () {var _uniq_var_21 = function (v, loop) {var next = current;
 next;
@@ -177,7 +177,7 @@ var stmt = join(['case ', current, ':\n', stmt]);
 return stmt;
 };_uniq_var_26.__lix_func__ = true;return _uniq_var_26;})()), ";\n");
 body;
-def.appendExpr(join(['function ', funcName, '(', seqFuncParamsName.cb, ', ', seqFuncParamsName.step, ', ', seqFuncParamsName.cont, ', ', seqFuncParamsName.ret, ', ', seqFuncParamsName.defer, ') {\n', 'switch (', seqFuncParamsName.step, ') {\n', body, '\n', 'default:\n', '}\n', 'thisDefer(defer_stack)(function () {\n', seqFuncParamsName.cb, '(', seqFuncParamsName.ret, ');\n', '}, 0);\n', 'if (', seqFuncParamsName.cont, ') {\n', seqFuncParamsName.cb, '(', seqFuncParamsName.ret, ');\n', '} else {\n', 'return ', seqFuncParamsName.ret, ';\n', '}\n', '}']));
+def.appendExpr(join(['function ', funcName, '(', seqFuncParamsName.cb, ', ', seqFuncParamsName.step, ', ', seqFuncParamsName.cont, ', ', seqFuncParamsName.ret, ', ', seqFuncParamsName.defer, ') {\n', 'switch (', seqFuncParamsName.step, ') {\n', body, '\n', 'default:\n', '}\n', 'thisDefer(defer_stack, false)(function () {\n', seqFuncParamsName.cb, '(', seqFuncParamsName.ret, ');\n', '}, 0);\n', 'if (', seqFuncParamsName.cont, ') {\n', seqFuncParamsName.cb, '(', seqFuncParamsName.ret, ');\n', '} else {\n', 'return ', seqFuncParamsName.ret, ';\n', '}\n', '}']));
 return funcName;
 };_uniq_var_27.__lix_func__ = true;return _uniq_var_27;})();
 generateSeq;

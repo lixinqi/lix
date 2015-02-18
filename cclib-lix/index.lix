@@ -51,10 +51,10 @@ generateSeq := [expr env ctx def]->{
 	getCount := counterGenerator call
 	chainDefer := [
 		'function () {\n'
-			'thisDefer(defer_stack, true)(function (' ') {\n'
+			'console.log("nice");\n'
+			'thisDefer(defer_stack)(function (' ') {\n'
 			seqFuncParamsName.defer ' && ' seqFuncParamsName.defer '();\n'
 			'}, 0);\n'
-			seqFuncParamsName.defer ' && ' seqFuncParamsName.defer '();\n'
 		'}\n' ] join
 	ctx := [current]->{
 		[v loop]->{
@@ -86,7 +86,7 @@ generateSeq := [expr env ctx def]->{
 			'\n'
 			'default:\n'
 			'}\n'
-			'thisDefer(defer_stack, false)(function () {\n'
+			'thisDefer(defer_stack)(function () {\n'
 				seqFuncParamsName.cb '(' seqFuncParamsName.ret ');\n' 
 			'}, 0);\n'
 			'if (' seqFuncParamsName.cont ') {\n'

@@ -40,7 +40,7 @@
 		}
 	}
 
-	this.thisDefer = function (LdeferList) {
+	this.thisDefer = function (LdeferList, isBreak) {
 		var Larguments = arguments;
 		var defer_stack = [];
 		var chain_defer = undefined;
@@ -56,7 +56,7 @@
 //					console.log('pop:');
 //					console.log(_0.toString());
 				case 2:
-					_ret = Lcall(_0)(function (_ret) {
+					_ret = Lcall(_0, isBreak)(function (_ret) {
 						return _5(_cb, 3, true, _ret, chain_defer);
 					}, 0);
 				case 3:
@@ -146,7 +146,6 @@
 		function _self(cb, step, cont, a, cb_defer) {
 			var brk = function (ret) {
 				function _self(_cb, step, cont, a, cb_defer) {
-//					cb_defer();
 					cb_defer && cb_defer();
 					setImmediate(function () {
 						try {
