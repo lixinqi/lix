@@ -49,6 +49,12 @@ withSeqLayout := [statements ctx]->{
 generateSeq := [expr env ctx def]->{
 	funcName := getUniqVarName call
 	getCount := counterGenerator call
+	chainDefer := [
+		'function () {\n'
+			'thisDefer(defer_stack)(function (' ') {\n'
+			seqFuncParamsName.defer ' && ' seqFuncParamsName.defer '();\n'
+			'}, 0);\n'
+		'}\n' ] join
 	ctx := [current]->{
 		[v loop]->{
 			next := current
@@ -57,10 +63,9 @@ generateSeq := [expr env ctx def]->{
 			}
 			[	v '(function (' seqFuncParamsName.ret ') {\n'
 				'return ' funcName '(' seqFuncParamsName.cb ', '
-				next ', true, ' seqFuncParamsName.ret ', ' seqFuncParamsName.chainDefer ');\n'
-#			'}, 0, false, undefined, '
-#			seqFuncParamsName.chainDefer '(' seqFuncParamsName.defer ')' ')'
-			'}, 0)'
+				next ', true, ' seqFuncParamsName.ret ', ' chainDefer ');\n'
+			'}, 0, false, undefined, ' chainDefer ')'
+#			'}, 0)'
 			] join
 		}
 	}
@@ -278,13 +283,6 @@ generateFunc := [expr env ctx def]->{
 	['(function (' args ') {\n'
 		'var ' ('arguments' transformVarName) ' = arguments;\n'
 		'var defer_stack = [];\n'
-		'function ' seqFuncParamsName.chainDefer '() {\n'
-			'thisDefer(defer_stack)(function (' ') {\n'
-#			'thisDefer(defer_stack)(function (' seqFuncParamsName.defer ') {\n'
-#			seqFuncParamsName.defer '();\n'
-			seqFuncParamsName.defer ' && ' seqFuncParamsName.defer '();\n'
-			'}, 0);\n'
-		'}\n'
 		(def.defineVar call) ";\n"
 		(def.appendExpr call) ";\n"
 		'return ' body ";\n"

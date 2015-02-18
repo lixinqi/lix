@@ -152,7 +152,7 @@
 						try {
 							cb(ret);
 						} catch (e) {
-							console.log(e);
+//							console.log(e);
 						}
 					});
 					throw 0;
@@ -164,7 +164,7 @@
 				try {
 					a = ctx(brk)(function (x) {return x;}, 0);
 				} catch (e) {
-					console.log(e);
+//					console.log(e);
 				}
 			});
 			throw 0;

@@ -148,13 +148,15 @@ var generateSeq = (function () {var _uniq_var_27 = function (expr, env, ctx, def
 funcName;
 var getCount = call(counterGenerator);
 getCount;
+var chainDefer = join(['function () {\n', 'thisDefer(defer_stack)(function (', ') {\n', seqFuncParamsName.defer, ' && ', seqFuncParamsName.defer, '();\n', '}, 0);\n', '}\n']);
+chainDefer;
 var ctx = (function () {var _uniq_var_22 = function (current) {return (function () {var _uniq_var_21 = function (v, loop) {var next = current;
 next;
 if (__eq__(loop, undefined)) {
 (next = __add__(next, 1));
 
 };
-return join([v, '(function (', seqFuncParamsName.ret, ') {\n', 'return ', funcName, '(', seqFuncParamsName.cb, ', ', next, ', true, ', seqFuncParamsName.ret, ', ', seqFuncParamsName.chainDefer, ');\n', '}, 0)']);
+return join([v, '(function (', seqFuncParamsName.ret, ') {\n', 'return ', funcName, '(', seqFuncParamsName.cb, ', ', next, ', true, ', seqFuncParamsName.ret, ', ', chainDefer, ');\n', '}, 0, false, undefined, ', chainDefer, ')']);
 };_uniq_var_21.__lix_func__ = true;return _uniq_var_21;})();
 };_uniq_var_22.__lix_func__ = true;return _uniq_var_22;})();
 ctx;
@@ -392,7 +394,7 @@ return _uniq_var_58.join;
 }
 _uniq_var_58.join = _uniq_var_59;
 }return _uniq_var_58;
-};_uniq_var_60.__lix_func__ = true;return _uniq_var_60;})()(['(function (', args, ') {\n', 'var ', transformVarName('arguments'), ' = arguments;\n', 'var defer_stack = [];\n', 'function ', seqFuncParamsName.chainDefer, '() {\n', 'thisDefer(defer_stack)(function (', ') {\n', seqFuncParamsName.defer, ' && ', seqFuncParamsName.defer, '();\n', '}, 0);\n', '}\n', call(def.defineVar), ";\n", call(def.appendExpr), ";\n", 'return ', body, ";\n", '})'], '');
+};_uniq_var_60.__lix_func__ = true;return _uniq_var_60;})()(['(function (', args, ') {\n', 'var ', transformVarName('arguments'), ' = arguments;\n', 'var defer_stack = [];\n', call(def.defineVar), ";\n", call(def.appendExpr), ";\n", 'return ', body, ";\n", '})'], '');
 };_uniq_var_61.__lix_func__ = true;return _uniq_var_61;})();
 generateFunc;
 var generateExpr = (function () {var _uniq_var_63 = function (expr, env, ctx, def) {var func = generate(expr[1], env, ctx0, def);
