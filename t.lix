@@ -1,23 +1,23 @@
 #!/usr/bin/env lix
 
-$a print
-$a print
-$a print
-$a print
-
-# inc1 := + $Partial 1
-# inc2 := + $Partial 2
-# inc3 := inc1 $Compose inc2
-# 1 inc3 | print
-
-ReadFile := [filename options]->{
-	cc call [brk]->{
-		filename $fs.ReadFileAsync options [err data]->{
-			brk call data
-		}
-	}
-}
-
+# $a print
+# $a print
+# $a print
+# $a print
+# 
+# # inc1 := + $Partial 1
+# # inc2 := + $Partial 2
+# # inc3 := inc1 $Compose inc2
+# # 1 inc3 | print
+# 
+# ReadFile := [filename options]->{
+# 	cc call [brk]->{
+# 		filename $fs.ReadFileAsync options [err data]->{
+# 			brk call data
+# 		}
+# 	}
+# }
+# 
 # ./t.lix | $fs.ReadFileAsync 'utf-8' [err data]->{
 # }
 

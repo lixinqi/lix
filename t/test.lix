@@ -1,0 +1,15 @@
+#!/usr/local/bin/node
+
+$try call []->{
+	'fine' call
+	'good' print
+	$raise call 'ok'
+} [e]->{
+	'nice' print
+}
+
+'end' print
+
+# 'trap' $test [assert]->{
+# 	assert call true
+# }

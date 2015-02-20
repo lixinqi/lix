@@ -1,4 +1,13 @@
+function identity(x) {
+	return x;
+}
 (function () {
+
+	function _LixCCException() {
+		this.message = 'cc call exception';
+	}
+
+	var _lixCCException = new _LixCCException();
 
 	require.lixCache = {}
 	require.lixLoadingCache = {}
@@ -186,7 +195,7 @@
 //							console.log(e);
 						}
 					});
-					throw 0;
+					throw _lixCCException;
 				}
 				return _self;
 			};
@@ -198,7 +207,7 @@
 //					console.log(e);
 				}
 			});
-			throw 0;
+			throw _lixCCException;
 		}
 		return _self;
 	}
@@ -289,10 +298,14 @@
 	};
 
 	this.Lcall = function (fn) {
-		if (typeof fn !== 'function') {
-			return global_trap();
+		try {
+			return fn.apply(fn, array_slice(arguments, 1));
+		} catch (e) {
+			if (e === _lixCCException) {
+				throw e;
+			}
+			global_trap(e)(identity, 0);
 		}
-		return fn.apply(fn, array_slice(arguments, 1));
 	};
 
 	this.LArray = Array.prototype;
@@ -1215,11 +1228,11 @@
 
 	this.LRegExp = RegExp.prototype
 
-		RegExp.prototype.Exec = function (r, str) {
-			return function () {
-				return r.exec(str);
-			}
+	RegExp.prototype.Exec = function (r, str) {
+		return function () {
+			return r.exec(str);
 		}
+	}
 
 	RegExp.prototype.Test = function (r, str) {
 		return function () {

@@ -32,19 +32,19 @@ generateFuncArgs := [args env ctx]->{
 
 ctx0 := [x]->{x}
 
-withSeqLayout := [statements ctx]->{
-	funcName := getUniqVarName call
-	suffix := [v]->{
-		v + '()'
-	}
-	body := statements map [stmtClosure index]->{
-		stmt := stmtClosure call suffix
-		if (index == (statements.length - 1)) {
-			stmt = 'return ' + stmt
-		}
-		stmt
-	}
-}
+# withSeqLayout := [statements ctx]->{
+# 	funcName := getUniqVarName call
+# 	suffix := [v]->{
+# 		v + '()'
+# 	}
+# 	body := statements map [stmtClosure index]->{
+# 		stmt := stmtClosure call suffix
+# 		if (index == (statements.length - 1)) {
+# 			stmt = 'return ' + stmt
+# 		}
+# 		stmt
+# 	}
+# }
 
 generateSeq := [expr env ctx def]->{
 	funcName := getUniqVarName call
