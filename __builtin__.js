@@ -40,6 +40,38 @@
 		}
 	}
 
+	var global_trap = function () {
+		var Larguments = arguments;
+		var defer_stack = [];
+		;
+		function _2(_cb, _step, _cont, _ret, cb_defer) {
+			switch (_step) {
+
+				default:
+			}
+			thisDefer(defer_stack, false)(function () {
+				_cb(_ret);
+			}, 0);
+			if (_cont) {
+				_cb(_ret);
+			} else {
+				return _ret;
+			}
+		};
+		return _2;
+	}
+
+	this.Ltrap = function (f) {
+		var nargs = arguments.length;
+		return function () {
+			if (nargs == 0)	{
+				return global_trap;
+			} else {
+				global_trap = f;
+			}
+		}
+	}
+
 	this.thisDefer = function (LdeferList, isBreak) {
 		var Larguments = arguments;
 		var defer_stack = [];
@@ -257,6 +289,9 @@
 	};
 
 	this.Lcall = function (fn) {
+		if (typeof fn !== 'function') {
+			return global_trap();
+		}
 		return fn.apply(fn, array_slice(arguments, 1));
 	};
 

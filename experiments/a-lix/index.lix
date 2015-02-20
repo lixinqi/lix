@@ -1,4 +1,19 @@
-f := []->{
-	'good' print
-	defer ('yes' print)
+f := [cb]->{
+	defer call []->{'in f' print}
+	cb call
 }
+
+call call []->{
+	defer call []->{'good' print}
+	defer call []->{('yes' print)}
+	defer call []->{
+		cc call [break]->{
+			f call []->{
+				break call
+			}
+		}
+	}
+	'nice' print
+}
+
+'end' print
