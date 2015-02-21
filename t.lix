@@ -1,5 +1,8 @@
 #!/usr/bin/env lix
 
+'a' String.IsString | print
+0 String.IsString | print
+
 # $a print
 # $a print
 # $a print

@@ -1,0 +1,25 @@
+ignore := [i]->{i}
+echo := [i]->{
+	i print
+	i
+}
+eval := [str]->{
+	str | $syntax.parse | $lix true | ignore echo | $evalJs | call
+}
+
+[
+	'"good" print'
+	'1 + 1 | print'
+	'1 + 1 | * 2 | print'
+	'$t0 print'
+] .Join "\n" | eval
+
+'----1----' print
+
+'1 + 1' | eval | print
+
+'----2----' print
+
+'1 + 2' | eval | print
+
+'end' print

@@ -3,6 +3,7 @@ function identity(x) {
 }
 (function () {
 
+
 	function _LixCCException() {
 		this.message = 'cc call exception';
 	}
@@ -34,15 +35,18 @@ function identity(x) {
 				var f = __require(name);
 				return function (cb) {
 					require.lixCache[path] = f(function (ret) {
+						//async cache module
 						require.lixCache[path] = ret;
 						require.lixLoadingCache[path] = undefined;
 						cb(ret);
 					}, 0);
+					//sync cache module
 					require.lixLoadingCache[path] = undefined;
 					return require.lixCache[path];
 				}
 			}
 
+			//cached result
 			return function () {
 				return require.lixCache[path];
 			}
@@ -698,6 +702,12 @@ function identity(x) {
 	String.prototype.ToLocaleLowerCase = function (str) {
 		return function () {
 			return str.toLocaleLowerCase();
+		}
+	}
+
+	String.prototype.IsString = function (str) {
+		return function () {
+			return typeof str == 'string';
 		}
 	}
 
