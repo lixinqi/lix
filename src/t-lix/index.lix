@@ -1,10 +1,14 @@
-ignore := [i]->{i}
-echo := [i]->{
-	i print
+#!/usr/local/bin/node
+dont := [i]->{i}
+echo := [i attr]->{
+	if (attr == null) {
+		attr = [x]->{x}
+	}
+	i | attr | print
 	i
 }
 eval := [str]->{
-	str | $syntax.parse | $lix true | ignore echo | $evalJs | call
+	str | echo | $syntax.parse | dont echo [x]->{x.(0).(0)} | $lix true | dont echo | $evalJs | call
 }
 
 [
@@ -21,5 +25,20 @@ eval := [str]->{
 '----2----' print
 
 '1 + 2' | eval | print
+
+'----0 call----' print
+
+try call []->{
+	'0 call' | eval
+} [e]->{
+	e print
+}
+# [
+# 	'try call []->{\n'
+# 		'0 call\n'
+# 	'} [e]->{\n'
+# 		'e print\n'
+# 	'}\n'
+# ] .Join '' | eval
 
 'end' print

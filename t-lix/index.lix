@@ -1,12 +1,17 @@
 #!/usr/bin/env lix
 
 try call []->{
-
-	'good' call
-} [e]->{
-	'in catch' print
-	e print
+	0 call
+} []->{
 }
+
+# try call []->{
+# 
+# 	'good' call
+# } [e]->{
+# 	'in catch' print
+# 	e print
+# }
 
 'end' print
 
