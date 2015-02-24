@@ -1,7 +1,20 @@
 #!/usr/bin/env lix
 
-'a' String.IsString | print
-0 String.IsString | print
+# 'a' String.IsString | print
+# 0 String.IsString | print
+#
+
+cc call [break]->{
+
+	try call []->{
+		'good' print
+		raise call 'fine'
+		'good1' print
+	} [e]->{
+		'nice' print
+		e print
+	}
+}
 
 # $a print
 # $a print

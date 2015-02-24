@@ -74,7 +74,8 @@ function identity(x) {
 		return _2;
 	}
 
-	this.Ltrap = function (f) {
+//	this.Ltrap = function Ltrap(f) {
+	function Ltrap(f) {
 		var nargs = arguments.length;
 		return function () {
 			if (nargs == 0)	{
@@ -98,8 +99,8 @@ function identity(x) {
 					}, 0);
 				case 1:
 					_0 = _ret;
-//					console.log('pop:');
-//					console.log(_0.toString());
+					//					console.log('pop:');
+					//					console.log(_0.toString());
 				case 2:
 					_ret = Lcall(_0, isBreak)(function (_ret) {
 						return _5(_cb, 3, true, _ret, chain_defer);
@@ -139,8 +140,8 @@ function identity(x) {
 		return function (cb) {
 			return function () {
 				defer_stack.push(cb);
-//				console.log('push:');
-//				console.log(cb.toString());
+				//				console.log('push:');
+				//				console.log(cb.toString());
 			}
 		}
 	}
@@ -196,7 +197,7 @@ function identity(x) {
 						try {
 							cb(ret);
 						} catch (e) {
-//							console.log(e);
+							//							console.log(e);
 						}
 					});
 					throw _lixCCException;
@@ -208,7 +209,7 @@ function identity(x) {
 				try {
 					a = ctx(brk)(function (x) {return x;}, 0);
 				} catch (e) {
-//					console.log(e);
+					//					console.log(e);
 				}
 			});
 			throw _lixCCException;
@@ -302,14 +303,7 @@ function identity(x) {
 	};
 
 	this.Lcall = function (fn) {
-		try {
-			return fn.apply(fn, array_slice(arguments, 1));
-		} catch (e) {
-			if (e === _lixCCException) {
-				throw e;
-			}
-			global_trap(e)(identity, 0);
-		}
+		return fn.apply(fn, array_slice(arguments, 1));
 	};
 
 	this.LArray = Array.prototype;
@@ -411,202 +405,126 @@ function identity(x) {
 	this.LObject = Object.prototype;
 	Object.prototype.Keys = function (a) {
 		return function () {
-			try {
-				return Object.keys(a);
-			} catch (e) {
-				return e;
-			}
+			return Object.keys(a);
 		};
 	}
 
 	Object.prototype.GetPrototypeOf = function (a) {
 		return function () {
-			try {
-				return Object.getPrototypeOf(a);
-			} catch (e) {
-				return e;
-			}
+			return Object.getPrototypeOf(a);
 		};
 	}
 
 	Object.prototype.GetOwnPropertyDescriptor = function (o, p) {
 		return function () {
-			try {
-				return Object.getOwnPropertyDescriptor(o, p);
-			} catch (e) {
-				return e;
-			}
+			return Object.getOwnPropertyDescriptor(o, p);
 		};
 	}
 
 	Object.prototype.GetOwnPropertyNames = function (o) {
 		return function () {
-			try {
-				return Object.getOwnPropertyNames(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.getOwnPropertyNames(o);
 		};
 	}
 
 	Object.prototype.Create = function (o) {
 		return function () {
-			try {
-				return Object.create(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.create(o);
 		};
 	}
 
 	Object.prototype.DefineProperty = function (o, p, attribute) {
 		return function () {
-			try {
-				return Object.defineProperty(o, p, attribute);
-			} catch (e) {
-				return e;
-			}
+			return Object.defineProperty(o, p, attribute);
 		};
 	}
 
 	Object.prototype.DefineProperties = function (o, properties) {
 		return function () {
-			try {
-				return Object.defineProperties(o, properties);
-			} catch (e) {
-				return e;
-			}
+			return Object.defineProperties(o, properties);
 		};
 	}
 
 	Object.prototype.Seal = function (o) {
 		return function () {
-			try {
-				return Object.seal(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.seal(o);
 		};
 	}
 
 	Object.prototype.Freeze = function (o) {
 		return function () {
-			try {
-				return Object.freeze(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.freeze(o);
 		};
 	}
 
 	Object.prototype.PreventExtensions = function (o) {
 		return function () {
-			try {
-				return Object.preventExtensions(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.preventExtensions(o);
 		};
 	}
 
 	Object.prototype.IsSealed = function (o) {
 		return function () {
-			try {
-				return Object.isSealed(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.isSealed(o);
 		};
 	}
 
 	Object.prototype.IsFrozen = function (o) {
 		return function () {
-			try {
-				return Object.isFrozen(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.isFrozen(o);
 		};
 	}
 
 	Object.prototype.IsExtensible = function (o) {
 		return function () {
-			try {
-				return Object.isExtensible(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.isExtensible(o);
 		};
 	}
 
 	Object.prototype.ToString = function (o) {
 		return function () {
-			try {
-				return o.toString();
-			} catch (e) {
-				return e;
-			}
+			return o.toString();
 		};
 	}
 
 	Object.prototype.ToLocaleString = function (o) {
 		return function () {
-			try {
-				return o.toLocaleString();
-			} catch (e) {
-				return e;
-			}
+			return o.toLocaleString();
 		};
 	}
 
 	Object.prototype.ValueOf = function (o) {
 		return function () {
-			try {
-				return o.valueOf();
-			} catch (e) {
-				return e;
-			}
+			return o.valueOf();
 		};
 	}
 
 	Object.prototype.HasOwnProperty = function (o, v) {
 		return function () {
-			try {
-				return o.hasOwnProperty(v);
-			} catch (e) {
-				return e;
-			}
+			return o.hasOwnProperty(v);
 		};
 	}
 
 	Object.prototype.IsPrototypeOf = function (o, v) {
 		return function () {
-			try {
-				return o.isPrototypeOf(v);
-			} catch (e) {
-				return e;
-			}
+			return o.isPrototypeOf(v);
 		};
 	}
 
 	Object.prototype.PropertyIsEnumerable = function (o, v) {
 		return function () {
-			try {
-				return o.propertyIsEnumerable(v);
-			} catch (e) {
-				return e;
-			}
+			return o.propertyIsEnumerable(v);
 		};
 	}
 
 	this.LString = String.prototype
 
-		String.prototype.FromCharCode = function () {
-			var args = array_slice(arguments);
-			return function () {
-				return String.fromCharCode.apply(null, args);
-			};
+	String.prototype.FromCharCode = function () {
+		var args = array_slice(arguments);
+		return function () {
+			return String.fromCharCode.apply(null, args);
 		};
+	};
 
 	String.prototype.ToString = function (a) {
 		return function () {
@@ -1238,11 +1156,11 @@ function identity(x) {
 
 	this.LRegExp = RegExp.prototype
 
-	RegExp.prototype.Exec = function (r, str) {
-		return function () {
-			return r.exec(str);
+		RegExp.prototype.Exec = function (r, str) {
+			return function () {
+				return r.exec(str);
+			}
 		}
-	}
 
 	RegExp.prototype.Test = function (r, str) {
 		return function () {
@@ -1293,5 +1211,261 @@ function identity(x) {
 
 	this.LFunction = Function.prototype;
 
+	this.Ltry = function (LtryBlock, LcatchBlock) {
+		var Larguments = arguments;
+		var defer_stack = [];
+		var _ret, _5, LoldTrapFn, _11, _12;
+		function _18(_cb, _step, _cont, _ret, cb_defer) {
+			switch (_step) {
+				case 0:
+					_ret = Lcall(Ltrap)(function (_ret) {
+						return _18(_cb, 1, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {
+								cb_defer && cb_defer();
+							}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {
+							cb_defer && cb_defer();
+						}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 1:
+					_5 = _ret;
+				case 2:
+					_ret = LoldTrapFn = _5;
+				case 3:
+					_ret = Lcall(Lcc, (function (Lbreak) {
+						var Larguments = arguments;
+						var defer_stack = [];
+						var _ret, _8, _9, _10;
+						function _20(_cb, _step, _cont, _ret, cb_defer) {
+							switch (_step) {
+								case 0:
+									_ret = Lcall(Ltrap, (function (Le) {
+										var Larguments = arguments;
+										var defer_stack = [];
+										var _ret, _6, _7;
+										function _22(_cb, _step, _cont, _ret, cb_defer) {
+											switch (_step) {
+												case 0:
+													_ret = Lcall(LcatchBlock, Le)(function (_ret) {
+														return _22(_cb, 1, true, _ret, function () {
+															thisDefer(defer_stack, true)(function () {
+																cb_defer && cb_defer();
+															}, 0);
+															cb_defer && cb_defer();
+														}
+														);
+													}, 0, false, undefined, function () {
+														thisDefer(defer_stack, true)(function () {
+															cb_defer && cb_defer();
+														}, 0);
+														cb_defer && cb_defer();
+													}
+													);
+												case 1:
+													_6 = _ret;
+												case 2:
+													_ret = Lcall(Lbreak)(function (_ret) {
+														return _22(_cb, 3, true, _ret, function () {
+															thisDefer(defer_stack, true)(function () {
+																cb_defer && cb_defer();
+															}, 0);
+															cb_defer && cb_defer();
+														}
+														);
+													}, 0, false, undefined, function () {
+														thisDefer(defer_stack, true)(function () {
+															cb_defer && cb_defer();
+														}, 0);
+														cb_defer && cb_defer();
+													}
+													);
+												case 3:
+													_7 = _ret
+												default:
+											}
+											thisDefer(defer_stack, false)(function () {
+												_cb(_ret);
+											}, 0);
+											if (_cont) {
+												_cb(_ret);
+											} else {
+												return _ret;
+											}
+										};
+										return _22;
+									}))(function (_ret) {
+										return _20(_cb, 1, true, _ret, function () {
+											thisDefer(defer_stack, true)(function () {
+												cb_defer && cb_defer();
+											}, 0);
+											cb_defer && cb_defer();
+										}
+										);
+									}, 0, false, undefined, function () {
+										thisDefer(defer_stack, true)(function () {
+											cb_defer && cb_defer();
+										}, 0);
+										cb_defer && cb_defer();
+									}
+									);
+								case 1:
+									_8 = _ret;
+								case 2:
+									_ret = Lcall(LtryBlock)(function (_ret) {
+										return _20(_cb, 3, true, _ret, function () {
+											thisDefer(defer_stack, true)(function () {
+												cb_defer && cb_defer();
+											}, 0);
+											cb_defer && cb_defer();
+										}
+										);
+									}, 0, false, undefined, function () {
+										thisDefer(defer_stack, true)(function () {
+											cb_defer && cb_defer();
+										}, 0);
+										cb_defer && cb_defer();
+									}
+									);
+								case 3:
+									_9 = _ret;
+								case 4:
+									_ret = Lcall(Lbreak)(function (_ret) {
+										return _20(_cb, 5, true, _ret, function () {
+											thisDefer(defer_stack, true)(function () {
+												cb_defer && cb_defer();
+											}, 0);
+											cb_defer && cb_defer();
+										}
+										);
+									}, 0, false, undefined, function () {
+										thisDefer(defer_stack, true)(function () {
+											cb_defer && cb_defer();
+										}, 0);
+										cb_defer && cb_defer();
+									}
+									);
+								case 5:
+									_10 = _ret
+								default:
+							}
+							thisDefer(defer_stack, false)(function () {
+								_cb(_ret);
+							}, 0);
+							if (_cont) {
+								_cb(_ret);
+							} else {
+								return _ret;
+							}
+						};
+						return _20;
+					}))(function (_ret) {
+						return _18(_cb, 4, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {
+								cb_defer && cb_defer();
+							}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {
+							cb_defer && cb_defer();
+						}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 4:
+					_11 = _ret;
+				case 5:
+					_ret = Lcall(Ltrap, LoldTrapFn)(function (_ret) {
+						return _18(_cb, 6, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {
+								cb_defer && cb_defer();
+							}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {
+							cb_defer && cb_defer();
+						}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 6:
+					_12 = _ret
+				default:
+			}
+			thisDefer(defer_stack, false)(function () {
+				_cb(_ret);
+			}, 0);
+			if (_cont) {
+				_cb(_ret);
+			} else {
+				return _ret;
+			}
+		};
+		return _18;
+	};
+	this.Lraise = function (Le) {
+		var Larguments = arguments;
+		var defer_stack = [];
+		var _ret, _13, _14;
+		function _24(_cb, _step, _cont, _ret, cb_defer) {
+			switch (_step) {
+				case 0:
+					_ret = Lcall(Ltrap)(function (_ret) {
+						return _24(_cb, 1, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {
+								cb_defer && cb_defer();
+							}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {
+							cb_defer && cb_defer();
+						}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 1:
+					_13 = _ret;
+				case 2:
+					_ret = Lcall(_13, Le)(function (_ret) {
+						return _24(_cb, 3, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {
+								cb_defer && cb_defer();
+							}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {
+							cb_defer && cb_defer();
+						}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 3:
+					_14 = _ret
+				default:
+			}
+			thisDefer(defer_stack, false)(function () {
+				_cb(_ret);
+			}, 0);
+			if (_cont) {
+				_cb(_ret);
+			} else {
+				return _ret;
+			}
+		};
+		return _24;
+	};
 })();
 
