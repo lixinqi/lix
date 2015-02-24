@@ -4,17 +4,17 @@
 # 0 String.IsString | print
 #
 
-cc call [break]->{
-
-	try call []->{
+MyObject := Object subclass [pub]->{
+	pub.__init__ = []->{
 		'good' print
-		raise call 'fine'
-		'good1' print
-	} [e]->{
-		'nice' print
-		e print
 	}
 }
+
+MyObject new
+obj := MyObject new
+
+obj is MyObject | print
+'good' is MyObject | print
 
 # $a print
 # $a print
