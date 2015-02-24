@@ -9,6 +9,7 @@ function identity(x) {
 	}
 
 	var _lixCCException = new _LixCCException();
+	this._lixCCException = _lixCCException;
 
 	require.lixCache = {}
 	require.lixLoadingCache = {}

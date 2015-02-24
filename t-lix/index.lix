@@ -1,20 +1,29 @@
 #!/usr/bin/env lix
 
+try call []->{
+
+	'good' call
+} [e]->{
+	'in catch' print
+	e print
+}
+
+'end' print
+
 # 'a' String.IsString | print
 # 0 String.IsString | print
 #
 
-MyObject := Object subclass [pub]->{
-	pub.__init__ = []->{
-		'good' print
-	}
-}
-
-MyObject new
-obj := MyObject new
-
-obj is MyObject | print
-'good' is MyObject | print
+# MyObject := Object subclass [pub]->{
+# 	pub.__init__ = []->{
+# 		'good' print
+# 	}
+# }
+# 
+# MyObject new
+# obj := MyObject new
+# 
+# obj is MyObject | print
 
 # $a print
 # $a print

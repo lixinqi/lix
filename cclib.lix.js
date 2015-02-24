@@ -161,7 +161,7 @@ var stmt = join(['case ', current, ':\n', stmt]);
 return stmt;
 };_uniq_var_23.__lix_func__ = true;return _uniq_var_23;})()), ";\n");
 body;
-def.appendExpr(join(['function ', funcName, '(', seqFuncParamsName.cb, ', ', seqFuncParamsName.step, ', ', seqFuncParamsName.cont, ', ', seqFuncParamsName.ret, ', ', seqFuncParamsName.defer, ') {\n', 'switch (', seqFuncParamsName.step, ') {\n', body, '\n', 'default:\n', '}\n', 'thisDefer(defer_stack, false)(function () {\n', seqFuncParamsName.cb, '(', seqFuncParamsName.ret, ');\n', '}, 0);\n', 'if (', seqFuncParamsName.cont, ') {\n', seqFuncParamsName.cb, '(', seqFuncParamsName.ret, ');\n', '} else {\n', 'return ', seqFuncParamsName.ret, ';\n', '}\n', '}']));
+def.appendExpr(join(['function ', funcName, '(', seqFuncParamsName.cb, ', ', seqFuncParamsName.step, ', ', seqFuncParamsName.cont, ', ', seqFuncParamsName.ret, ', ', seqFuncParamsName.defer, ') {\n', 'try {\n', 'switch (', seqFuncParamsName.step, ') {\n', body, '\n', 'default:\n', '}\n', 'thisDefer(defer_stack, false)(function () {\n', seqFuncParamsName.cb, '(', seqFuncParamsName.ret, ');\n', '}, 0);\n', 'if (', seqFuncParamsName.cont, ') {\n', seqFuncParamsName.cb, '(', seqFuncParamsName.ret, ');\n', '} else {\n', 'return ', seqFuncParamsName.ret, ';\n', '}\n', '} catch (e) {\n', 'if (e == ', builtinNames.ccException, ') {\n', 'throw e;\n', '} else {\n', 'Lraise(e)(function (x) {return x;}, 0);\n', '}\n', '}\n', '}\n']));
 return funcName;
 };_uniq_var_24.__lix_func__ = true;return _uniq_var_24;})();
 generateSeq;
@@ -947,6 +947,10 @@ thisDefer: 'this_defer',
 chainDefer: 'chain_defer'
 };
 seqFuncParamsName;
+var builtinNames = {
+ccException: '_lixCCException'
+};
+builtinNames;
 var compile = (function () {var _uniq_var_173 = function (expr) {var libs = (function () {var _uniq_var_169 = function (_uniq_var_167, _uniq_var_168) {
 if (typeof _uniq_var_167.join === 'function') {
 arguments = Array.prototype.slice.call(arguments, (_uniq_var_167.join.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_167.join.apply(_uniq_var_167, arguments);

@@ -81,20 +81,28 @@ generateSeq := [expr env ctx def]->{
 		seqFuncParamsName.cb ', ' seqFuncParamsName.step ', '
 		seqFuncParamsName.cont ', ' seqFuncParamsName.ret ', '
 		seqFuncParamsName.defer ') {\n'
-		'switch (' seqFuncParamsName.step ') {\n'
-			body
-			'\n'
-			'default:\n'
+			'try {\n'
+				'switch (' seqFuncParamsName.step ') {\n'
+					body
+					'\n'
+					'default:\n'
+				'}\n'
+				'thisDefer(defer_stack, false)(function () {\n'
+					seqFuncParamsName.cb '(' seqFuncParamsName.ret ');\n' 
+				'}, 0);\n'
+				'if (' seqFuncParamsName.cont ') {\n'
+					seqFuncParamsName.cb '(' seqFuncParamsName.ret ');\n'
+				'} else {\n'
+					'return ' seqFuncParamsName.ret ';\n'
+				'}\n'
+			'} catch (e) {\n'
+				'if (e == ' builtinNames.ccException ') {\n'
+					'throw e;\n'
+				'} else {\n'
+					'Lraise(e)(function (x) {return x;}, 0);\n'
+				'}\n'
 			'}\n'
-			'thisDefer(defer_stack, false)(function () {\n'
-				seqFuncParamsName.cb '(' seqFuncParamsName.ret ');\n' 
-			'}, 0);\n'
-			'if (' seqFuncParamsName.cont ') {\n'
-				seqFuncParamsName.cb '(' seqFuncParamsName.ret ');\n'
-			'} else {\n'
-				'return ' seqFuncParamsName.ret ';\n'
-			'}\n'
-		'}'
+		'}\n'
 	] | join | def.appendExpr
 	funcName
 }
@@ -704,6 +712,10 @@ seqFuncParamsName := {
 	.defer 'cb_defer'
 	.thisDefer 'this_defer'
 	.chainDefer 'chain_defer'
+}
+
+builtinNames := {
+	.ccException '_lixCCException'
 }
 
 compile := [expr]->{
