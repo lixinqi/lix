@@ -1,9 +1,62 @@
 #!/usr/bin/env lix
 
-try call []->{
-	0 call
-} []->{
+flist := [arr]->{
+	[append]->{
+		i := 0
+		while (i < arr.length) {
+			arr.(i) append
+			i = i + 1
+		}
+	}
 }
+
+sflist := [x]->{
+	[append]->{
+		x append
+	}
+}
+
+compose := [f0 f1]->{
+	[i]->{ i | f0 | f1 }
+}
+
+add := [x]->{
+	[i]->{ i + x }
+}
+
+data := [append]->{
+	'good' append
+	'nice' append
+}
+
+# (data
+# 	| >>= (+ __ '0' | >> sflist)
+# 	| >>= (+ __ '1' | >> sflist)
+# 	| call print
+# )
+
+(data
+	| __bind__ (+ __ '0' | compose sflist)
+	| __bind__ (+ __ '1' | compose sflist)
+	| call print
+	)
+
+df := [x]->{
+	data
+}
+
+# threeDf := df >>> df >>> df
+
+threeDf := df | __vcompose__ df | __vcompose__ df
+
+threeDf call | call print
+
+'end' print
+
+# try call []->{
+# 	0 call
+# } []->{
+# }
 
 # try call []->{
 # 
@@ -12,8 +65,6 @@ try call []->{
 # 	'in catch' print
 # 	e print
 # }
-
-'end' print
 
 # 'a' String.IsString | print
 # 0 String.IsString | print
