@@ -1,5 +1,11 @@
 #!/usr/bin/env lix
 
+add2 := + __ 2
+mul3 := * __ 3
+# add2 __compose__ print | call 3 
+# add2 << mul3 >> print | call 3 
+print << (add2 >> mul3) | call 3 
+
 flist := [arr]->{
 	[append]->{
 		i := 0
@@ -29,25 +35,25 @@ data := [append]->{
 	'nice' append
 }
 
-# (data
-# 	| >>= (+ __ '0' | >> sflist)
-# 	| >>= (+ __ '1' | >> sflist)
-# 	| call print
-# )
-
 (data
-	| __bind__ (+ __ '0' | compose sflist)
-	| __bind__ (+ __ '1' | compose sflist)
+	| >>= ((+ __ '0') >> sflist)
+	| >>= ((+ __ '1') >> sflist)
 	| call print
-	)
+)
+
+# (data
+# 	| __bind__ (+ __ '0' | compose sflist)
+# 	| __bind__ (+ __ '1' | compose sflist)
+# 	| call print
+# 	)
 
 df := [x]->{
 	data
 }
 
-# threeDf := df >>> df >>> df
+threeDf := df >>> df >>> df
 
-threeDf := df | __vcompose__ df | __vcompose__ df
+# threeDf := df | __vcompose__ df | __vcompose__ df
 
 threeDf call | call print
 

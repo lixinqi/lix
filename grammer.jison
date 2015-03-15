@@ -11,6 +11,7 @@
 		}
 		return expr;
 	}
+
 //	lixlib = require("./lixlib.js");
 //	lixlib = require("./lib.lix.js");
 %}
@@ -70,6 +71,12 @@
 '$'"("\s*(("#".*)?\n+)*\s* 				{ return 'DOLLAR_PARAN'; }
 '$'[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'DOLLAR_STR'; }
 
+">>="													{ return 'var'; }
+\s*">>>"\s+										{ return ">>>"; }
+\s*"<<<"\s+										{ return "<<<"; }
+\s*">>"\s+										{ return ">>"; }
+\s*"<<"\s+										{ return "<<"; }
+
 "+"														{ return 'var'; }
 "*"														{ return 'var'; }
 "-"														{ return 'var'; }
@@ -92,6 +99,10 @@
 %left VBAR
 %left SEP
 %left ASSIGN_OPERATOR
+%left ">>>"
+%left "<<<"
+%left ">>"
+%left "<<"
 
 %%
 
@@ -262,13 +273,28 @@ PrimaryExpr
 				$$ = [$ArrayLiteral, '{func}', $FUNC_BODY];
 			}
 		| '[' ']' FUNC_ARROW '{' FUNC_BODY '}'
-			{
-				$$ = [[], '{func}', $FUNC_BODY];
-			}
+			{ $$ = [[], '{func}', $FUNC_BODY]; }
 		| OPENPARAN MultiLineExpr CLOSEPARAN
 			{
 				$$ = makeExpr($MultiLineExpr);
 			}
+		| PrimaryExpr '>>>' PrimaryExpr
+			{
+				$$ = [makeExpr($1), ["__vcompose__", "{atomic}", "{var}"], makeExpr($3)];
+			}
+		| PrimaryExpr '<<<' PrimaryExpr
+			{
+				$$ = [makeExpr($1), ["__rvcompose__", "{atomic}", "{var}"], makeExpr($3)];
+			}
+		| PrimaryExpr '>>' PrimaryExpr
+			{
+				$$ = [makeExpr($1), ["__compose__", "{atomic}", "{var}"], makeExpr($3)];
+			}
+		| PrimaryExpr '<<' PrimaryExpr
+			{
+				$$ = [makeExpr($1), ["__rcompose__", "{atomic}", "{var}"], makeExpr($3)];
+			}
+
 		| '{' '}'
 			{
 				$$ = [[], '{object}'];

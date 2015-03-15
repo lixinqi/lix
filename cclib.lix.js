@@ -194,6 +194,7 @@ return join(['if (', generate(i[0], env, ctx, def), ') {\n', ctx(generate(i[1], 
 };_uniq_var_31.__lix_func__ = true;return _uniq_var_31;})();
 generateIf;
 var operateFuncName = {
+">>=": '__bind__',
 "+": '__add__',
 "-": '__sub__',
 "*": '__mul__',
