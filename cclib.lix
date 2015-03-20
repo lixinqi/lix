@@ -131,7 +131,6 @@ generateIf := [expr env ctx def]->{
 }
 
 operateFuncName := {
-	.(">>=") 				'__bind__'
 	.("+") 				'__add__'
 	.("-") 				'__sub__'
 	.("*") 				'__mul__'
@@ -513,6 +512,40 @@ flattenAssign := [expr define]->{
 	expr
 }
 
+flattenBasicOp := [expr builtinOpName define]->{
+	expr.1 = [builtinOpName '{atomic}' '{var}']
+	if (expr.length > 3) {
+		partialExpr := [expr.2 ['__' '{atomic}' '{var}']]
+		i := 3
+		while (i < expr.length) {
+			partialExpr .push expr.(i)
+			i = i + 1
+		}
+		expr = [expr.0 expr.1 partialExpr]
+	}
+	expr flattenExpr define
+}
+
+flattenBind := [expr define]->{
+	expr flattenBasicOp '__bind__' define
+}
+
+flattenCompose := [expr define]->{
+	expr flattenBasicOp '__compose__' define
+}
+
+flattenReverseCompose := [expr define]->{
+	expr flattenBasicOp '__rcompose__' define
+}
+
+flattenReverseCPSCompose := [expr define]->{
+	expr flattenBasicOp '__rvcompose__' define
+}
+
+flattenCPSCompose := [expr define]->{
+	expr flattenBasicOp '__vcompose__' define
+}
+
 flattenDef := flattenAssign
 
 flattenPathArgItem := [expr define]->{
@@ -678,6 +711,11 @@ flattenOpTable := {
 	.('{path_arg_item}')			flattenPathArgItem
 	.(':=')										flattenDef
 	.('=') 										flattenAssign
+	.('>>=') 									flattenBind
+	.('>>>') 									flattenCPSCompose
+	.('<<<') 									flattenReverseCPSCompose
+	.('>>') 									flattenCompose
+	.('<<') 									flattenReverseCompose
 	.('if')										flattenIf
 	.('and')									flattenAnd
 	.('or') 									flattenOr

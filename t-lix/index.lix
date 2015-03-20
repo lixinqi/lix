@@ -1,9 +1,20 @@
 #!/usr/bin/env lix
 
+identity := [i]->{i}
+id := identity
+
 add2 := + __ 2
+add4 := add2 >> add2
+add2 >> add4 >> print | call 3
+add2 >> + 2 | call 3 | print
+
+id >> + 2 >> + 3 >> * 6 >> print | call 3
+
 mul3 := * __ 3
+p := add2 >> mul3 >> print
+5 p
 # add2 __compose__ print | call 3 
-# add2 << mul3 >> print | call 3 
+add2 >> mul3 >> print | call 3 
 print << (add2 >> mul3) | call 3 
 
 flist := [arr]->{
@@ -22,10 +33,6 @@ sflist := [x]->{
 	}
 }
 
-compose := [f0 f1]->{
-	[i]->{ i | f0 | f1 }
-}
-
 add := [x]->{
 	[i]->{ i + x }
 }
@@ -36,22 +43,22 @@ data := [append]->{
 }
 
 (data
-	| >>= ((+ __ '0') >> sflist)
-	| >>= ((+ __ '1') >> sflist)
+	>>= (sflist << + 0)
+	>>= (sflist << + '1')
 	| call print
 )
-
-# (data
-# 	| __bind__ (+ __ '0' | compose sflist)
-# 	| __bind__ (+ __ '1' | compose sflist)
-# 	| call print
-# 	)
 
 df := [x]->{
 	data
 }
 
-threeDf := df >>> df >>> df
+times := [x n]->{
+	ret := [0]
+	ret.length = n
+	ret flist
+}
+
+threeDf := sflist >>> times 5 >>> df
 
 # threeDf := df | __vcompose__ df | __vcompose__ df
 

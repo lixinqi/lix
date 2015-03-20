@@ -12,6 +12,20 @@
 		return expr;
 	}
 
+	function makePartialExpr(expr) {
+		console.error('enter');
+		console.error(expr);
+		if (expr.length === 1) {
+			expr.push("{mono}");
+			return expr;
+		}
+		var expr0 = expr[0];
+		expr[0] = ["__", "{atomic}", "{var}"];
+		expr = expr.unshift(expr0);
+		console.error(expr);
+		return expr;
+	}
+
 //	lixlib = require("./lixlib.js");
 //	lixlib = require("./lib.lix.js");
 %}
@@ -71,7 +85,7 @@
 '$'"("\s*(("#".*)?\n+)*\s* 				{ return 'DOLLAR_PARAN'; }
 '$'[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'DOLLAR_STR'; }
 
-">>="													{ return 'var'; }
+\s*">>="\s+										{ return '>>='; }
 \s*">>>"\s+										{ return ">>>"; }
 \s*"<<<"\s+										{ return "<<<"; }
 \s*">>"\s+										{ return ">>"; }
@@ -97,12 +111,13 @@
 
 %left NEWLINE
 %left VBAR
-%left SEP
-%left ASSIGN_OPERATOR
+%left ">>="
 %left ">>>"
 %left "<<<"
 %left ">>"
 %left "<<"
+%left SEP
+%left ASSIGN_OPERATOR
 
 %%
 
@@ -278,22 +293,6 @@ PrimaryExpr
 			{
 				$$ = makeExpr($MultiLineExpr);
 			}
-		| PrimaryExpr '>>>' PrimaryExpr
-			{
-				$$ = [makeExpr($1), ["__vcompose__", "{atomic}", "{var}"], makeExpr($3)];
-			}
-		| PrimaryExpr '<<<' PrimaryExpr
-			{
-				$$ = [makeExpr($1), ["__rvcompose__", "{atomic}", "{var}"], makeExpr($3)];
-			}
-		| PrimaryExpr '>>' PrimaryExpr
-			{
-				$$ = [makeExpr($1), ["__compose__", "{atomic}", "{var}"], makeExpr($3)];
-			}
-		| PrimaryExpr '<<' PrimaryExpr
-			{
-				$$ = [makeExpr($1), ["__rcompose__", "{atomic}", "{var}"], makeExpr($3)];
-			}
 
 		| '{' '}'
 			{
@@ -398,9 +397,38 @@ MultiLineExpr
 			{
 				$$ = [makeExpr($1), 'or', makeExpr($5)];
 			}
-
 		| MultiLineExpr VBAR MultiLineExpr
 			{
+				$3.unshift(makeExpr($1));
+				$$ = $3;
+			}
+		| MultiLineExpr '>>=' MultiLineExpr
+			{
+				$3.unshift('>>=');
+				$3.unshift(makeExpr($1));
+				$$ = $3;
+			}
+		| MultiLineExpr '>>>' MultiLineExpr
+			{
+				$3.unshift('>>>');
+				$3.unshift(makeExpr($1));
+				$$ = $3;
+			}
+		| MultiLineExpr '<<<' MultiLineExpr
+			{
+				$3.unshift('<<<');
+				$3.unshift(makeExpr($1));
+				$$ = $3;
+			}
+		| MultiLineExpr '>>' MultiLineExpr
+			{
+				$3.unshift('>>');
+				$3.unshift(makeExpr($1));
+				$$ = $3;
+			}
+		| MultiLineExpr '<<' MultiLineExpr
+			{
+				$3.unshift('<<');
 				$3.unshift(makeExpr($1));
 				$$ = $3;
 			}
@@ -441,6 +469,36 @@ Expr
 
 		| Expr VBAR Expr
 			{
+				$3.unshift(makeExpr($1));
+				$$ = $3;
+			}
+		| Expr '>>=' Expr
+			{
+				$3.unshift('>>=');
+				$3.unshift(makeExpr($1));
+				$$ = $3;
+			}
+		| Expr '>>>' Expr
+			{
+				$3.unshift('>>>');
+				$3.unshift(makeExpr($1));
+				$$ = $3;
+			}
+		| Expr '<<<' Expr
+			{
+				$3.unshift('<<<');
+				$3.unshift(makeExpr($1));
+				$$ = $3;
+			}
+		| Expr '>>' Expr
+			{
+				$3.unshift('>>');
+				$3.unshift(makeExpr($1));
+				$$ = $3;
+			}
+		| Expr '<<' Expr
+			{
+				$3.unshift('<<');
 				$3.unshift(makeExpr($1));
 				$$ = $3;
 			}
