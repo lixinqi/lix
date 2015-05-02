@@ -1,4 +1,10 @@
 #!/usr/local/bin/node ./lix.js
+
+PREV := '0'
+F := '1'
+STEP := '2'
+RET := '3'
+
 join := [arr]->{ arr .join "" }
 
 map := [arr cb]->{
@@ -32,76 +38,30 @@ generateFuncArgs := [args env ctx]->{
 
 ctx0 := [x]->{x}
 
-# withSeqLayout := [statements ctx]->{
-# 	funcName := getUniqVarName call
-# 	suffix := [v]->{
-# 		v + '()'
-# 	}
-# 	body := statements map [stmtClosure index]->{
-# 		stmt := stmtClosure call suffix
-# 		if (index == (statements.length - 1)) {
-# 			stmt = 'return ' + stmt
-# 		}
-# 		stmt
-# 	}
+# newDynamicScope := [prev exceptionStack]->{
+# 	[ "{ p:" prev ", " "e:" exceptionStack " }"  ] join
 # }
 
+# e := 'e'
+
 generateSeq := [expr env ctx def]->{
+
 	funcName := getUniqVarName call
 	getCount := counterGenerator call
-	chainDefer := [
-		'function () {\n'
-			'thisDefer(defer_stack, true)(function (' ') {'
-			seqFuncParamsName.defer ' && ' seqFuncParamsName.defer '();'
-			'}, 0);\n'
-			seqFuncParamsName.defer ' && ' seqFuncParamsName.defer '();\n'
-		'}\n' ] join
-	ctx := [current]->{
-		[v loop]->{
-			next := current
-			if (loop == undefined) {
-				next = next + 1
-			}
-			[	v '(function (' seqFuncParamsName.ret ') {\n'
-				'return ' funcName '(' seqFuncParamsName.cb ', '
-				next ', true, ' seqFuncParamsName.ret ', ' chainDefer ');\n'
-			'}, 0, false, undefined, ' chainDefer ')'
-#			'}, 0)'
-			] join
-		}
-	}
 	body := expr.0 map [item index]->{
 		current := (getCount call)
-		stmt := item generate env (current ctx) def
+		stmt := item generate env ctx0 def
 		stmt := ['case ' current ':\n' stmt] join
 	} | .join ";\n"
 
 	[
-		'function ' funcName '('
-		seqFuncParamsName.cb ', ' seqFuncParamsName.step ', '
-		seqFuncParamsName.cont ', ' seqFuncParamsName.ret ', '
-		seqFuncParamsName.defer ') {\n'
-			'try {\n'
-				'switch (' seqFuncParamsName.step ') {\n'
-					body
-					'\n'
-					'default:\n'
-				'}\n'
-				'thisDefer(defer_stack, false)(function () {\n'
-					seqFuncParamsName.cb '(' seqFuncParamsName.ret ');\n' 
-				'}, 0);\n'
-				'if (' seqFuncParamsName.cont ') {\n'
-					seqFuncParamsName.cb '(' seqFuncParamsName.ret ');\n'
-				'} else {\n'
-					'return ' seqFuncParamsName.ret ';\n'
-				'}\n'
-			'} catch (e) {\n'
-				'if (e == ' builtinNames.ccException ') {\n'
-					'throw e;\n'
-				'} else {\n'
-					'Lraise(e)(function (x) {return x;}, 0);\n'
-				'}\n'
+		'function ' funcName '(s) {\n'
+			'switch (s[' STEP ']) {\n'
+				body
+				'\n'
+				'default:\n'
 			'}\n'
+			'return s[' RET ']\n'
 		'}\n'
 	] | join | def.appendExpr
 	funcName
@@ -291,6 +251,7 @@ generateFunc := [expr env ctx def]->{
 	body := expr.2 generate funcEnv ctx0 def
 	['(function (' args ') {\n'
 		'var ' ('arguments' transformVarName) ' = arguments, defer_stack = [];\n'
+#		'var ' e ";\n"
 		(def.defineVar call) ";\n"
 		(def.appendExpr call) ";\n"
 		'return ' body ";\n"
@@ -305,7 +266,7 @@ generateExpr := [expr env ctx def]->{
 			args = [args ', ' (item generate env ctx0 def)] join
 		}
 	}
-	[func '(' args ')'] | join | ctx
+	['lix(s, ' func '(' args '))'] | join | ctx
 }
 
 GenerateDefNew := []->{
@@ -343,10 +304,6 @@ generateStart := [expr env ctx def]->{
 	] join
 
 	[
-		'var defer_stack = [];\n'
-		'function ' seqFuncParamsName.chainDefer '() {\n'
-			'thisDefer(defer_stack)(function(){return;}, 0);\n'
-		'}\n'
 		(def.defineVar call) ";\n"
 		(def.appendExpr call) ";\n"
 		body
@@ -415,7 +372,7 @@ generate := [expr env ctx def]->{
 
 env0 := {
 	.exports 				null
-	.__builtin__		"require('/lib/lix/__builtin__.js');"
+	.__builtin__		"require('/lib/lix/s_builtin_.js');"
 }
 
 env_new := [env]->{
@@ -633,7 +590,8 @@ statementFlattenGenerator := []->{
 			varName := getUniqVarName call
 			lixVar := [varName '{atomic}' '{var}' 'tmp']
 			tmpRet := [seqFuncParamsName.ret '{atomic}' '{var}' 'aux']
-			data .push [tmpRet ':=' statement]
+			data .push statement
+#			data .push [tmpRet ':=' statement]
 			data .push [lixVar ':=' tmpRet]
 			lixVar
 		}
@@ -744,10 +702,12 @@ def0 := {
 }
 
 seqFuncParamsName := {
+	.dynamicScope 'd'
 	.cb '_cb'
 	.step '_step'
 	.cont '_cont'
-	.ret '_ret'
+#	.ret '_ret'
+	.ret (['s[' RET ']'] join)
 	.defer 'cb_defer'
 	.thisDefer 'this_defer'
 	.chainDefer 'chain_defer'

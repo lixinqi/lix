@@ -8,6 +8,36 @@ function identity(x) {
 }
 (function () {
 
+	this.lix = function (s, f) {
+		s[STEP] ++;
+		var ns = [
+		/*prev:*/ s,
+		/*f:*/ f,
+		/*step:*/ 0,
+		/*ret:*/ undefined,
+		]
+		s[RET] = f(ns);
+		ns[PREV] = undefined;
+		ns[F] = undefined;
+		return s[RET];
+	}
+
+	this.lix_resume = function (s) {
+		var ret = s[RET];
+		while (s) {
+			s[RET] = ret;
+			ret = s[F](s);
+			s = s[PREV];
+		}
+	}
+
+	this.lix_start = function (f) {
+		try {
+			f([/*PREV*/ null, /*F*/ function () {}, /*STEP*/ 0, /*RET*/ undefined]);
+		} catch (e) {
+					console.log(e);
+		}
+	}
 
 	function _LixCCException() {
 		this.message = 'cc call exception';
