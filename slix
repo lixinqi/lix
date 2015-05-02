@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cmd="./slix.js $1 $2"
+jsFile=$($cmd)
+node ./run-slix.js $jsFile

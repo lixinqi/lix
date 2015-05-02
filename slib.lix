@@ -48,9 +48,21 @@ generateSeq := [expr env ctx def]->{
 
 	funcName := getUniqVarName call
 	getCount := counterGenerator call
+	ctx := [current]->{
+		[v loop]->{
+			next := current
+			if (loop == undefined) {
+				next = next + 1
+			}
+			[
+				seqFuncParamsName.step ' = ' next ';\n'
+				'lix(s, ' v ')'
+			] join
+		}
+	}
 	body := expr.0 map [item index]->{
 		current := (getCount call)
-		stmt := item generate env ctx0 def
+		stmt := item generate env (current ctx) def
 		stmt := ['case ' current ':\n' stmt] join
 	} | .join ";\n"
 
@@ -238,7 +250,6 @@ generateAssign := [expr env ctx def]->{
 
 	varname := (expr.0 generate env ctx0 def)
 	value := (expr.2 generate env ctx def)
-#	[seqFuncParamsName.ret " = " value] | join | def.appendExpr
 	[varname " = " value] | join
 }
 
@@ -250,8 +261,7 @@ generateFunc := [expr env ctx def]->{
 	def := GenerateDefNew call
 	body := expr.2 generate funcEnv ctx0 def
 	['(function (' args ') {\n'
-		'var ' ('arguments' transformVarName) ' = arguments, defer_stack = [];\n'
-#		'var ' e ";\n"
+		'var ' ('arguments' transformVarName) ' = arguments\n'
 		(def.defineVar call) ";\n"
 		(def.appendExpr call) ";\n"
 		'return ' body ";\n"
@@ -266,7 +276,7 @@ generateExpr := [expr env ctx def]->{
 			args = [args ', ' (item generate env ctx0 def)] join
 		}
 	}
-	['lix(s, ' func '(' args '))'] | join | ctx
+	[func '(' args ')'] | join | ctx
 }
 
 GenerateDefNew := []->{
@@ -402,7 +412,7 @@ flattenWhile := [expr define]->{
 			i define true
 		}
 		expr define true
-		['undefined' '{atomic}']
+		['' '{empty}']
 }
 
 flattenOr := [expr define]->{
@@ -455,12 +465,10 @@ _flattenIf := [expr define tmpVar ctx]->{
 }
 
 flattenIf := [expr define]->{
-	tmpVar := ['true' '{atomic}'] define
-	retVar := ['null' '{atomic}'] define
-	ctx := [i]->{
-		[retVar '=' i]
-	}
-	expr _flattenIf define tmpVar ctx
+	tmpVar := ['true' '{atomic}'] define 'new'
+	retVar := ['null' '{atomic}']
+	retVar := ['' '{empty}']
+	expr _flattenIf define tmpVar ctx0
 	retVar
 }
 
@@ -591,10 +599,15 @@ statementFlattenGenerator := []->{
 			lixVar := [varName '{atomic}' '{var}' 'tmp']
 			tmpRet := [seqFuncParamsName.ret '{atomic}' '{var}' 'aux']
 			data .push statement
-#			data .push [tmpRet ':=' statement]
 			data .push [lixVar ':=' tmpRet]
 			lixVar
+		} (tmpVarName == 'new') {
+			varName := getUniqVarName call
+			lixVar := [varName '{atomic}' '{var}' 'tmp']
+			data .push [lixVar ':=' statement]
+			lixVar
 		}
+
 	}
 }
 
@@ -704,7 +717,8 @@ def0 := {
 seqFuncParamsName := {
 	.dynamicScope 'd'
 	.cb '_cb'
-	.step '_step'
+#	.step '_step'
+	.step (['s[' STEP ']'] join)
 	.cont '_cont'
 #	.ret '_ret'
 	.ret (['s[' RET ']'] join)

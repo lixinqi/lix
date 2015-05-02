@@ -109,8 +109,8 @@ function exec(jsFileName) {
 parseOptions({
 	run: function (filename) {
 		var jsFileName = compileAndSave(filename);
-//		console.log(jsFileName);
-		exec(jsFileName);
+		console.log(jsFileName);
+//		exec(jsFileName);
 	},
 	module: function (filename) {
 		compileAndSave(filename);

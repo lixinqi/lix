@@ -1,0 +1,253 @@
+#!/usr/bin/env lix
+
+[1 2 3 4] $array2Monad | $until > 3 | call print
+
+# [1 2 3 4] $array2Monad | $filter > 1 | call print
+
+# 3 | $i | print
+
+# id := [i]->{i}
+# 
+# Id := [i]->{
+# 	[append]->{ i append }
+# }
+# 
+# Array2Monad := [arr]->{
+# 	[append]->{
+# 		i := 0
+# 		while (i < arr.length) {
+# 			arr.(i) append
+# 			i = i + 1
+# 		}
+# 	}
+# }
+# 
+# square := [x]->{ x * x }
+# 
+# ([1 2 3] Array2Monad
+# 	>>= (Id << square)
+# 	>>= (Id << square)
+# 	| call print
+# 	)
+# 
+# 
+# f := id >> + 3 >> * 2 >> print
+# 
+# 3 f
+# 4 f
+
+# f := [x]->{
+# 	if (x > 0) {
+# 		x
+# 	} else {
+# 		0
+# 	}
+# }
+# 
+# -1 | f | print
+# 0 | f | print
+# 1 | f | print
+
+
+# sleep := [ms]->{
+# 	cc call [brk]->{
+# 		ms timeout []->{
+# 			brk call
+# 		}
+# 	}
+# }
+# 
+# i := 0
+# 
+# while (i < 5) {
+# 	i print
+# 	sleep call 500
+# 	i = i + 1
+# }
+# 
+# i := 1 
+# if (i) {
+# 	'true' print
+# } else {
+# 	'false' print
+# }
+# 'end' print
+
+# 'fine' print
+# sleep call 1000
+# 'good' print
+# sleep call 1000
+# 'ok' print
+# sleep call 1000
+# 'end' print
+
+# cc call [brk]->{
+# 	immediately call []->{
+# 		'good' print
+# 		brk call
+# 	}
+# }
+# 'end' print
+
+# immediately call []->{
+# 	'good' print
+# }
+# 'end' print
+
+# cc call [brk]->{
+# 	'nice' print
+# 	brk call
+# 	'not here' print
+# }
+# 'good' print
+
+# 1 | [x]->{x + 1} | print
+# print call 'good'
+# 'good' print
+# 'good' print
+# 1 + 2 | + 3 | - 1 | * (1 + (3 - 0.5)) | print
+
+# identity := [i]->{i}
+# id := identity
+# 
+# add2 := + __ 2
+# add4 := add2 >> add2
+# add2 >> add4 >> print | call 3
+# add2 >> + 2 | call 3 | print
+# 
+# id >> + 2 >> + 3 >> * 6 >> print | call 3
+# 
+# mul3 := * __ 3
+# p := add2 >> mul3 >> print
+# 5 p
+# # add2 __compose__ print | call 3 
+# add2 >> mul3 >> print | call 3 
+# print << (add2 >> mul3) | call 3 
+# 
+# flist := [arr]->{
+# 	[append]->{
+# 		i := 0
+# 		while (i < arr.length) {
+# 			arr.(i) append
+# 			i = i + 1
+# 		}
+# 	}
+# }
+# 
+# sflist := [x]->{
+# 	[append]->{
+# 		x append
+# 	}
+# }
+# 
+# add := [x]->{
+# 	[i]->{ i + x }
+# }
+# 
+# data := [append]->{
+# 	'good' append
+# 	'nice' append
+# }
+# 
+# (data
+# 	>>= ($I << + 0)
+# 	>>= ($I << + '1')
+# 	| call print
+# )
+# 
+# df := [x]->{
+# 	data
+# }
+# 
+# times := [x n]->{
+# 	ret := [0]
+# 	ret.length = n
+# 	ret flist
+# }
+# 
+# threeDf := $I >>> times 5 >>> df
+# 
+# # threeDf := df | __vcompose__ df | __vcompose__ df
+# 
+# threeDf call | call print
+# 
+# 'end' print
+# 
+# try call []->{
+# 	0 call
+# } []->{
+# }
+
+# try call []->{
+# 
+# 	'good' call
+# } [e]->{
+# 	'in catch' print
+# 	e print
+# }
+
+# 'a' String.IsString | print
+# 0 String.IsString | print
+#
+
+# MyObject := Object subclass [pub]->{
+# 	pub.__init__ = []->{
+# 		'good' print
+# 	}
+# }
+# 
+# MyObject new
+# obj := MyObject new
+# 
+# obj is MyObject | print
+
+# $a print
+# $a print
+# $a print
+# $a print
+# 
+# # inc1 := + $Partial 1
+# # inc2 := + $Partial 2
+# # inc3 := inc1 $Compose inc2
+# # 1 inc3 | print
+# 
+# ReadFile := [filename options]->{
+# 	cc call [brk]->{
+# 		filename $fs.ReadFileAsync options [err data]->{
+# 			brk call data
+# 		}
+# 	}
+# }
+# 
+# ./t.lix | $fs.ReadFileAsync 'utf-8' [err data]->{
+# }
+
+# ./t.lix | ReadFile 'utf-8' | print
+
+# /tmp/a $fs.RenameAsync /tmp/a-back [err]->{
+# 	err print
+# }
+
+# WriteFile := [filename data options]->{
+# 	cc call [brk]->{
+# 		filename $fs.WriteFileAsync data options [err data]->{
+# 			brk call filename
+# 		}
+# 	}
+# }
+# 
+# AppendFile := [filename data options]->{
+# 	cc call [brk]->{
+# 		filename $fs.AppendFileAsync data options [err]->{
+# 			brk call filename
+# 		}
+# 	}
+# }
+# 
+# 
+# /tmp/a | WriteFile 'gooooooooooooood' | ReadFile 'utf-8' | print
+# /tmp/a | AppendFile '\nnice' | ReadFile 'utf-8' | print
+# 
+# $a | print
+
+# /etc/passwd $fs.ReadFile 'utf-8' | .1 | print
