@@ -75,6 +75,8 @@ var STEP = '2';
 STEP;
 var RET = '3';
 RET;
+var DEFER = '4';
+DEFER;
 var join = (function () {var _uniq_var_3 = function (arr) {return (function () {var _uniq_var_2 = function (_uniq_var_0, _uniq_var_1) {
 if (typeof _uniq_var_0.join === 'function') {
 arguments = Array.prototype.slice.call(arguments, (_uniq_var_0.join.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_0.join.apply(_uniq_var_0, arguments);

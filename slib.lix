@@ -4,6 +4,7 @@ PREV := '0'
 F := '1'
 STEP := '2'
 RET := '3'
+DEFER := '4'
 
 join := [arr]->{ arr .join "" }
 

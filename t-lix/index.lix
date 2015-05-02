@@ -1,12 +1,15 @@
 #!/usr/bin/env lix
 
-exec := call __ $i
-square := [x]->{x * x}
-
-( $naturalNumbers
-	| $map square
-	| $until > 100
-	| $reduce + 0
-	| $hook print
-	| exec
+( N
+	| until > 5
+	| bind [x]->{
+			$naturalNumbers | $until >= x
+		}
+	| map * 2
+	| hook print
+	| reduce + 0
+	| hook []->{'--------------' print}
+	| hook print
+	| call $i
 )
+

@@ -2,11 +2,432 @@ var PREV = 0;
 var F = 1; 
 var STEP = 2; 
 var RET = 3; 
+var DEFER = 4; 
 
 (function () {
+	this.LIdentity = (function (Lx) {
+		var Larguments = arguments
+		;
+	function _3(s) {
+		switch (s[2]) {
+			case 0:
+				s[3] = (function (Lappend) {
+					var Larguments = arguments
+					var _0;
+				function _5(s) {
+					switch (s[2]) {
+						case 0:
+							s[2] = 1;
+							lix(s, Lappend(Lx));
+						case 1:
+							_0 = s[3]
+						default:
+					}
+					return s[3]
+				}
+				;
+				return _5;
+				})
+			default:
+		}
+		return s[3]
+	}
+	;
+	return _3;
+	}) 
+	this.Lidentity = (function (Li) {
+		return function () {
+			return Li;
+		}
+	})
+
+	this.LNaturalNumbers = (function (Lcb) {
+		var Larguments = arguments
+		var Li, _0, _1;
+	function _5(s) {
+		switch (s[2]) {
+			case 0:
+				s[2] = 1;
+				lix(s, Lcb(Li));
+			case 1:
+				_0 = s[3];
+			case 2:
+				s[2] = 3;
+				lix(s, L__add__(Li, 1));
+			case 3:
+				_1 = s[3];
+			case 4:
+				s[3] = Li = _1
+			default:
+		}
+		return s[3]
+	}
+	;
+	function _4(s) {
+		switch (s[2]) {
+			case 0:
+				s[3] = Li = 0;
+			case 1:
+				while (1) {
+					s[2] = 1;
+					lix(s, _5)
+				}
+			default:
+		}
+		return s[3]
+	}
+	;
+	return _4;
+	})
+
+	this.LN = this.LNaturalNumbers
+
+	this.LMinorArgs2Fn = (function (Largs) {
+				var Larguments = arguments
+				var _0, Largs, _1;
+			function _4(s) {
+				switch (s[2]) {
+					case 0:
+						s[2] = 1;
+						lix(s, LArray.Slice(Largs));
+					case 1:
+						_0 = s[3];
+					case 2:
+						s[3] = Largs = _0;
+					case 3:
+						s[3] = Largs[0] = L__;
+					case 4:
+						s[2] = 5;
+						lix(s, Lapply(Lcall, Largs));
+					case 5:
+						_1 = s[3]
+					default:
+				}
+				return s[3]
+			}
+			;
+			return _4;
+			})
+
+	this.Lreduce = (function (Lmonad, Lacc, Linit) {
+				var Larguments = arguments
+				;
+			function _6(s) {
+				switch (s[2]) {
+					case 0:
+						s[3] = (function (Lcb) {
+							var Larguments = arguments
+							var Lret, _1, _2, _3;
+						function _8(s) {
+							switch (s[2]) {
+								case 0:
+									s[3] = Lret = Linit;
+								case 1:
+									s[2] = 2;
+									lix(s, Lmap(Lmonad, (function (Li) {
+										var Larguments = arguments
+										var _0;
+									function _10(s) {
+										switch (s[2]) {
+											case 0:
+												s[2] = 1;
+												lix(s, Lacc(Lret, Li));
+											case 1:
+												_0 = s[3];
+											case 2:
+												s[3] = Lret = _0
+											default:
+										}
+										return s[3]
+									}
+									;
+									return _10;
+									})));
+								case 2:
+									_1 = s[3];
+								case 3:
+									s[2] = 4;
+									lix(s, Lcall(_1, Lidentity));
+								case 4:
+									_2 = s[3];
+								case 5:
+									s[2] = 6;
+									lix(s, Lcb(Lret));
+								case 6:
+									_3 = s[3]
+								default:
+							}
+							return s[3]
+						}
+						;
+						return _8;
+						})
+					default:
+				}
+				return s[3]
+			}
+			;
+			return _6;
+			})
+
+	this.Luntil = (function (Lmonad) {
+				var Larguments = arguments
+				var _0, Lfn;
+			function _10(s) {
+				switch (s[2]) {
+					case 0:
+						s[2] = 1;
+						lix(s, LMinorArgs2Fn(Larguments));
+					case 1:
+						_0 = s[3];
+					case 2:
+						s[3] = Lfn = _0;
+					case 3:
+						s[3] = (function (Lcb) {
+							var Larguments = arguments
+							var _7;
+						function _12(s) {
+							switch (s[2]) {
+								case 0:
+									s[2] = 1;
+									lix(s, Lcall(Lcc, (function (Lbrk) {
+										var Larguments = arguments
+										var _5, _6;
+									function _14(s) {
+										switch (s[2]) {
+											case 0:
+												s[2] = 1;
+												lix(s, Lcall(Lmonad, (function (Lx) {
+													var Larguments = arguments
+													var _1, _3, _2, _4;
+												function _17(s) {
+													switch (s[2]) {
+														case 0:
+															_1 = false;
+														case 1:
+															s[2] = 2;
+															lix(s, Lcall(Lbrk));
+														case 2:
+															_2 = s[3]
+														default:
+													}
+													return s[3]
+												}
+												;
+												function _16(s) {
+													switch (s[2]) {
+														case 0:
+															_1 = true;
+														case 1:
+															s[2] = 2;
+															lix(s, Lfn(Lx));
+														case 2:
+															_3 = s[3];
+														case 3:
+															if ((_1 && _3)) {
+																s[2] = 4;
+																lix(s, _17)
+															};
+														case 4:
+															s[2] = 5;
+															lix(s, Lcb(Lx));
+														case 5:
+															_4 = s[3]
+														default:
+													}
+													return s[3]
+												}
+												;
+												return _16;
+												})));
+											case 1:
+												_5 = s[3];
+											case 2:
+												s[2] = 3;
+												lix(s, Lcall(Lbrk));
+											case 3:
+												_6 = s[3]
+											default:
+										}
+										return s[3]
+									}
+									;
+									return _14;
+									})));
+								case 1:
+									_7 = s[3]
+								default:
+							}
+							return s[3]
+						}
+						;
+						return _12;
+						})
+					default:
+				}
+				return s[3]
+			}
+			;
+			return _10;
+			})	
+
+	this.Lhook = (function (Lmonad) {
+		var Larguments = arguments
+		var _0, Lfn;
+	function _6(s) {
+		switch (s[2]) {
+			case 0:
+				s[2] = 1;
+				lix(s, LMinorArgs2Fn(Larguments));
+			case 1:
+				_0 = s[3];
+			case 2:
+				s[3] = Lfn = _0;
+			case 3:
+				s[3] = (function (Lcb) {
+					var Larguments = arguments
+					var _3;
+				function _8(s) {
+					switch (s[2]) {
+						case 0:
+							s[2] = 1;
+							lix(s, Lcall(Lmonad, (function (Lx) {
+								var Larguments = arguments
+								var _1, _2;
+							function _10(s) {
+								switch (s[2]) {
+									case 0:
+										s[2] = 1;
+										lix(s, Lfn(Lx));
+									case 1:
+										_1 = s[3];
+									case 2:
+										s[2] = 3;
+										lix(s, Lcb(Lx));
+									case 3:
+										_2 = s[3]
+									default:
+								}
+								return s[3]
+							}
+							;
+							return _10;
+							})));
+						case 1:
+							_3 = s[3]
+						default:
+					}
+					return s[3]
+				}
+				;
+				return _8;
+				})
+			default:
+		}
+		return s[3]
+	}
+	;
+	return _6;
+	});
+
+	this.Lmap = (function (Lx) {
+		var Larguments = arguments
+		var _0, _1, _2;
+	function _5(s) {
+		switch (s[2]) {
+			case 0:
+				s[2] = 1;
+				lix(s, LMinorArgs2Fn(Larguments));
+			case 1:
+				_0 = s[3];
+			case 2:
+				s[2] = 3;
+				lix(s, L__rcompose__(LIdentity, _0));
+			case 3:
+				_1 = s[3];
+			case 4:
+				s[2] = 5;
+				lix(s, L__bind__(Lx, _1));
+			case 5:
+				_2 = s[3]
+			default:
+		}
+		return s[3]
+	}
+	;
+	return _5;
+	})
+
+	this.Lbind = (function (Lflist, Lf) {
+		var Larguments = arguments
+		;
+	function _6(s) {
+		switch (s[2]) {
+			case 0:
+				s[3] = (function (Lappend) {
+					var Larguments = arguments
+					var _3;
+				function _8(s) {
+					switch (s[2]) {
+						case 0:
+							s[2] = 1;
+							lix(s, Lcall(Lflist, (function (Li) {
+								var Larguments = arguments
+								var _0, _2;
+							function _10(s) {
+								switch (s[2]) {
+									case 0:
+										s[2] = 1;
+										lix(s, Lf(Li));
+									case 1:
+										_0 = s[3];
+									case 2:
+										s[2] = 3;
+										lix(s, Lcall(_0, (function (Lj) {
+											var Larguments = arguments
+											var _1;
+										function _12(s) {
+											switch (s[2]) {
+												case 0:
+													s[2] = 1;
+													lix(s, Lappend(Lj));
+												case 1:
+													_1 = s[3]
+												default:
+											}
+											return s[3]
+										}
+										;
+										return _12;
+										})));
+									case 3:
+										_2 = s[3]
+									default:
+								}
+								return s[3]
+							}
+							;
+							return _10;
+							})));
+						case 1:
+							_3 = s[3]
+						default:
+					}
+					return s[3]
+				}
+				;
+				return _8;
+				})
+			default:
+		}
+		return s[3]
+	}
+	;
+	return _6;
+	});
 
 	this.lix = function (s, f) {
-		var ns = [ /*prev:*/ s, /*f:*/ f, /*step:*/ 0, /*ret:*/ undefined]
+		var ns = [ /*prev:*/ s, /*f:*/ f, /*step:*/ 0, /*ret:*/ undefined, /*defer*/ []]
 		s[RET] = f(ns);
 		ns[PREV] = undefined;
 		ns[F] = undefined;
@@ -24,7 +445,8 @@ var RET = 3;
 
 	this.lix_start = function (f) {
 		try {
-			f([/*PREV*/ null, /*F*/ function () {}, /*STEP*/ 0, /*RET*/ undefined]);
+			f([/*PREV*/ null, /*F*/ function () {},
+					/*STEP*/ 0, /*RET*/ undefined, /*defer*/ []]);
 		} catch (e) {
 //					console.log(e);
 		}
@@ -1845,200 +2267,97 @@ var RET = 3;
 		return _24;
 	};
 	this.Lsubclass = (function (Lbase, Lconfig) {
-		var Larguments = arguments, defer_stack = [];
-		var _ret, _0, Lclass, _1, _2, _3;
-		function _12(_cb, _step, _cont, _ret, cb_defer) {
-			switch (_step) {
-				case 0:
-					_1 = false;
-				case 1:
-					_ret = Lconfig(Lclass)(function (_ret) {
-						return _12(_cb, 2, true, _ret, function () {
-							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
-							cb_defer && cb_defer();
-						}
-						);
-					}, 0, false, undefined, function () {
-						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
-						cb_defer && cb_defer();
-					}
-					);
-				case 2:
-					_3 = _ret;
-				case 3:
-					_ret = _2 = _3
-				default:
+				var Larguments = arguments
+				var _0, Lclass, _1, _2;
+			function _6(s) {
+				switch (s[2]) {
+					case 0:
+						_1 = false;
+					case 1:
+						s[2] = 2;
+						lix(s, Lconfig(Lclass));
+					case 2:
+						_2 = s[3]
+					default:
+				}
+				return s[3]
 			}
-			thisDefer(defer_stack, false)(function () {
-				_cb(_ret);
-			}, 0);
-			if (_cont) {
-				_cb(_ret);
-			} else {
-				return _ret;
+			;
+			function _5(s) {
+				switch (s[2]) {
+					case 0:
+						s[2] = 1;
+						lix(s, LObject.Create(Lbase));
+					case 1:
+						_0 = s[3];
+					case 2:
+						s[3] = Lclass = _0;
+					case 3:
+						_1 = true;
+					case 4:
+						if ((_1 && Lconfig)) {
+							s[2] = 5;
+							lix(s, _6)
+						};
+					case 5:
+						s[3] = Lclass
+					default:
+				}
+				return s[3]
 			}
-		};
-		function _11(_cb, _step, _cont, _ret, cb_defer) {
-			switch (_step) {
-				case 0:
-					_ret = LObject.Create(Lbase)(function (_ret) {
-						return _11(_cb, 1, true, _ret, function () {
-							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
-							cb_defer && cb_defer();
-						}
-						);
-					}, 0, false, undefined, function () {
-						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
-						cb_defer && cb_defer();
-					}
-					);
-				case 1:
-					_0 = _ret;
-				case 2:
-					_ret = Lclass = _0;
-				case 3:
-					_ret = true;
-				case 4:
-					_1 = _ret;
-				case 5:
-					_ret = null;
-				case 6:
-					_2 = _ret;
-				case 7:
-					if ((_1 && Lconfig)) {
-						_12(function (_ret) {
-							return _11(_cb, 8, true, _ret, function () {
-								thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
-								cb_defer && cb_defer();
-							}
-							);
-						}, 0, false, undefined, function () {
-							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
-							cb_defer && cb_defer();
-						}
-						)
-					};
-				case 8:
-					_ret = Lclass
-				default:
-			}
-			thisDefer(defer_stack, false)(function () {
-				_cb(_ret);
-			}, 0);
-			if (_cont) {
-				_cb(_ret);
-			} else {
-				return _ret;
-			}
-		};
-		return _11;
-	});
+			;
+			return _5;
+			});
 	this.Lnew = (function (Lclass) {
-		var Larguments = arguments, defer_stack = [];
-		var _ret, _4, Lobj, _5, Largs, _6, _7, _8;
-		function _15(_cb, _step, _cont, _ret, cb_defer) {
-			switch (_step) {
-				case 0:
-					_6 = false;
-				case 1:
-					_ret = Lapply(Lclass.__init__, Largs)(function (_ret) {
-						return _15(_cb, 2, true, _ret, function () {
-							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
-							cb_defer && cb_defer();
-						}
-						);
-					}, 0, false, undefined, function () {
-						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
-						cb_defer && cb_defer();
-					}
-					);
-				case 2:
-					_8 = _ret;
-				case 3:
-					_ret = _7 = _8
-				default:
+				var Larguments = arguments
+				var _0, Lobj, _1, Largs, _2, _3;
+			function _7(s) {
+				switch (s[2]) {
+					case 0:
+						_2 = false;
+					case 1:
+						s[2] = 2;
+						lix(s, Lapply(Lclass.__init__, Largs));
+					case 2:
+						_3 = s[3]
+					default:
+				}
+				return s[3]
 			}
-			thisDefer(defer_stack, false)(function () {
-				_cb(_ret);
-			}, 0);
-			if (_cont) {
-				_cb(_ret);
-			} else {
-				return _ret;
+			;
+			function _6(s) {
+				switch (s[2]) {
+					case 0:
+						s[2] = 1;
+						lix(s, LObject.Create(Lclass));
+					case 1:
+						_0 = s[3];
+					case 2:
+						s[3] = Lobj = _0;
+					case 3:
+						s[2] = 4;
+						lix(s, LArray.Slice(Larguments));
+					case 4:
+						_1 = s[3];
+					case 5:
+						s[3] = Largs = _1;
+					case 6:
+						s[3] = Largs[0] = Lobj;
+					case 7:
+						_2 = true;
+					case 8:
+						if ((_2 && Lclass.__init__)) {
+							s[2] = 9;
+							lix(s, _7)
+						};
+					case 9:
+						s[3] = Lobj
+					default:
+				}
+				return s[3]
 			}
-		};
-		function _14(_cb, _step, _cont, _ret, cb_defer) {
-			switch (_step) {
-				case 0:
-					_ret = LObject.Create(Lclass)(function (_ret) {
-						return _14(_cb, 1, true, _ret, function () {
-							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
-							cb_defer && cb_defer();
-						}
-						);
-					}, 0, false, undefined, function () {
-						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
-						cb_defer && cb_defer();
-					}
-					);
-				case 1:
-					_4 = _ret;
-				case 2:
-					_ret = Lobj = _4;
-				case 3:
-					_ret = LArray.Slice(Larguments)(function (_ret) {
-						return _14(_cb, 4, true, _ret, function () {
-							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
-							cb_defer && cb_defer();
-						}
-						);
-					}, 0, false, undefined, function () {
-						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
-						cb_defer && cb_defer();
-					}
-					);
-				case 4:
-					_5 = _ret;
-				case 5:
-					_ret = Largs = _5;
-				case 6:
-					_ret = Largs[0] = Lobj;
-				case 7:
-					_ret = true;
-				case 8:
-					_6 = _ret;
-				case 9:
-					_ret = null;
-				case 10:
-					_7 = _ret;
-				case 11:
-					if ((_6 && Lclass.__init__)) {
-						_15(function (_ret) {
-							return _14(_cb, 12, true, _ret, function () {
-								thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
-								cb_defer && cb_defer();
-							}
-							);
-						}, 0, false, undefined, function () {
-							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
-							cb_defer && cb_defer();
-						}
-						)
-					};
-				case 12:
-					_ret = Lobj
-				default:
-			}
-			thisDefer(defer_stack, false)(function () {
-				_cb(_ret);
-			}, 0);
-			if (_cont) {
-				_cb(_ret);
-			} else {
-				return _ret;
-			}
-		};
-		return _14;
-	});
+			;
+			return _6;
+			});
 })();
 
