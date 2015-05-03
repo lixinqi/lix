@@ -1,13 +1,9 @@
-#!/usr/bin/env lix
-
-( N
-	| until > 8
-	| bind [x]->{ N | until >= x }
-	| map * 2
-	| map / 2
-	| hook print
-	| reduce + 0
-	| hook []->{ '--------------' print }
-	| hook print
-	| call $i
+#!/usr/local/bin/node
+( 1
+	| [x]->{
+			defer call []->{ 'good0' print }
+			defer call []->{ 'good1' print }
+			x + 1
+		}
+	| print
 )

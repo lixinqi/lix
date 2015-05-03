@@ -153,8 +153,6 @@ generateObjectLiteral := [expr env ctx def]->{
 transformVarName := [name]->{
 	if (name == 'require') {
 		name = '_require(require)'
-	} (name == 'defer') {
-		name = '_defer(defer_stack)'
 	} ((name != 'exports') | and (name != 'undefined') |
 			and (name != 'null') | and (name != 'true') | and (name != 'false')) {
 		name = 'L' + name

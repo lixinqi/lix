@@ -426,9 +426,19 @@ var DEFER = 4;
 	return _6;
 	});
 
+	function defer(s) {
+		var f;
+		while (f = s.pop()) {
+			lix_start(function (s0) {
+				lix(s0, f());
+			});
+		}
+	}
+
 	this.lix = function (s, f) {
 		var ns = [ /*prev:*/ s, /*f:*/ f, /*step:*/ 0, /*ret:*/ undefined, /*defer*/ []]
 		s[RET] = f(ns);
+		defer(ns);
 		ns[PREV] = undefined;
 		ns[F] = undefined;
 		return s[RET];
@@ -987,6 +997,13 @@ var DEFER = 4;
 					lix(s, ctx());
 				});
 			});
+		}
+	}
+
+	this.Ldefer = function (f) {
+		return function (s) {
+			s = s[PREV];
+			s.push(f);
 		}
 	}
 
