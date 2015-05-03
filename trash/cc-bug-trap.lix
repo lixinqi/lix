@@ -1,0 +1,5 @@
+#!/usr/local/bin/node
+
+trap call print
+
+cc call
