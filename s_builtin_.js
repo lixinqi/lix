@@ -6,6 +6,100 @@ var DEFER = 4;
 var TRAP = 5; 
 
 (function () {
+
+	this.Lsubclass = (function (Lbase, Lconfig) {
+				var Larguments = arguments
+				var _0, Lclass, _1, _2;
+			function _6(s) {
+				switch (s[2]) {
+					case 0:
+						_1 = false;
+					case 1:
+						s[2] = 2;
+						lix(s, Lconfig(Lclass));
+					case 2:
+						_2 = s[3]
+					default:
+				}
+				return s[3]
+			}
+			;
+			function _5(s) {
+				switch (s[2]) {
+					case 0:
+						s[2] = 1;
+						lix(s, LObject.Create(Lbase));
+					case 1:
+						_0 = s[3];
+					case 2:
+						s[3] = Lclass = _0;
+					case 3:
+						_1 = true;
+					case 4:
+						if ((_1 && Lconfig)) {
+							s[2] = 5;
+							lix(s, _6)
+						};
+					case 5:
+						s[3] = Lclass
+					default:
+				}
+				return s[3]
+			}
+			;
+			return _5;
+			});
+	this.Lnew = (function (Lclass) {
+				var Larguments = arguments
+				var _0, Lobj, _1, Largs, _2, _3;
+			function _7(s) {
+				switch (s[2]) {
+					case 0:
+						_2 = false;
+					case 1:
+						s[2] = 2;
+						lix(s, Lapply(Lclass.__init__, Largs));
+					case 2:
+						_3 = s[3]
+					default:
+				}
+				return s[3]
+			}
+			;
+			function _6(s) {
+				switch (s[2]) {
+					case 0:
+						s[2] = 1;
+						lix(s, LObject.Create(Lclass));
+					case 1:
+						_0 = s[3];
+					case 2:
+						s[3] = Lobj = _0;
+					case 3:
+						s[2] = 4;
+						lix(s, LArray.Slice(Larguments));
+					case 4:
+						_1 = s[3];
+					case 5:
+						s[3] = Largs = _1;
+					case 6:
+						s[3] = Largs[0] = Lobj;
+					case 7:
+						_2 = true;
+					case 8:
+						if ((_2 && Lclass.__init__)) {
+							s[2] = 9;
+							lix(s, _7)
+						};
+					case 9:
+						s[3] = Lobj
+					default:
+				}
+				return s[3]
+			}
+			;
+			return _6;
+			});
 	this.Ltrap = function (f) {
 		return function (s) {
 			s = s[PREV];
@@ -17,11 +111,7 @@ var TRAP = 5;
 
 	function _raise (s, e) {
 		while (s) {
-//			console.log('in while');
-//			console.log(s);
 			if (s[TRAP]) {
-//			console.log('in if');
-//			console.log(e);
 				var reraise = raise(s[PREV]);
 				lix_start(function (s0) {
 					lix(s0, s[TRAP](e, reraise));
@@ -2024,99 +2114,5 @@ var TRAP = 5;
 	}
 
 	this.LFunction = Function.prototype;
-
-	this.Lsubclass = (function (Lbase, Lconfig) {
-				var Larguments = arguments
-				var _0, Lclass, _1, _2;
-			function _6(s) {
-				switch (s[2]) {
-					case 0:
-						_1 = false;
-					case 1:
-						s[2] = 2;
-						lix(s, Lconfig(Lclass));
-					case 2:
-						_2 = s[3]
-					default:
-				}
-				return s[3]
-			}
-			;
-			function _5(s) {
-				switch (s[2]) {
-					case 0:
-						s[2] = 1;
-						lix(s, LObject.Create(Lbase));
-					case 1:
-						_0 = s[3];
-					case 2:
-						s[3] = Lclass = _0;
-					case 3:
-						_1 = true;
-					case 4:
-						if ((_1 && Lconfig)) {
-							s[2] = 5;
-							lix(s, _6)
-						};
-					case 5:
-						s[3] = Lclass
-					default:
-				}
-				return s[3]
-			}
-			;
-			return _5;
-			});
-	this.Lnew = (function (Lclass) {
-				var Larguments = arguments
-				var _0, Lobj, _1, Largs, _2, _3;
-			function _7(s) {
-				switch (s[2]) {
-					case 0:
-						_2 = false;
-					case 1:
-						s[2] = 2;
-						lix(s, Lapply(Lclass.__init__, Largs));
-					case 2:
-						_3 = s[3]
-					default:
-				}
-				return s[3]
-			}
-			;
-			function _6(s) {
-				switch (s[2]) {
-					case 0:
-						s[2] = 1;
-						lix(s, LObject.Create(Lclass));
-					case 1:
-						_0 = s[3];
-					case 2:
-						s[3] = Lobj = _0;
-					case 3:
-						s[2] = 4;
-						lix(s, LArray.Slice(Larguments));
-					case 4:
-						_1 = s[3];
-					case 5:
-						s[3] = Largs = _1;
-					case 6:
-						s[3] = Largs[0] = Lobj;
-					case 7:
-						_2 = true;
-					case 8:
-						if ((_2 && Lclass.__init__)) {
-							s[2] = 9;
-							lix(s, _7)
-						};
-					case 9:
-						s[3] = Lobj
-					default:
-				}
-				return s[3]
-			}
-			;
-			return _6;
-			});
 })();
 
