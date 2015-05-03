@@ -1007,14 +1007,8 @@ appendExpr: (function () {var _uniq_var_177 = function (i) {;
 };
 def0;
 var seqFuncParamsName = {
-dynamicScope: 'd',
-cb: '_cb',
 step: join(['s[', STEP, ']']),
-cont: '_cont',
-ret: join(['s[', RET, ']']),
-defer: 'cb_defer',
-thisDefer: 'this_defer',
-chainDefer: 'chain_defer'
+ret: join(['s[', RET, ']'])
 };
 seqFuncParamsName;
 var builtinNames = {
