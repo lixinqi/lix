@@ -1,29 +1,32 @@
 #!/usr/local/bin/node
 
-try := [tryBlock catchBlock finBlock]->{
-	if (finBlock not) {
-		finBlock = identity
-	}
-
-	outer_raise := raise
-
-	cc call [brk]->{
-		trap call [e]->{
-			trap call outer_raise
-			e catchBlock
-			finBlock call
-			brk call
+array2Monad := [arr]->{
+	[append]->{
+		i := 0
+		while (i < arr.length) {
+			arr.(i) append
+			i = i + 1
 		}
-		tryBlock call
-		finBlock call
-		brk call
 	}
 }
 
-try call []->{
-	try call
-} [e]->{
-	e print	
+monad2Array := [m]->{
+	ret := []
+	m call [x]->{
+		ret .Push x
+	}
+	ret
 }
 
-'end' print
+seq := [x]->{
+	N | until > x
+}
+
+p := array2Monad >> hook print >> call identity
+
+4 | seq | monad2Array | p
+'--------' print
+4 | seq | call [x]->{
+	x print
+}
+

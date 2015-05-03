@@ -5,8 +5,11 @@ try := [tryBlock catchBlock finBlock]->{
 		finBlock = identity
 	}
 
+	outer_raise := raise
+
 	cc call [brk]->{
 		trap call [e]->{
+			trap call outer_raise
 			e catchBlock
 			finBlock call
 			brk call
@@ -18,10 +21,9 @@ try := [tryBlock catchBlock finBlock]->{
 }
 
 try call []->{
-	'0' call
+	try call
 } [e]->{
-	'catchBlock0' print
-	e print
+	e print	
 }
 
 'end' print
