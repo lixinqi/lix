@@ -1,0 +1,27 @@
+#!/usr/local/bin/node
+
+try := [tryBlock catchBlock finBlock]->{
+	if (finBlock not) {
+		finBlock = identity
+	}
+
+	cc call [brk]->{
+		trap call [e]->{
+			e catchBlock
+			finBlock call
+			brk call
+		}
+		tryBlock call
+		finBlock call
+		brk call
+	}
+}
+
+try call []->{
+	'0' call
+} [e]->{
+	'catchBlock0' print
+	e print
+}
+
+'end' print

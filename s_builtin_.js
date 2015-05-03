@@ -15,21 +15,29 @@ var TRAP = 5;
 		}
 	}
 
+	function _raise (s, e) {
+		while (s) {
+//			console.log('in while');
+//			console.log(s);
+			if (s[TRAP]) {
+//			console.log('in if');
+//			console.log(e);
+				var reraise = raise(s[PREV]);
+				lix_start(function (s0) {
+					lix(s0, s[TRAP](e, reraise));
+				});
+				break;
+			}
+			s = s[PREV];
+		}
+	}
+
 	this.raise = function (s) {
 		return function (e) {
 			return function () {
-				while (s && s[TRAP]) {
-					var reraise = raise(s[PREV]);
-					lix_start(function (s0) {
-						lix(s0, s[TRAP](e, reraise));
-					});
-					s = s[PREV];
-					if (s[TRAP]) {
-						break;
-					}
-				}
+				_raise(s, e);
 			};
-		};	
+		};
 	}
 
 	this.LIdentity = (function (Lx) {
@@ -465,19 +473,39 @@ var TRAP = 5;
 
 	this.lix = function (s, f) {
 		var ns = [ /*prev:*/ s, /*f:*/ f, /*step:*/ 0,
-				/*ret:*/ undefined, /*defer*/ [], /*trap*/ undefined]
-		s[RET] = f(ns);
+				/*ret:*/ undefined, /*defer*/ [], /*trap*/ undefined];
+		try {
+			s[RET] = f(ns);
+		} catch (e) {
+//			console.log(typeof e);
+//			console.log(e);
+			if (e !== _lixCCException) {
+				_raise(ns, e);
+			}
+			throw _lixCCException;
+		}
 		defer(ns);
 		ns[PREV] = undefined;
 		ns[F] = undefined;
 		return s[RET];
 	}
 
-	this.lix_resume = function (s) {
+	this.lix_resume = function (s) {//resume continuations
 		var ret = s[RET];
 		while (s) {
 			s[RET] = ret;
-			ret = s[F](s);
+
+			try {
+				ret = s[F](s);
+			} catch (e) {
+//			console.log(typeof e);
+//			console.log(e);
+				if (e !== _lixCCException) {
+					_raise(s, e);
+				}
+				throw _lixCCException;
+			}
+
 			defer(s);
 			s = s[PREV];
 		}

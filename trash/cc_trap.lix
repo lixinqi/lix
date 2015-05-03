@@ -1,0 +1,19 @@
+#!/usr/local/bin/node
+
+trap call []->{
+	'outer' print
+}
+
+outer_raise := raise
+
+cc call [brk]->{
+	trap call outer_raise
+	inner_raise := raise
+	immediately call []->{
+		trap call inner_raise
+		raise call 'good'
+		brk call
+	}
+}
+
+'end' print
