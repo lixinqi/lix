@@ -1,0 +1,19 @@
+#!/usr/local/bin/node
+
+trap call [e]->{
+	'outer fn' print
+	e print
+}
+
+[]->{
+	trap call [e reraise]->{
+		'in fn' print
+		e print
+		reraise call e
+	}
+
+	raise call 'nice'
+
+} call
+
+'end' print

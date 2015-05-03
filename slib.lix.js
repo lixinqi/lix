@@ -77,6 +77,8 @@ var RET = '3';
 RET;
 var DEFER = '4';
 DEFER;
+var TRAP = '5';
+TRAP;
 var join = (function () {var _uniq_var_3 = function (arr) {return (function () {var _uniq_var_2 = function (_uniq_var_0, _uniq_var_1) {
 if (typeof _uniq_var_0.join === 'function') {
 arguments = Array.prototype.slice.call(arguments, (_uniq_var_0.join.__lix_func__ ? 0 : 1), arguments.length);return _uniq_var_0.join.apply(_uniq_var_0, arguments);
@@ -169,7 +171,7 @@ var stmt = join(['case ', current, ':\n', stmt]);
 return stmt;
 };_uniq_var_23.__lix_func__ = true;return _uniq_var_23;})()), ";\n");
 body;
-def.appendExpr(join(['function ', funcName, '(s) {\n', 'switch (s[', STEP, ']) {\n', body, '\n', 'default:\n', '}\n', 'return s[', RET, ']\n', '}\n']));
+def.appendExpr(join(['function ', funcName, '(s) {\n', "var Lraise = raise(s);\n", 'switch (s[', STEP, ']) {\n', body, '\n', 'default:\n', '}\n', 'return s[', RET, ']\n', '}\n']));
 return funcName;
 };_uniq_var_24.__lix_func__ = true;return _uniq_var_24;})();
 generateSeq;

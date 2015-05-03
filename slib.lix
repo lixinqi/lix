@@ -5,6 +5,7 @@ F := '1'
 STEP := '2'
 RET := '3'
 DEFER := '4'
+TRAP := '5'
 
 join := [arr]->{ arr .join "" }
 
@@ -69,6 +70,7 @@ generateSeq := [expr env ctx def]->{
 
 	[
 		'function ' funcName '(s) {\n'
+			"var Lraise = raise(s);\n"
 			'switch (s[' STEP ']) {\n'
 				body
 				'\n'

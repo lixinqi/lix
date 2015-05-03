@@ -1,0 +1,11 @@
+#!/usr/local/bin/node
+[]->{
+	defer call []->{'ok' print}
+	defer call []->{'good' print}
+	cc call [brk]->{
+		defer call []->{'good0' print}
+		defer call []->{'good1' print}
+		brk call
+	}
+	'end' print
+} | call

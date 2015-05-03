@@ -3,8 +3,35 @@ var F = 1;
 var STEP = 2; 
 var RET = 3; 
 var DEFER = 4; 
+var TRAP = 5; 
 
 (function () {
+	this.Ltrap = function (f) {
+		return function (s) {
+			s = s[PREV];
+			var old = s[TRAP];
+			s[TRAP] = f;
+			return old;
+		}
+	}
+
+	this.raise = function (s) {
+		return function (e) {
+			return function () {
+				while (s && s[TRAP]) {
+					var reraise = raise(s[PREV]);
+					lix_start(function (s0) {
+						lix(s0, s[TRAP](e, reraise));
+					});
+					s = s[PREV];
+					if (s[TRAP]) {
+						break;
+					}
+				}
+			};
+		};	
+	}
+
 	this.LIdentity = (function (Lx) {
 		var Larguments = arguments
 		;
@@ -428,7 +455,8 @@ var DEFER = 4;
 
 	function defer(s) {
 		var f;
-		while (f = s.pop()) {
+		var deferList = s[DEFER];
+		while (deferList.length && (f = deferList.pop())) {
 			lix_start(function (s0) {
 				lix(s0, f());
 			});
@@ -436,7 +464,8 @@ var DEFER = 4;
 	}
 
 	this.lix = function (s, f) {
-		var ns = [ /*prev:*/ s, /*f:*/ f, /*step:*/ 0, /*ret:*/ undefined, /*defer*/ []]
+		var ns = [ /*prev:*/ s, /*f:*/ f, /*step:*/ 0,
+				/*ret:*/ undefined, /*defer*/ [], /*trap*/ undefined]
 		s[RET] = f(ns);
 		defer(ns);
 		ns[PREV] = undefined;
@@ -449,14 +478,15 @@ var DEFER = 4;
 		while (s) {
 			s[RET] = ret;
 			ret = s[F](s);
+			defer(s);
 			s = s[PREV];
 		}
 	}
 
 	this.lix_start = function (f) {
 		try {
-			f([/*PREV*/ null, /*F*/ function () {},
-					/*STEP*/ 0, /*RET*/ undefined, /*defer*/ []]);
+			f([/*PREV*/ null, /*F*/ function () {}, /*STEP*/ 0,
+					/*RET*/ undefined, /*defer*/ []], /*trap*/ undefined);
 		} catch (e) {
 //					console.log(e);
 		}
@@ -534,77 +564,6 @@ var DEFER = 4;
 		return _2;
 	}
 
-	//	this.Ltrap = function Ltrap(f) {
-	function Ltrap(f) {
-		var nargs = arguments.length;
-		return function () {
-			if (nargs == 0)	{
-				return global_trap;
-			} else {
-				global_trap = f;
-			}
-		}
-	}
-
-	this.thisDefer = function (LdeferList, isBreak) {
-		var Larguments = arguments;
-		var defer_stack = [];
-		var chain_defer = undefined;
-		var _ret, _0, _1;
-		function _5(_cb, _step, _cont, _ret, cb_defer) {
-			switch (_step) {
-				case 0:
-					_ret = LdeferList.Pop(LdeferList)(function (_ret) {
-						return _5(_cb, 1, true, _ret, chain_defer);
-					}, 0);
-				case 1:
-					_0 = _ret;
-					//					console.log('pop:');
-					//					console.log(_0.toString());
-				case 2:
-					_ret = Lcall(_0, isBreak)(function (_ret) {
-						return _5(_cb, 3, true, _ret, chain_defer);
-					}, 0);
-				case 3:
-					_1 = _ret
-				default:
-			}
-			if (_cont) {
-				_cb(_ret);
-			} else {
-				return _ret;
-			}
-		};
-		function _4(_cb, _step, _cont, _ret, cb_defer) {
-			switch (_step) {
-				case 0:
-					while (LdeferList.length) {
-						_5(function (_ret) {
-							return _4(_cb, 0, true, _ret, chain_defer);
-						}, 0)
-					};
-				case 1:
-					_ret = undefined
-				default:
-			}
-			if (_cont) {
-				_cb(_ret);
-			} else {
-				return _ret;
-			}
-		};
-		return _4;
-	}; 
-
-	this._defer = function (defer_stack) {
-		return function (cb) {
-			return function () {
-				defer_stack.push(cb);
-				//				console.log('push:');
-				//				console.log(cb.toString());
-			}
-		}
-	}
 
 	this.L__compose__ = (function (Lf0, Lf1) {
 				var Larguments = arguments
@@ -1002,8 +961,15 @@ var DEFER = 4;
 
 	this.Ldefer = function (f) {
 		return function (s) {
-			s = s[PREV];
-			s.push(f);
+			s[PREV][DEFER].push(f);
+		}
+	}
+
+	function defer_until(s, s0)
+	{
+		while (s0 && s0 != s) {
+			defer(s0);
+			s0 = s0[PREV];
 		}
 	}
 
@@ -1012,6 +978,7 @@ var DEFER = 4;
 			s = s[PREV]
 				function brk(ret) {
 					return function (s0) {
+						defer_until(s, s0);
 						s[RET] = ret;
 						setImmediate(function () {
 							try {
