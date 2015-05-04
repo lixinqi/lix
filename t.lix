@@ -1,34 +1,6 @@
 #!/usr/local/bin/node
 
-array2Monad := [arr]->{
-	[append]->{
-		i := 0
-		while (i < arr.length) {
-			arr.(i) append
-			i = i + 1
-		}
-	}
-}
-
-monad2Array := [m]->{
-	ret := []
-	m call [x]->{
-		ret .Push x
-	}
-	ret
-}
-
-seq := [x]->{
-	N | until > x
-}
-
-p := array2Monad >> hook print >> call identity
-
-4 | seq | monad2Array | p
-
-'--------' print
-
-4 | seq | call [x]->{
-	x print
-}
-
+'in t.lix' print
+__dirname print
+__filename print
+$c print

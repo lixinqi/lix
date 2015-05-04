@@ -263,10 +263,7 @@ objectBody;
 return join(["{\n", objectBody, "\n}"]);
 };_uniq_var_39.__lix_func__ = true;return _uniq_var_39;})();
 generateObjectLiteral;
-var transformVarName = (function () {var _uniq_var_40 = function (name) {if (__eq__(name, 'require')) {
-(name = '_require(require)');
-
-} else if (((((__ne__(name, 'exports') && __ne__(name, 'undefined')) && __ne__(name, 'null')) && __ne__(name, 'true')) && __ne__(name, 'false'))) {
+var transformVarName = (function () {var _uniq_var_40 = function (name) {if (((((__ne__(name, 'exports') && __ne__(name, 'undefined')) && __ne__(name, 'null')) && __ne__(name, 'true')) && __ne__(name, 'false'))) {
 (name = __add__('L', name));
 
 };
@@ -468,7 +465,7 @@ var body = generate(expr[0], env, ctx, def);
 body;
 var body = join(['module.exports = ', body, '\n']);
 body;
-return join([call(def.defineVar), ";\n", call(def.appendExpr), ";\n", body]);
+return join(["require.lixCache = {};\n", "require.lixLoadingCache = {};\n", "var Lrequire = _require(require);\n", "var L__dirname = __dirname;\n", "var L__filename = __filename;\n", call(def.defineVar), ";\n", call(def.appendExpr), ";\n", body]);
 };_uniq_var_74.__lix_func__ = true;return _uniq_var_74;})();
 generateStart;
 var generateMono = (function () {var _uniq_var_75 = function (expr, env, ctx, def) {return generate(expr[0], env, ctx, def);
@@ -944,9 +941,7 @@ var name = flatten(expr[0], define);
 name;
 
 };
-var jsName = define([name, ['__add__', '{atomic}', '{var}'], ['"-lix"', '{atomic}']]);
-jsName;
-var moduleExpr = [jsName, ['require', '{atomic}', '{var}']];
+var moduleExpr = [name, ['require', '{atomic}', '{var}']];
 moduleExpr;
 return define(moduleExpr);
 };_uniq_var_171.__lix_func__ = true;return _uniq_var_171;})();

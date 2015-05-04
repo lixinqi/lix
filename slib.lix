@@ -153,9 +153,7 @@ generateObjectLiteral := [expr env ctx def]->{
 }
 
 transformVarName := [name]->{
-	if (name == 'require') {
-		name = '_require(require)'
-	} ((name != 'exports') | and (name != 'undefined') |
+	if ((name != 'exports') | and (name != 'undefined') |
 			and (name != 'null') | and (name != 'true') | and (name != 'false')) {
 		name = 'L' + name
 	}
@@ -315,6 +313,11 @@ generateStart := [expr env ctx def]->{
 	] join
 
 	[
+		"require.lixCache = {};\n"
+		"require.lixLoadingCache = {};\n"
+		"var Lrequire = _require(require);\n"
+		"var L__dirname = __dirname;\n"
+		"var L__filename = __filename;\n"
 		(def.defineVar call) ";\n"
 		(def.appendExpr call) ";\n"
 		body
@@ -657,8 +660,9 @@ flattenModule := [expr define]->{
 	} else if (expr.2 == '{index}') {
 		name := expr.0 flatten define
 	}
-	jsName := [name ['__add__' '{atomic}' '{var}'] ['"-lix"' '{atomic}']] define
-	moduleExpr := [jsName ['require' '{atomic}' '{var}']]
+#	jsName := [name ['__add__' '{atomic}' '{var}'] ['"-lix"' '{atomic}']] define
+#	moduleExpr := [jsName ['require' '{atomic}' '{var}']]
+	moduleExpr := [name ['require' '{atomic}' '{var}']]
 	moduleExpr define
 }
 

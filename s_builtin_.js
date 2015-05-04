@@ -617,37 +617,35 @@ var TRAP = 5;
 	var _lixCCException = new _LixCCException();
 	this._lixCCException = _lixCCException;
 
-	require.lixCache = {}
-	require.lixLoadingCache = {}
-
 	this._require = function (__require) {
 		return function (name) {
-			var path = name;
-			try {
-				path = __require.resolve(name);
-			} catch (e) {
-				console.log(e);
-				return function () {
-					return null;
-				}
-			}
+			if (__require.lixCache[name] === undefined) {
+				var moduleName = name + '-lix';
+				var path = name;
+//				try {
+//					path = __require.resolve(name);
+//				} catch (e) {
+//					console.log(e);
+//					return function () {
+//						return null;
+//					}
+//				}
 
-			if (require.lixCache[path] === undefined) {
-				if (require.lixLoadingCache[path]) {//loading
+				if (__require.lixLoadingCache[name]) {//loading
 					return function () {
 						return undefined;
 					}
 				}
-				require.lixLoadingCache[path] = true;
-				var f = __require(name);
+				__require.lixLoadingCache[name] = true;
+				var f = __require(moduleName);
 				return function (s) {
 					switch (s[STEP]) {
 						case 0:
 							s[STEP] = 1;
 							lix(s, f);
 						case 1:
-							require.lixCache[path] = s[RET];
-							require.lixLoadingCache[path] = undefined;
+							__require.lixCache[name] = s[RET];
+							__require.lixLoadingCache[name] = undefined;
 						default:
 					}
 					return s[RET];
@@ -656,7 +654,7 @@ var TRAP = 5;
 
 			//cached result
 			return function () {
-				return require.lixCache[path];
+				return __require.lixCache[name];
 			}
 		}
 	}
