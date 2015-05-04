@@ -621,15 +621,6 @@ var TRAP = 5;
 		return function (name) {
 			if (__require.lixCache[name] === undefined) {
 				var moduleName = name + '-lix';
-				var path = name;
-//				try {
-//					path = __require.resolve(name);
-//				} catch (e) {
-//					console.log(e);
-//					return function () {
-//						return null;
-//					}
-//				}
 
 				if (__require.lixLoadingCache[name]) {//loading
 					return function () {
