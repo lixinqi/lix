@@ -221,7 +221,7 @@ case 41:
 			
 break;
 case 42:
-				this.$ = [$$[$0], '{method}']
+				this.$ = [$$[$0], '{method}', 'field']
 			
 break;
 case 44:

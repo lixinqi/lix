@@ -304,7 +304,7 @@ PrimaryExpr
 			}
 		| '.' PropertyField
 			{
-				$$ = [$2, '{method}']
+				$$ = [$2, '{method}', 'field']
 			}
 		| Object
 		| NAT

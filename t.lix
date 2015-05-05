@@ -1,6 +1,23 @@
 #!/usr/local/bin/node
 
 'in t.lix' print
-__dirname print
-__filename print
-$c print
+obj := {
+	.name []->{ 'good' print }
+}
+
+obj .name
+obj .name
+
+obj print
+obj .age | print
+obj .age 10
+obj .age | print
+
+obj .hi | print
+
+obj .hi []->{'hi' print} | .hi
+
+obj0 := {}
+obj0 .hi []->{'nice' print} | .hi
+
+.hi call | print

@@ -40,12 +40,6 @@ generateFuncArgs := [args env ctx]->{
 
 ctx0 := [x]->{x}
 
-# newDynamicScope := [prev exceptionStack]->{
-# 	[ "{ p:" prev ", " "e:" exceptionStack " }"  ] join
-# }
-
-# e := 'e'
-
 generateSeq := [expr env ctx def]->{
 
 	funcName := getUniqVarName call
@@ -201,17 +195,24 @@ generateMethod := [expr env ctx]->{
 	method := localVarName + methodName
 	tmpVar := (getUniqVarName call)
 	["(function (" localVarName ", " localValueName ") {\n"
+		"if (" localVarName " == undefined || "
+			localVarName " == null ) {\n"
+			"return function () {\n"
+				"return " localVarName ";\n"
+			"}\n"
+		"}\n"
 		"if (typeof " method " === 'function') {\n"
 				"arguments = Array.prototype.slice.call(arguments, 0, arguments.length);\n"
 				"return " method ".apply(" localVarName ", arguments);\n"
-		"} else if (" method " !== undefined) {\n"
-			"if (" localValueName " === undefined) {\n"
-				"return function (_ret) {\n"
-					"return " method ';\n'
+		"} else {\n"
+			"if (arguments.length > 1) {\n"
+				"return function () {\n"
+					method " = " localValueName ";\n"
+					"return " localVarName ";\n"
 				"}\n"
 			"}\n"
-			"return function (_ret) {\n"
-				method " = " localValueName ";\n"
+			"return function () {\n"
+				"return " method ';\n'
 			"}\n"
 		"}"
 	"})"] join
@@ -544,9 +545,37 @@ flattenField := [expr define]->{
 	expr
 }
 
+NewGlobalDefine := []->{
+	defined := {}
+	statements := []
+	[name value]->{
+		ret := undefined
+		if (arguments.length == 2) {
+			if (defined.(name) == undefined) {
+				varName := getUniqVarName call
+				lixVar := [varName '{atomic}' '{var}' 'tmp']
+				statements .push [lixVar ':=' value]
+				defined.(name) = lixVar
+			}
+			ret = defined.(name)
+		} else {
+			ret = statements
+		}
+		ret
+	}
+}
+
+globalDefine := NewGlobalDefine call
+
 flattenMethod := [expr define]->{
-	expr.0 = expr.0 flattenField define
-	expr
+	ret := ['' '{empty}']
+	if (expr.2 == 'field') {
+		ret = expr.(0).(0) globalDefine expr
+	} else {
+		expr.0 = expr.0 flattenField define
+		ret = expr
+	}
+	ret
 }
 
 flattenProperty := [expr define]->{
@@ -651,6 +680,7 @@ flattenSeq := [expr define seqCtx]->{
 
 flattenStart := [expr define]->{
 	ret := expr.0 flatten define
+	ret.(0) = globalDefine call | .concat ret.(0)
 	[ret '{start}']
 }
 
@@ -660,8 +690,6 @@ flattenModule := [expr define]->{
 	} else if (expr.2 == '{index}') {
 		name := expr.0 flatten define
 	}
-#	jsName := [name ['__add__' '{atomic}' '{var}'] ['"-lix"' '{atomic}']] define
-#	moduleExpr := [jsName ['require' '{atomic}' '{var}']]
 	moduleExpr := [name ['require' '{atomic}' '{var}']]
 	moduleExpr define
 }
