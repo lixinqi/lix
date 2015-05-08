@@ -111,6 +111,7 @@ var TRAP = 5;
 
 	function _raise (s, e) {
 		while (s) {
+			defer(s);
 			if (s[TRAP]) {
 				var reraise = raise(s[PREV]);
 				lix_start(function (s0) {
@@ -554,7 +555,7 @@ var TRAP = 5;
 	function defer(s) {
 		var f;
 		var deferList = s[DEFER];
-		while (deferList.length && (f = deferList.pop())) {
+		while (f = deferList.pop()) {
 			lix_start(function (s0) {
 				lix(s0, f());
 			});

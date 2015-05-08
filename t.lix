@@ -1,23 +1,41 @@
 #!/usr/local/bin/node
 
-'in t.lix' print
-obj := {
-	.name []->{ 'good' print }
-}
+[]->{
+	defer call []->{
+		'in defer' print
+	}
 
-obj .name
-obj .name
+	trap call [e]->{
+		'in trap' print
+		e print
+	}
 
-obj print
-obj .age | print
-obj .age 10
-obj .age | print
+	cc call [brk]->{
+		'good' call
+		brk call
+	}
+} call
 
-obj .hi | print
+'end' print
 
-obj .hi []->{'hi' print} | .hi
-
-obj0 := {}
-obj0 .hi []->{'nice' print} | .hi
-
-.hi call | print
+# 'in t.lix' print
+# obj := {
+# 	.name []->{ 'good' print }
+# }
+# 
+# obj .name
+# obj .name
+# 
+# obj print
+# obj .age | print
+# obj .age 10
+# obj .age | print
+# 
+# obj .hi | print
+# 
+# obj .hi []->{'hi' print} | .hi
+# 
+# obj0 := {}
+# obj0 .hi []->{'nice' print} | .hi
+# 
+# .hi call | print
