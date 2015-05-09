@@ -9,4 +9,6 @@ arr := [
 arr.0 print
 
 i := 0
-arr.00.(i) print
+arr.0.(i) print
+
+arr.0.0 print

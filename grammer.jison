@@ -105,8 +105,8 @@
 "<="													{ return 'var'; }
 "<"														{ return 'var'; }
 
-\s?":="\s?  									{ return 'DEF'; }
-\s?"="\s?  										{ return 'ASSIGN_OPERATOR'; }
+\s+":="\s+  									{ return 'DEF'; }
+\s+"="\s+  										{ return 'ASSIGN_OPERATOR'; }
 
 \s+       										{ return 'SEP'; }
 /lex

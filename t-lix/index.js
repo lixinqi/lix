@@ -5,8 +5,8 @@ require.lixLoadingCache = {};
 var Lrequire = _require(require);
 var L__dirname = __dirname;
 var L__filename = __filename;
-var Larr, _0, Li, _1;
-function _2(s) {
+var Larr, _0, Li, _1, _2;
+function _3(s) {
 var Lraise = raise(s);
 switch (s[2]) {
 case 0:
@@ -20,12 +20,17 @@ case 3:
 s[3] = Li = 0;
 case 4:
 s[2] = 5;
-lix(s, Lprint(Larr[00][Li]));
+lix(s, Lprint(Larr[0][Li]));
 case 5:
-_1 = s[3]
+_1 = s[3];
+case 6:
+s[2] = 7;
+lix(s, Lprint(Larr[0][0]));
+case 7:
+_2 = s[3]
 default:
 }
 return s[3]
 }
 ;
-module.exports = _2
+module.exports = _3
