@@ -144,19 +144,19 @@ FUNC_ARGS
 PropertyField
 		: '.' VAR
 			{
-				$$ = [$VAR, "{atomic}"];
+				$$ = [$VAR, "{atomic}", "{dot}", "{global}"];
 			}
 		| NUMERIC_INDEX
 			{
-				$$ = [[$NUMERIC_INDEX.substring(1), '{atomic}'], '{index}'];
+				$$ = [[$NUMERIC_INDEX.substring(1), '{atomic}'], '{index}', "{index}", "{global}"];
 			}
-		| '.' NAT
-			{
-				$$ = [[$NAT, '{atomic}'], '{index}'];
-			}
+//		| '.' NAT
+//			{
+//				$$ = [[$NAT, '{atomic}'], '{index}'];
+//			}
 		| '.' STRING_LITERAL
 			{
-				$$ = [[$STRING_LITERAL, '{atomic}'], '{index}'];
+				$$ = [[$STRING_LITERAL, '{atomic}'], '{index}', "{index}", "{global}"];
 			}
 //		| '.' OPENPARAN STRING_LITERAL CLOSEPARAN
 //			{
@@ -168,7 +168,7 @@ PropertyField
 //			}
 		| '.' OPENPARAN MultiLineExpr CLOSEPARAN
 			{
-				$$ = [makeExpr($MultiLineExpr), '{index}'];
+				$$ = [makeExpr($MultiLineExpr), '{index}', "{index}"];
 			}
 		;
 	

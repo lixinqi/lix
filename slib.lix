@@ -163,9 +163,9 @@ getVarName := [expr]->{
 }
 
 generateField := [expr env ctx def]->{
-	if (expr.1 == '{atomic}') {
+	if (expr.2 == '{dot}') {
 		'.' + (expr generateAtomic env ctx0 def)
-	} (expr.1 == '{index}') {
+	} (expr.2 == '{index}') {
 		['[' (expr.0 generate env ctx def) ']'] join
 	}
 }
@@ -569,7 +569,7 @@ globalDefine := NewGlobalDefine call
 
 flattenMethod := [expr define]->{
 	ret := ['' '{empty}']
-	if (expr.(0).(1) == '{atomic}') {
+	if (expr.(0).(3) == '{global}') {
 		ret = expr.(0).(0) globalDefine expr
 	} else {
 		expr.0 = expr.0 flattenField define

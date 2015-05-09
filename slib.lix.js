@@ -534,7 +534,7 @@ var generateField = (function () {var _uniq_var_388 = function (expr, env, ctx, 
 _uniq_var_85;
 var _uniq_var_86 = null;
 _uniq_var_86;
-var _uniq_var_89 = __eq__(expr[1], '{atomic}');
+var _uniq_var_89 = __eq__(expr[2], '{dot}');
 _uniq_var_89;
 if ((_uniq_var_85 && _uniq_var_89)) {
 (_uniq_var_85 = false);
@@ -545,7 +545,7 @@ _uniq_var_88;
 (_uniq_var_86 = _uniq_var_88);
 
 };
-var _uniq_var_92 = __eq__(expr[1], '{index}');
+var _uniq_var_92 = __eq__(expr[2], '{index}');
 _uniq_var_92;
 if ((_uniq_var_85 && _uniq_var_92)) {
 (_uniq_var_85 = false);
@@ -1552,7 +1552,7 @@ var _uniq_var_260 = true;
 _uniq_var_260;
 var _uniq_var_261 = null;
 _uniq_var_261;
-var _uniq_var_263 = __eq__(expr[0][1], '{atomic}');
+var _uniq_var_263 = __eq__(expr[0][3], '{global}');
 _uniq_var_263;
 if ((_uniq_var_260 && _uniq_var_263)) {
 (_uniq_var_260 = false);
