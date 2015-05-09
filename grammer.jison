@@ -48,6 +48,8 @@
 '.''/'+													{	return 'CURRENT_PATH'; }
 '/''/'+													{	return 'ROOT'; }
 
+"."[0-9]+  											{ return 'NUMERIC_INDEX'; }
+
 
 
 \'(\\.|[^\\'])*\'|\"(\\.|[^\\"])*\"			{ return 'STRING_LITERAL'; }	
@@ -103,8 +105,8 @@
 "<="													{ return 'var'; }
 "<"														{ return 'var'; }
 
-\s+":="\s+  									{ return 'DEF'; }
-\s+"="\s+  										{ return 'ASSIGN_OPERATOR'; }
+\s?":="\s?  									{ return 'DEF'; }
+\s?"="\s?  										{ return 'ASSIGN_OPERATOR'; }
 
 \s+       										{ return 'SEP'; }
 /lex
@@ -143,6 +145,10 @@ PropertyField
 		: '.' VAR
 			{
 				$$ = [$VAR, "{atomic}"];
+			}
+		| NUMERIC_INDEX
+			{
+				$$ = [[$NUMERIC_INDEX.substring(1), '{atomic}'], '{index}'];
 			}
 		| '.' NAT
 			{
@@ -194,10 +200,14 @@ Object
 			{
 				$$ = [makeExpr($3), '{module}', '{index}'];
 			} 
-		| Object '.' Field
+		| Object PropertyField
 			{
-				$$ = [$1, '{.}', $3];
+				$$ = [$1, '{.}', $PropertyField];
 			}
+//		| Object '.' Field
+//			{
+//				$$ = [$1, '{.}', $3];
+//			}
 		;
 
 Property
