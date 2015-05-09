@@ -140,21 +140,29 @@ FUNC_ARGS
 		;
 
 PropertyField
-		: VAR
+		: '.' VAR
 			{
-				$$ = [$1, "{atomic}"];
+				$$ = [$VAR, "{atomic}"];
 			}
-		| OPENPARAN STRING_LITERAL CLOSEPARAN
+		| '.' NAT
 			{
-				$$ = [[$2, '{atomic}'], '{index}'];
+				$$ = [[$NAT, '{atomic}'], '{index}'];
 			}
-		| OPENPARAN NAT CLOSEPARAN
+		| '.' STRING_LITERAL
 			{
-				$$ = [[$2, '{atomic}'], '{index}'];
+				$$ = [[$STRING_LITERAL, '{atomic}'], '{index}'];
 			}
-		| NAT
+//		| '.' OPENPARAN STRING_LITERAL CLOSEPARAN
+//			{
+//				$$ = [[$STRING_LITERAL, '{atomic}'], '{index}'];
+//			}
+//		| '.' OPENPARAN NAT CLOSEPARAN
+//			{
+//				$$ = [[$NAT, '{atomic}'], '{index}'];
+//			}
+		| '.' OPENPARAN MultiLineExpr CLOSEPARAN
 			{
-				$$ = [[$1, '{atomic}'], '{index}'];
+				$$ = [makeExpr($MultiLineExpr), '{index}'];
 			}
 		;
 	
@@ -204,17 +212,17 @@ Property
 		;
 
 PropertyList
-		: '.' Property
+		: Property
 			{
 				$$ = [$Property];
 			}
-		| PropertyList SEP '.' Property
+		| PropertyList SEP Property
 			{
 				$PropertyList.push($Property);
 				$$ = $PropertyList;
 			}
 		| PropertyList NEWLINE
-		| PropertyList NEWLINE '.' Property
+		| PropertyList NEWLINE Property
 			{
 				$PropertyList.push($Property);
 				$$ = $PropertyList;
@@ -302,9 +310,9 @@ PrimaryExpr
 			{
 				$$ = [$2, '{object}'];
 			}
-		| '.' PropertyField
+		| PropertyField
 			{
-				$$ = [$2, '{method}', 'field']
+				$$ = [$PropertyField, '{method}', 'field']
 			}
 		| Object
 		| NAT

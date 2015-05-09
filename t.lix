@@ -1,41 +1,13 @@
 #!/usr/local/bin/node
 
-[]->{
-	defer call []->{
-		'in defer' print
-	}
+obj := {
+	.hi []->{'hi' print}
+}
 
-	trap call [e]->{
-		'in trap' print
-		e print
-	}
 
-	cc call [brk]->{
-		'good' call
-		brk call
-	}
-} call
+method := 'h' + 'i'
 
-'end' print
-
-# 'in t.lix' print
-# obj := {
-# 	.name []->{ 'good' print }
-# }
-# 
-# obj .name
-# obj .name
-# 
-# obj print
-# obj .age | print
-# obj .age 10
-# obj .age | print
-# 
-# obj .hi | print
-# 
-# obj .hi []->{'hi' print} | .hi
-# 
-# obj0 := {}
-# obj0 .hi []->{'nice' print} | .hi
-# 
-# .hi call | print
+obj .hi
+obj.(method) call
+obj .('hi' + '')
+obj .('h' + 'i')

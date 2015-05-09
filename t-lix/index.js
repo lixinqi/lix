@@ -5,111 +5,67 @@ require.lixLoadingCache = {};
 var Lrequire = _require(require);
 var L__dirname = __dirname;
 var L__filename = __filename;
-var _8, _9;
-function _10(s) {
+var _2, Lobj, _1, Lmethod, _3;
+function _4(s) {
 	var Lraise = raise(s);
 	switch (s[2]) {
 		case 0:
-			s[2] = 1;
-			lix(s, Lcall((function () {
-				var Larguments = arguments
-				var _1, _4, _7;
-			function _12(s) {
-				var Lraise = raise(s);
-				switch (s[2]) {
-					case 0:
-						s[2] = 1;
-						lix(s, Lcall(Ldefer, (function () {
-							var Larguments = arguments
-							var _0;
-						function _14(s) {
-							var Lraise = raise(s);
-							switch (s[2]) {
-								case 0:
-									s[2] = 1;
-									lix(s, Lprint('in defer'));
-								case 1:
-									_0 = s[3]
-								default:
-							}
-							return s[3]
-						}
-						;
-						return _14;
-						})));
-					case 1:
-						_1 = s[3];
-					case 2:
-						s[2] = 3;
-						lix(s, Lcall(Ltrap, (function (Le) {
-							var Larguments = arguments
-							var _2, _3;
-						function _16(s) {
-							var Lraise = raise(s);
-							switch (s[2]) {
-								case 0:
-									s[2] = 1;
-									lix(s, Lprint('in trap'));
-								case 1:
-									_2 = s[3];
-								case 2:
-									s[2] = 3;
-									lix(s, Lprint(Le));
-								case 3:
-									_3 = s[3]
-								default:
-							}
-							return s[3]
-						}
-						;
-						return _16;
-						})));
-					case 3:
-						_4 = s[3];
-					case 4:
-						s[2] = 5;
-						lix(s, Lcall(Lcc, (function (Lbrk) {
-							var Larguments = arguments
-							var _5, _6;
-						function _18(s) {
-							var Lraise = raise(s);
-							switch (s[2]) {
-								case 0:
-									s[2] = 1;
-									lix(s, Lcall('good'));
-								case 1:
-									_5 = s[3];
-								case 2:
-									s[2] = 3;
-									lix(s, Lcall(Lbrk));
-								case 3:
-									_6 = s[3]
-								default:
-							}
-							return s[3]
-						}
-						;
-						return _18;
-						})));
-					case 5:
-						_7 = s[3]
-					default:
+			_2 = (function (_5, _6) {
+				if (_5 == undefined || _5 == null ) {
+					return function () {
+						return _5;
+					}
 				}
-				return s[3]
-			}
-			;
-			return _12;
-			})));
+				if (typeof _5.hi === 'function') {
+					arguments = Array.prototype.slice.call(arguments, 0, arguments.length);
+					return _5.hi.apply(_5, arguments);
+				} else {
+					if (arguments.length > 1) {
+						return function () {
+							_5.hi = _6;
+							return _5;
+						}
+					}
+					return function () {
+						return _5.hi;
+					}
+				}});
 		case 1:
-			_8 = s[3];
+			s[3] = Lobj = {
+				hi: (function () {
+					var Larguments = arguments
+					var _0;
+				function _9(s) {
+					var Lraise = raise(s);
+					switch (s[2]) {
+						case 0:
+							s[2] = 1;
+							lix(s, Lprint('hi'));
+						case 1:
+							_0 = s[3]
+						default:
+					}
+					return s[3]
+				}
+				;
+				return _9;
+				})
+			};
 		case 2:
 			s[2] = 3;
-			lix(s, Lprint('end'));
+			lix(s, L__add__('h', 'i'));
 		case 3:
-			_9 = s[3]
+			_1 = s[3];
+		case 4:
+			s[3] = Lmethod = _1;
+		case 5:
+			s[2] = 6;
+			lix(s, _2(Lobj));
+		case 6:
+			_3 = s[3]
 		default:
 	}
 	return s[3]
 }
 ;
-module.exports = _10
+module.exports = _4
