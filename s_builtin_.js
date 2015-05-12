@@ -562,14 +562,20 @@ var TRAP = 5;
 		}
 	}
 
+	var calledTimes = 1;
+
 	this.lix = function (s, f) {
 		var ns = [ /*prev:*/ s, /*f:*/ f, /*step:*/ 0,
 				/*ret:*/ undefined, /*defer*/ [], /*trap*/ undefined];
+		if ((calledTimes ++) > 10000) {
+			setImmediate(function () {
+					lix_resume(s);
+			});
+			calledTimes = 1;
+		}
 		try {
 			s[RET] = f(ns);
 		} catch (e) {
-//			console.log(typeof e);
-//			console.log(e);
 			if (e !== _lixCCException) {
 				_raise(ns, e);
 			}
@@ -583,22 +589,23 @@ var TRAP = 5;
 
 	this.lix_resume = function (s) {//resume continuations
 		var ret = s[RET];
-		while (s) {
-			s[RET] = ret;
+		try {
+			while (s) {
+				s[RET] = ret;
 
-			try {
-				ret = s[F](s);
-			} catch (e) {
-//			console.log(typeof e);
-//			console.log(e);
-				if (e !== _lixCCException) {
-					_raise(s, e);
+				try {
+					ret = s[F](s);
+				} catch (e) {
+					if (e !== _lixCCException) {
+						_raise(s, e);
+					}
+					throw _lixCCException;
 				}
-				throw _lixCCException;
-			}
 
-			defer(s);
-			s = s[PREV];
+				defer(s);
+				s = s[PREV];
+			}
+		} catch (e) {
 		}
 	}
 
@@ -1089,11 +1096,7 @@ var TRAP = 5;
 						defer_until(s, s0);
 						s[RET] = ret;
 						setImmediate(function () {
-							try {
 								lix_resume(s);
-							} catch (e) {
-//								console.log(e);
-							}
 						});
 						throw _lixCCException;
 					}

@@ -1,14 +1,16 @@
 #!/usr/local/bin/node
 
-obj := {
-	.0 {
-		.0 []->{'hi obj.0.0' print}
-		.1 []->{'hi obj.0.1' print}
+trap call print
+
+fib := [x]->{
+	if (x <= 0) {
+		1
+	} (x == 1) {
+		1
+	} else {
+		(x | - 1 | fib) + (x | - 2 | fib)
 	}
 }
 
-obj (.0 >> .0)
-obj (.0 >> .1)
-
-obj.0.0 call
-obj.0.1 call
+30 | fib | print
+'end' print
