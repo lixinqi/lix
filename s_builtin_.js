@@ -575,6 +575,7 @@ var TRAP = 5;
 		}
 		try {
 			s[RET] = f(ns);
+			calledTimes --;
 		} catch (e) {
 			if (e !== _lixCCException) {
 				_raise(ns, e);
@@ -595,6 +596,7 @@ var TRAP = 5;
 
 				try {
 					ret = s[F](s);
+					calledTimes --;
 				} catch (e) {
 					if (e !== _lixCCException) {
 						_raise(s, e);

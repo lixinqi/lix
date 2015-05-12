@@ -2,7 +2,9 @@
 
 trap call print
 
+counter := 0
 fib := [x]->{
+	counter = counter + 1
 	if (x <= 0) {
 		1
 	} (x == 1) {
@@ -13,4 +15,5 @@ fib := [x]->{
 }
 
 30 | fib | print
+counter print
 'end' print
