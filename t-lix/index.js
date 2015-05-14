@@ -5,145 +5,110 @@ require.lixLoadingCache = {};
 var Lrequire = _require(require);
 var L__dirname = __dirname;
 var L__filename = __filename;
-var _0, Lcounter, Lfib, _10, _11, _12, _13;
-function _14(s) {
+var Lx, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, Lp, _11, _12;
+function _13(s) {
 var Lraise = raise(s);
 switch (s[2]) {
 case 0:
-s[2] = 1;
-lix(s, Lcall(Ltrap, Lprint));
+s[3] = Lx = 0;
 case 1:
-_0 = s[3];
+s[2] = 2;
+lix(s, Luntil(LN, L__gt__, 25));
 case 2:
-s[3] = Lcounter = 0;
+_0 = s[3];
 case 3:
-s[3] = Lfib = (function (Lx) {
+s[2] = 4;
+lix(s, Lreduce(_0, L__add__, 0));
+case 4:
+_1 = s[3];
+case 5:
+s[2] = 6;
+lix(s, Lhook(_1, (function (L$x) {
 var Larguments = arguments
-var _1, _2, _3, _4, _5, _6, _7, _8, _9;
+;
+function _15(s) {
+var Lraise = raise(s);
+switch (s[2]) {
+case 0:
+s[3] = Lx = L$x
+default:
+}
+return s[3]
+}
+;
+return _15;
+})));
+case 6:
+_2 = s[3];
+case 7:
+s[2] = 8;
+lix(s, Lexec(_2));
+case 8:
+_3 = s[3];
+case 9:
+s[2] = 10;
+lix(s, Lprint(Lx));
+case 10:
+_4 = s[3];
+case 11:
+s[2] = 12;
+lix(s, Lrequire("i"));
+case 12:
+_5 = s[3];
+case 13:
+s[2] = 14;
+lix(s, L__(L__add__, 2));
+case 14:
+_6 = s[3];
+case 15:
+s[2] = 16;
+lix(s, L__compose__(_5, _6));
+case 16:
+_7 = s[3];
+case 17:
+s[2] = 18;
+lix(s, L__(L__mul__, 3));
+case 18:
+_8 = s[3];
+case 19:
+s[2] = 20;
+lix(s, L__compose__(_7, _8));
+case 20:
+_9 = s[3];
+case 21:
+s[2] = 22;
+lix(s, L__compose__(_9, (function (L$x) {
+var Larguments = arguments
+;
 function _17(s) {
 var Lraise = raise(s);
 switch (s[2]) {
 case 0:
-_2 = false;
-case 1:
-s[3] = 1
+s[3] = Lx = L$x
 default:
 }
 return s[3]
 }
 ;
-function _18(s) {
-var Lraise = raise(s);
-switch (s[2]) {
-case 0:
-_2 = false;
-case 1:
-s[3] = 1
-default:
-}
-return s[3]
-}
-;
-function _19(s) {
-var Lraise = raise(s);
-switch (s[2]) {
-case 0:
-s[2] = 1;
-lix(s, L__sub__(Lx, 1));
-case 1:
-_5 = s[3];
-case 2:
-s[2] = 3;
-lix(s, Lfib(_5));
-case 3:
-_6 = s[3];
-case 4:
-s[2] = 5;
-lix(s, L__sub__(Lx, 2));
-case 5:
-_7 = s[3];
-case 6:
-s[2] = 7;
-lix(s, Lfib(_7));
-case 7:
-_8 = s[3];
-case 8:
-s[2] = 9;
-lix(s, L__add__(_6, _8));
-case 9:
-_9 = s[3]
-default:
-}
-return s[3]
-}
-;
-function _16(s) {
-var Lraise = raise(s);
-switch (s[2]) {
-case 0:
-s[2] = 1;
-lix(s, L__add__(Lcounter, 1));
-case 1:
-_1 = s[3];
-case 2:
-s[3] = Lcounter = _1;
-case 3:
-_2 = true;
-case 4:
-s[2] = 5;
-lix(s, L__le__(Lx, 0));
-case 5:
-_3 = s[3];
-case 6:
-if ((_2 && _3)) {
-s[2] = 7;
-lix(s, _17)
-};
-case 7:
-s[2] = 8;
-lix(s, L__eq__(Lx, 1));
-case 8:
-_4 = s[3];
-case 9:
-if ((_2 && _4)) {
-s[2] = 10;
-lix(s, _18)
-};
-case 10:
-if (_2) {
-s[2] = 11;
-lix(s, _19)
-}
-default:
-}
-return s[3]
-}
-;
-return _16;
-});
-case 4:
-s[2] = 5;
-lix(s, Lfib(30));
-case 5:
+return _17;
+})));
+case 22:
 _10 = s[3];
-case 6:
-s[2] = 7;
-lix(s, Lprint(_10));
-case 7:
+case 23:
+s[3] = Lp = _10;
+case 24:
+s[2] = 25;
+lix(s, Lp(3));
+case 25:
 _11 = s[3];
-case 8:
-s[2] = 9;
-lix(s, Lprint(Lcounter));
-case 9:
-_12 = s[3];
-case 10:
-s[2] = 11;
-lix(s, Lprint('end'));
-case 11:
-_13 = s[3]
+case 26:
+s[2] = 27;
+lix(s, Lprint(Lx));
+case 27:
+_12 = s[3]
 default:
 }
 return s[3]
 }
 ;
-module.exports = _14
+module.exports = _13

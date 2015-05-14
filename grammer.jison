@@ -50,6 +50,7 @@
 
 "."[0-9]+  											{ return 'NUMERIC_INDEX'; }
 
+"&"  											{ return 'AMPERSAND'; }
 
 
 \'(\\.|[^\\'])*\'|\"(\\.|[^\\"])*\"			{ return 'STRING_LITERAL'; }	
@@ -59,9 +60,25 @@
 \s*(("#".*)?\n+)+\s*"and"\s*(("#".*)?\n+)*\s*	{ return 'NLAND'; }
 \s*(("#".*)?\n+)+\s*"or"\s*(("#".*)?\n+)*\s*	{ return 'NLOR'; }
 
+\s*(("#".*)?\n+)*\s*"|"\s*   									{ return 'VBAR'; }
+\s*(("#".*)?\n+)*\s*">>="\s+									{ return '>>='; }
+\s*(("#".*)?\n+)*\s*">>>"\s+									{ return ">>>"; }
+\s*(("#".*)?\n+)*\s*"<<<"\s+									{ return "<<<"; }
+\s*(("#".*)?\n+)*\s*">>"\s+										{ return ">>"; }
+\s*(("#".*)?\n+)*\s*"<<"\s+										{ return "<<"; }
+
+/*
+\s*"|"\s*   									{ return 'VBAR'; }
+\s*">>="\s+										{ return '>>='; }
+\s*">>>"\s+										{ return ">>>"; }
+\s*"<<<"\s+										{ return "<<<"; }
+\s*">>"\s+										{ return ">>"; }
+\s*"<<"\s+										{ return "<<"; }
+*/
+
 \s*(("#".*)?\n+)+\s*       		{ return 'NEWLINE'; }
 
-\s*"|"\s*   									{ return 'VBAR'; }
+
 
 "("\s*       									{ return 'OPENPARAN'; }
 \s*")"      									{ return 'CLOSEPARAN'; }
@@ -86,12 +103,6 @@
 
 '$'"("\s*(("#".*)?\n+)*\s* 				{ return 'DOLLAR_PARAN'; }
 '$'[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'DOLLAR_STR'; }
-
-\s*">>="\s+										{ return '>>='; }
-\s*">>>"\s+										{ return ">>>"; }
-\s*"<<<"\s+										{ return "<<<"; }
-\s*">>"\s+										{ return ">>"; }
-\s*"<<"\s+										{ return "<<"; }
 
 "+"														{ return 'var'; }
 "*"														{ return 'var'; }
@@ -132,7 +143,7 @@ VAR
 FUNC_ARGS
 		: VAR
 			{
-				$$ = [[$VAR, '{atomic}', '{var}']];
+				$$ = [[$VAR, "{atomic}", "{var}"]];
 			}
 		| FUNC_ARGS SEP VAR
 			{
@@ -305,8 +316,16 @@ PrimaryExpr
 			{
 				$$ = [$ArrayLiteral, '{func}', $FUNC_BODY];
 			}
+
 		| '[' ']' FUNC_ARROW '{' FUNC_BODY '}'
 			{ $$ = [[], '{func}', $FUNC_BODY]; }
+		| AMPERSAND VAR
+			{
+				$$ = [[["$x", "{atomic}", "{var}"]], "{func}", [[
+					[[$VAR, "{atomic}", "{var}"], '=', ["$x", "{atomic}", "{var}"]],
+				], "{seq}"]];	
+			}
+
 		| OPENPARAN MultiLineExpr CLOSEPARAN
 			{
 				$$ = makeExpr($MultiLineExpr);

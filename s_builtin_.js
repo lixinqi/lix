@@ -396,6 +396,24 @@ var TRAP = 5;
 			;
 			return _10;
 			})	
+	this.Lexec = (function (Lxlist) {
+				var Larguments = arguments
+				var _0;
+			function _3(s) {
+				var Lraise = raise(s);
+				switch (s[2]) {
+					case 0:
+						s[2] = 1;
+						lix(s, Lcall(Lxlist, Lidentity));
+					case 1:
+						_0 = s[3]
+					default:
+				}
+				return s[3]
+			}
+			;
+			return _3;
+			});
 
 	this.Lhook = (function (Lmonad) {
 		var Larguments = arguments
