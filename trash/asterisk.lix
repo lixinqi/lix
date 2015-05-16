@@ -1,0 +1,35 @@
+#!/usr/local/bin/node
+
+x = 0
+p = [_x]->{
+	if (arguments.length) {
+		x = _x
+	} else {
+		x
+	}
+}
+
+*p print
+
+*p = 3
+
+*p print
+
+x print
+
+'---' print
+
+a = {
+	.b &x
+}
+
+*a.b print
+
+*a.b = 4
+
+*a.b print
+
+x print
+
+'end' print
+

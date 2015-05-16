@@ -321,10 +321,10 @@ PrimaryExpr
 		| '[' ']' FUNC_ARROW '{' FUNC_BODY '}'
 			{ $$ = [[], "{func}", $FUNC_BODY]; }
 
-//		| "&" VAR
-//			{
-//				$$ = [[$VAR, "{atomic}", "{var}"], "{ampersand}"]
-//			}
+		| "*" Object
+			{
+				$$ = [$Object, "{asterisk}"]
+			}
 
 		| "&" Object
 			{
@@ -349,11 +349,6 @@ PrimaryExpr
 				$$ = [$PropertyField, '{method}', 'field']
 			}
 		| Object
-
-		| "*" Object
-			{
-				$$ = [[$VAR, "{atomic}", "{var}"], "{asterisk}"]
-			}
 
 		| NAT
 			{
@@ -579,6 +574,10 @@ AssignStatement
 		: Object ASSIGN_OPERATOR Expr NEWLINE
 			{
 				$$ = [$1, '=', makeExpr($3)];
+			}
+		| '*' Object ASSIGN_OPERATOR Expr NEWLINE
+			{
+				$$ = [makeExpr($Expr), $Object];
 			}
 		;
 

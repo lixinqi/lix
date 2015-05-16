@@ -241,6 +241,10 @@ generateDef := [expr env ctx def]->{
 	ret
 }
 
+generateAsterisk := [expr env ctx def]->{
+	[['undefined' '{atomic}' '{var}'] expr.0] generateExpr env ctx def
+}
+
 generateAmpersand := [expr env ctx def]->{
 	if (expr.(0).(1) == '{atomic}') {
 		varname := expr.(0) getVarName
@@ -384,6 +388,7 @@ generateOpTable := {
 	.'{module}' 						generateModule
 	.'{func}' 							generateFunc
 	.'{ampersand}' 					generateAmpersand
+	.'{asterisk}' 					generateAsterisk
 	.'{array}' 							generateArray
 	.'{object}' 						generateObjectLiteral
 	.'{method}' 						generateMethod
@@ -706,8 +711,9 @@ flattenSeq := [expr define seqCtx]->{
 }
 
 flattenStart := [expr define]->{
+	trapExpr := [[['print' '{atomic}' '{var}'] ['trap' '{atomic}' '{var}']]]
 	ret := expr.0 flatten define
-	ret.(0) = globalDefine call | .concat ret.(0)
+	ret.(0) = trapExpr | .concat (globalDefine call) | .concat ret.(0)
 	[ret '{start}']
 }
 
@@ -729,6 +735,11 @@ flattenAmpersand := [expr define]->{
 	expr
 }
 
+flattenAsterisk := [expr define]->{
+	expr.1 = ['call' '{atomic}' '{var}']
+	expr flatten define
+}
+
 flattenOpTable := {
 	.'{start}' 							flattenStart
 	.'{seq}' 								flattenSeq
@@ -738,6 +749,7 @@ flattenOpTable := {
 	.'{module}' 						flattenModule
 	.'{func}' 							flattenFunc
 	.'{ampersand}' 					flattenAmpersand
+	.'{asterisk}' 					flattenAsterisk
 	.'{array}' 							flattenArray
 	.'{object}' 						flattenObjectLiteral
 	.'{method}' 						flattenMethod
