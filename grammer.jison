@@ -50,7 +50,8 @@
 
 "."[0-9]+  											{ return 'NUMERIC_INDEX'; }
 
-"&"  											{ return 'AMPERSAND'; }
+"&"  											{ return "&"; }
+"*"  											{ return "*"; }
 
 
 \'(\\.|[^\\'])*\'|\"(\\.|[^\\"])*\"			{ return 'STRING_LITERAL'; }	
@@ -306,24 +307,28 @@ Path
 PrimaryExpr
 		: '[' ']'
 			{
-				$$ = [[], '{array}'];
+				$$ = [[], "{array}"];
 			}
 		| '[' ArrayLiteral ']'
 			{
-				$$ = [$ArrayLiteral, '{array}'];
+				$$ = [$ArrayLiteral, "{array}"];
 			}
 		| '[' ArrayLiteral ']' FUNC_ARROW '{' FUNC_BODY '}'
 			{
-				$$ = [$ArrayLiteral, '{func}', $FUNC_BODY];
+				$$ = [$ArrayLiteral, "{func}", $FUNC_BODY];
 			}
 
 		| '[' ']' FUNC_ARROW '{' FUNC_BODY '}'
-			{ $$ = [[], '{func}', $FUNC_BODY]; }
-		| AMPERSAND VAR
+			{ $$ = [[], "{func}", $FUNC_BODY]; }
+
+//		| "&" VAR
+//			{
+//				$$ = [[$VAR, "{atomic}", "{var}"], "{ampersand}"]
+//			}
+
+		| "&" Object
 			{
-				$$ = [[["$x", "{atomic}", "{var}"]], "{func}", [[
-					[[$VAR, "{atomic}", "{var}"], '=', ["$x", "{atomic}", "{var}"]],
-				], "{seq}"]];	
+				$$ = [$Object, "{ampersand}"]
 			}
 
 		| OPENPARAN MultiLineExpr CLOSEPARAN
@@ -344,6 +349,12 @@ PrimaryExpr
 				$$ = [$PropertyField, '{method}', 'field']
 			}
 		| Object
+
+		| "*" Object
+			{
+				$$ = [[$VAR, "{atomic}", "{var}"], "{asterisk}"]
+			}
+
 		| NAT
 			{
 				$$ = [$NAT, '{atomic}'];

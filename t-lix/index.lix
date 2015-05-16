@@ -1,16 +1,20 @@
 #!/usr/local/bin/node
 
-x := 0
+0 | &a
 
-N | until > 25
-	| reduce + 0
-	| hook &x
-	| exec
+a print
 
-x print
+b = {
+	.a 3
+}
 
-p := $i >> + 2 >> * 3 >> &x
+4 | &b.a
+b print
 
-3 p
+c = {
+	.b [0]
+}
 
-x print
+5 | &c.b.0
+
+c print

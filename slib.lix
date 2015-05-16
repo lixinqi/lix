@@ -241,16 +241,42 @@ generateDef := [expr env ctx def]->{
 	ret
 }
 
+generateAmpersand := [expr env ctx def]->{
+	if (expr.(0).(1) == '{atomic}') {
+		varname := expr.(0) getVarName
+		if (env.(varname) == undefined
+			| and (varname != seqFuncParamsName.ret)) {
+			[expr.(0) '=' ['undefined' '{atomic}' '{var}']] generate env ctx def
+		}
+	} else {
+		varname := expr.(0) generate env ctx def
+	}
+	[
+		"(function (_x) {\n"
+			"if (arguments.length) {\n"
+				"return function () {\n"
+					"return " varname " = _x\n"
+				"}\n"
+			"} else {\n"
+				"return function () {\n"
+					"return " varname "\n"
+				"}\n"
+			"}\n"
+		"})"
+	] .join ""
+}
+
 generateAssign := [expr env ctx def]->{
 	varname := expr.0 getVarName
+	ret := []
 	if (env.(varname) == undefined | and (varname != seqFuncParamsName.ret)) {
-		varname console.log
-		"this var is undefined" console.log
+		ret = expr generateDef env ctx def
+	} else {
+		varname := (expr.0 generate env ctx0 def)
+		value := (expr.2 generate env ctx def)
+		ret = [varname " = " value] | join
 	}
-
-	varname := (expr.0 generate env ctx0 def)
-	value := (expr.2 generate env ctx def)
-	[varname " = " value] | join
+	ret
 }
 
 generateFunc := [expr env ctx def]->{
@@ -357,6 +383,7 @@ generateOpTable := {
 	.'{.}' 									generateFieldAccess
 	.'{module}' 						generateModule
 	.'{func}' 							generateFunc
+	.'{ampersand}' 					generateAmpersand
 	.'{array}' 							generateArray
 	.'{object}' 						generateObjectLiteral
 	.'{method}' 						generateMethod
@@ -698,6 +725,10 @@ flattenDefer := [expr define]->{
 	['undefined' '{atomic}']
 }
 
+flattenAmpersand := [expr define]->{
+	expr
+}
+
 flattenOpTable := {
 	.'{start}' 							flattenStart
 	.'{seq}' 								flattenSeq
@@ -706,6 +737,7 @@ flattenOpTable := {
 	.'{.}' 									flattenFieldAccess
 	.'{module}' 						flattenModule
 	.'{func}' 							flattenFunc
+	.'{ampersand}' 					flattenAmpersand
 	.'{array}' 							flattenArray
 	.'{object}' 						flattenObjectLiteral
 	.'{method}' 						flattenMethod

@@ -295,6 +295,80 @@ var TRAP = 5;
 			;
 			return _6;
 			})
+	this.Lfilter = (function (Lmonad) {
+				var Larguments = arguments
+				var _0, Lfn;
+			function _7(s) {
+				switch (s[2]) {
+					case 0:
+						s[2] = 1;
+						lix(s, LMinorArgs2Fn(Larguments));
+					case 1:
+						_0 = s[3];
+					case 2:
+						s[3] = Lfn = _0;
+					case 3:
+						s[3] = (function (Lcb) {
+							var Larguments = arguments
+							var _4;
+						function _9(s) {
+							switch (s[2]) {
+								case 0:
+									s[2] = 1;
+									lix(s, Lcall(Lmonad, (function (Lx) {
+										var Larguments = arguments
+										var _1, _3, _2;
+									function _12(s) {
+										switch (s[2]) {
+											case 0:
+												_1 = false;
+											case 1:
+												s[2] = 2;
+												lix(s, Lcb(Lx));
+											case 2:
+												_2 = s[3]
+											default:
+										}
+										return s[3]
+									}
+									;
+									function _11(s) {
+										switch (s[2]) {
+											case 0:
+												_1 = true;
+											case 1:
+												s[2] = 2;
+												lix(s, Lfn(Lx));
+											case 2:
+												_3 = s[3];
+											case 3:
+												if ((_1 && _3)) {
+													s[2] = 4;
+													lix(s, _12)
+												}
+											default:
+										}
+										return s[3]
+									}
+									;
+									return _11;
+									})));
+								case 1:
+									_4 = s[3]
+								default:
+							}
+							return s[3]
+						}
+						;
+						return _9;
+						})
+					default:
+				}
+				return s[3]
+			}
+			;
+			return _7;
+			});
 
 	this.Luntil = (function (Lmonad) {
 				var Larguments = arguments
