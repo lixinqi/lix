@@ -1,40 +1,12 @@
 #!/usr/local/bin/node
 
-iterator := [arr end]->{
-	current := 0
-	default = { .end 'end' }
-	*end = default
-	ret := [x]->{
-		if (arguments.length) {
-			arr.(current) = x
-		} else {
-			if (current >= arr.length) {
-				default
-			} else {
-				arr.(current)
-			}
-		}
-	}
-	ret.inc = [self n]->{
-		if (arguments.length <= 1) {
-			n = 1
-		}
-		pos = current + n
-		if (pos < 0) {
-			pos = 0
-		}
-		current = pos
-	}
-	ret
-}
+array2generator := $array2xlist >> $xlist2generator
 
-arr := [1 2 3 5 4]
-itt := arr iterator &end
-while (*itt != end) {
-	*itt print
-	itt .inc
-}
+[1 23 5 4] | array2generator | &itt
 
-# for (itt := arr iterator &end; *itt != end; itt .inc) {
-# }
+*itt print
+*itt print
+*itt print
+*itt print
+*itt print
 
