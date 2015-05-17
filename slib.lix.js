@@ -246,7 +246,7 @@ _uniq_var_23;
 var body = _uniq_var_23;
 body;
 body;
-var _uniq_var_24 = join(['function ', funcName, '(s) {\n', "var Lraise = raise(s);\n", 'switch (s[', STEP, ']) {\n', body, '\n', 'default:\n', '}\n', 'return s[', RET, ']\n', '}\n']);
+var _uniq_var_24 = join(['function ', funcName, '(s) {\n', 'switch (s[', STEP, ']) {\n', body, '\n', 'default:\n', '}\n', 'return s[', RET, ']\n', '}\n']);
 _uniq_var_24;
 var _uniq_var_25 = def.appendExpr(_uniq_var_24);
 _uniq_var_25;

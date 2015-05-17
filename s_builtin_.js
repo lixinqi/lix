@@ -123,6 +123,12 @@ var TRAP = 5;
 		}
 	}
 
+	this.LCurrentRaiser = function () {
+		return function (s) {
+			return raise(s[PREV]);
+		}
+	}
+
 	this.raise = function (s) {
 		return function (e) {
 			return function () {
@@ -474,7 +480,6 @@ var TRAP = 5;
 				var Larguments = arguments
 				var _0;
 			function _3(s) {
-				var Lraise = raise(s);
 				switch (s[2]) {
 					case 0:
 						s[2] = 1;

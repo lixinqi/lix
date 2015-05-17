@@ -1,12 +1,19 @@
 #!/usr/local/bin/node
 
-array2generator := $array2xlist >> $xlist2generator
+cc call [break]->{
+	trap call [e]->{
+		e print
+		break call
+	}
+	raiser = CurrentRaiser call
 
-[1 23 5 4] | array2generator | &itt
+	20 timeout []->{
+		trap call raiser
+		'good' print
+		'nice' call
+		'end' print
+		break call
+	}
+}
 
-*itt print
-*itt print
-*itt print
-*itt print
-*itt print
-
+'end' print

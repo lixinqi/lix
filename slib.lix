@@ -64,7 +64,6 @@ generateSeq := [expr env ctx def]->{
 
 	[
 		'function ' funcName '(s) {\n'
-			"var Lraise = raise(s);\n"
 			'switch (s[' STEP ']) {\n'
 				body
 				'\n'
