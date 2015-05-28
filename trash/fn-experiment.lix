@@ -1,0 +1,31 @@
+#!/usr/local/bin/node
+
+max fn (x Number) (y Number) =>{ if (x > y) { x } else { y } }
+
+max fn [x] =>{ x }
+
+max fn [x y...] =>{ x max (y max) }
+
+fib fn 0 => { 1 } 
+fib fn 1 => { 1 } 
+fib fn n => { (n - 1 | fib) + (n - 2 | fib) } 
+
+length fn [] => { 0 }
+length fn [x l...] => { length call l | + 1 }
+
+reverse fn [] => { [] }
+reverse fn [x] => { [x] }
+reverse fn [x l...] => { [...(l reverse) x] }
+
+xrange fn x y
+			=> { N | map + x | until >= y }
+
+xrange fn [x y]
+			=> { xrange call x y }
+
+xrange fn {.start x .end y}
+			=> { xrange call x y }
+
+xrange fn x y...
+			=> { range call 0 x }
+

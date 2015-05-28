@@ -1,0 +1,43 @@
+#!/usr/local/bin/node
+
+# max := [x y]->{
+#  	if (x > y) {
+#  		x
+#  	} else {
+#  		y
+#  	}
+# }
+# 
+# 3 max 4 | print
+
+max fn x y => {
+	if (x > y) {
+		x
+	} else {
+		y
+	}
+}
+
+3 max 4 | print
+
+square fn x => {
+	x * x
+}
+
+cube fn x = x | square | * x
+
+3 | square | print
+3 | cube | print
+
+&x | &y
+
+x print
+*y print
+
+*y = 28
+
+*y print
+x print
+
+3 * *y | print
+

@@ -297,6 +297,11 @@ generateFunc := [expr env ctx def]->{
 	'})'] .join ''
 }
 
+generateFn := [expr env ctx def]->{
+	expr.(1) = ":="
+	expr generate env ctx def
+}
+
 generateExpr := [expr env ctx def]->{
 	func := (expr.1 generate env ctx0 def)
 	args := (expr.0 generate env ctx0 def)
@@ -310,9 +315,21 @@ generateExpr := [expr env ctx def]->{
 
 GenerateDefNew := []->{
 	vars := {}
+	fns := {}
 	funcs := []
 
 	{
+		.generateFn []->{
+		}
+		.defineFn [name func condition]->{
+			if (fns.(name) == undefined) {
+				fns.(name) = []
+			}
+			fns.(name) .push {
+				.func func
+				.condition condition
+			}
+		}
 		.defineVar [v]->{
 			if (v) {
 				vars.(v) = v
@@ -386,6 +403,7 @@ generateOpTable := {
 	.'{.}' 									generateFieldAccess
 	.'{module}' 						generateModule
 	.'{func}' 							generateFunc
+	.'{fn}' 								generateFn
 	.'{ampersand}' 					generateAmpersand
 	.'{asterisk}' 					generateAsterisk
 	.'{array}' 							generateArray
@@ -734,6 +752,11 @@ flattenAmpersand := [expr define]->{
 	expr
 }
 
+flattenFn := [expr define]->{
+	func := [expr.(2) "{func}" expr.(3)] flatten define
+	[expr.(0) "{fn}" func] 
+}
+
 flattenAsterisk := [expr define]->{
 	expr.1 = ['call' '{atomic}' '{var}']
 	expr flatten define
@@ -747,6 +770,7 @@ flattenOpTable := {
 	.'{.}' 									flattenFieldAccess
 	.'{module}' 						flattenModule
 	.'{func}' 							flattenFunc
+	.'{fn}' 								flattenFn
 	.'{ampersand}' 					flattenAmpersand
 	.'{asterisk}' 					flattenAsterisk
 	.'{array}' 							flattenArray

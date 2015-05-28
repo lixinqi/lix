@@ -32,9 +32,11 @@
 
 %lex
 %%
-<<EOF>>   											{ return 'EOF'; }
+<<EOF>> 												{ return 'EOF'; }
 
-"/"+"("\s*(("#".*)?\n+)*\s*			{ return 'DIRITEM_PARAN'; }
+'...'														{ return '...'; }	
+
+"/"+"("\s*(("#".*)?\n+)*\s* 		{ return 'DIRITEM_PARAN'; }
 '.''/'+"("\s*(("#".*)?\n+)*\s*	{ return 'CURRENT_DIRITEM_PARAN'; }
 '..''/'+"("\s*(("#".*)?\n+)*\s*	{ return 'PARENT_DIRITEM_PARAN'; }
 
@@ -49,14 +51,24 @@
 '/''/'+													{	return 'ROOT'; }
 
 "."[0-9]+  											{ return 'NUMERIC_INDEX'; }
+"."[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]*
+																{ return "DOT_VAR" }
+"*"[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]*
+																{ return "ASTERISK_VAR" }
 
-"&"  											{ return "&"; }
-"*"  											{ return "*"; }
+"&"  													{ return "&"; }
+"@{"\s*  											{ return "@{"; }
+"@["\s* 											{ return "@["; }
+"@("\s*  											{ return "@("; }
 
 
 \'(\\.|[^\\'])*\'|\"(\\.|[^\\"])*\"			{ return 'STRING_LITERAL'; }	
 
 \.    												{ return '.'; }
+
+\s*(("#".*)?\n+)*\s*"=>"\s*(("#".*)?\n+)*\s*						
+															{ return '=>'; }
+
 \s*(("#".*)?\n+)*\s*"->"\s*(("#".*)?\n+)*\s*   { return 'FUNC_ARROW'; }
 \s*(("#".*)?\n+)+\s*"and"\s*(("#".*)?\n+)*\s*	{ return 'NLAND'; }
 \s*(("#".*)?\n+)+\s*"or"\s*(("#".*)?\n+)*\s*	{ return 'NLOR'; }
@@ -81,17 +93,20 @@
 
 
 
-"("\s*       									{ return 'OPENPARAN'; }
-\s*")"      									{ return 'CLOSEPARAN'; }
+"("\s*       									{ return '('; }
+\s*")"      									{ return ')'; }
 "{"\s*(("#".*)?\n+)*\s* 			{ return '{'; }
 \s*"}"       									{ return '}'; }
 "["\s*(("#".*)?\n+)*\s*  			{ return '['; }
 \s*"]"       									{ return ']'; }
 
 
+\s+'fn'												{ return 'FN'; }
 'if'													{ return 'IF'; }
 'else'												{ return 'ELSE'; }
 'while'												{ return 'WHILE'; }
+'null'												{ return 'NULL'; }
+'undefined'										{ return 'UNDEFINED'; }
 'true'												{ return 'TRUE'; }
 'false'												{ return 'FALSE'; }
 "and"\s*											{ return 'AND'; }
@@ -103,19 +118,20 @@
 [\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'var'; }
 
 '$'"("\s*(("#".*)?\n+)*\s* 				{ return 'DOLLAR_PARAN'; }
-'$'[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'DOLLAR_STR'; }
+'$'[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]*
+															{ return 'DOLLAR_STR'; }
 
-"+"														{ return 'var'; }
-"*"														{ return 'var'; }
-"-"														{ return 'var'; }
-"/"														{ return 'DIV'; }
-"%"														{ return 'var'; }
-">="													{ return 'var'; }
-">"														{ return 'var'; }
-"=="													{ return 'var'; }
-"!="													{ return 'var'; }
-"<="													{ return 'var'; }
-"<"														{ return 'var'; }
+"+"														{ return '+'; }
+"*"														{ return '*'; }
+"-"														{ return '-'; }
+"/"														{ return '/'; }
+"%"														{ return '%'; }
+">="													{ return '>='; }
+">"														{ return '>'; }
+"=="													{ return '=='; }
+"!="													{ return '!='; }
+"<="													{ return '<='; }
+"<"														{ return '<'; }
 
 \s+":="\s+  									{ return 'DEF'; }
 \s+"="\s+  										{ return 'ASSIGN_OPERATOR'; }
@@ -132,12 +148,27 @@
 %left "<<"
 %left SEP
 %left ASSIGN_OPERATOR
+%left FN
 
 %%
 
+Operator
+	: "+"	
+	| "*"	
+	| "-"	
+	| "/"	
+	| "%"	
+	| ">="
+	| ">"	
+	| "=="
+	| "!="
+	| "<="
+	| "<"	
+	;
+
 VAR
 	: var
-	| DIV
+	| Operator
 	;
 		
 
@@ -148,89 +179,84 @@ FUNC_ARGS
 			}
 		| FUNC_ARGS SEP VAR
 			{
-				$FUNC_ARGS.push([$VAR, '{atomic}', '{var}']);
+				$FUNC_ARGS.push([$VAR, "{atomic}", "{var}"]);
 				$$ = $FUNC_ARGS;
 			}
 		;
 
 PropertyField
-		: '.' VAR
+		: DOT_VAR
 			{
-				$$ = [$VAR, "{atomic}", "{dot}", "{global}"];
+				$$ = [$DOT_VAR.substring(1), "{atomic}", "{dot}", "{global}"];
 			}
 		| NUMERIC_INDEX
 			{
-				$$ = [[$NUMERIC_INDEX.substring(1), '{atomic}'], '{index}', "{index}", "{global}"];
+				$$ = [[$NUMERIC_INDEX.substring(1), "{atomic}"], "{index}", "{index}", "{global}"];
 			}
-//		| '.' NAT
-//			{
-//				$$ = [[$NAT, '{atomic}'], '{index}'];
-//			}
 		| '.' STRING_LITERAL
 			{
-				$$ = [[$STRING_LITERAL, '{atomic}'], '{index}', "{index}", "{global}"];
+				$$ = [[$STRING_LITERAL, "{atomic}"], "{index}", "{index}", "{global}"];
 			}
-//		| '.' OPENPARAN STRING_LITERAL CLOSEPARAN
-//			{
-//				$$ = [[$STRING_LITERAL, '{atomic}'], '{index}'];
-//			}
-//		| '.' OPENPARAN NAT CLOSEPARAN
-//			{
-//				$$ = [[$NAT, '{atomic}'], '{index}'];
-//			}
-		| '.' OPENPARAN MultiLineExpr CLOSEPARAN
+		| '.' '(' MultiLineExpr ')'
 			{
-				$$ = [makeExpr($MultiLineExpr), '{index}', "{index}"];
+				$$ = [makeExpr($MultiLineExpr), "{index}", "{index}"];
 			}
 		;
 	
 Field
 		: VAR
 			{
-				$$ = [$1, '{atomic}'];
+				$$ = [$1, "{atomic}"];
 			}
-		| OPENPARAN MultiLineExpr CLOSEPARAN
+		| '(' MultiLineExpr ')'
 			{
-				$$ = [makeExpr($2), '{index}'];
+				$$ = [makeExpr($2), "{index}"];
 			}
 		| NAT
 			{
-				$$ = [[$1, '{atomic}'], '{index}'];
+				$$ = [[$1, "{atomic}"], "{index}"];
 			}
 		;
 	
+AsteriskObject
+		: ASTERISK_VAR
+			{
+				$$ = [$ASTERISK_VAR.substring(1), "{atomic}", "{var}"];
+			}
+		| AsteriskObject PropertyField
+			{
+				$$ = [$1, "{.}", $PropertyField];
+			}
+		;
+
 Object
 		: VAR
 			{
-				$$ = [$1, '{atomic}', '{var}'];
+				$$ = [$1, "{atomic}", "{var}"];
 			}
 		| DOLLAR_STR
 			{
-				$$ = [($1).substr(1), '{module}', '{var}'];
+				$$ = [($1).substr(1), "{module}", "{var}"];
 			}
-		| DOLLAR_PARAN MultiLineExpr CLOSEPARAN
+		| DOLLAR_PARAN MultiLineExpr ')'
 			{
-				$$ = [makeExpr($3), '{module}', '{index}'];
+				$$ = [makeExpr($3), "{module}", "{index}"];
 			} 
 		| Object PropertyField
 			{
-				$$ = [$1, '{.}', $PropertyField];
+				$$ = [$1, "{.}", $PropertyField];
 			}
-//		| Object '.' Field
-//			{
-//				$$ = [$1, '{.}', $3];
-//			}
 		;
 
 Property
-		: PropertyField SEP PrimaryExpr
+		: PropertyField MultiLineSEP PrimaryExpr
 			{
-				$$ = [$1, '{property}', makeExpr($3)];
+				$$ = [$1, "{property}", makeExpr($3)];
 			}
-		| PropertyField NEWLINE PrimaryExpr
-			{
-				$$ = [$1, '{property}', makeExpr($3)];
-			}
+//		| PropertyField NEWLINE PrimaryExpr
+//			{
+//				$$ = [$1, "{property}", makeExpr($3)];
+//			}
 		;
 
 PropertyList
@@ -238,42 +264,42 @@ PropertyList
 			{
 				$$ = [$Property];
 			}
-		| PropertyList SEP Property
+		| PropertyList MultiLineSEP Property
 			{
 				$PropertyList.push($Property);
 				$$ = $PropertyList;
 			}
 		| PropertyList NEWLINE
-		| PropertyList NEWLINE Property
-			{
-				$PropertyList.push($Property);
-				$$ = $PropertyList;
-			}
+//		| PropertyList NEWLINE Property
+//			{
+//				$PropertyList.push($Property);
+//				$$ = $PropertyList;
+//			}
 		;
 
 DirItem
 		: DIRITEM
 			{
-				$$ = [$1, '{path_item}'];
+				$$ = [$1, "{path_item}"];
 			}
-		| CURRENT_DIRITEM_PARAN MultiLineExpr CLOSEPARAN
+		| CURRENT_DIRITEM_PARAN MultiLineExpr ')'
 			{
-				$$ = [makeExpr($MultiLineExpr), '{path_arg_item}', './'];
+				$$ = [makeExpr($MultiLineExpr), "{path_arg_item}", './'];
 			}
-		| PARENT_DIRITEM_PARAN MultiLineExpr CLOSEPARAN
+		| PARENT_DIRITEM_PARAN MultiLineExpr ')'
 			{
-				$$ = [makeExpr($MultiLineExpr), '{path_arg_item}', '../'];
+				$$ = [makeExpr($MultiLineExpr), "{path_arg_item}", '../'];
 			}
-		| DIRITEM_PARAN MultiLineExpr CLOSEPARAN
+		| DIRITEM_PARAN MultiLineExpr ')'
 			{
-				$$ = [makeExpr($MultiLineExpr), '{path_arg_item}', ''];
+				$$ = [makeExpr($MultiLineExpr), "{path_arg_item}", ''];
 			}
 		;
 
 PATH
 		: DirItem
 			{
-				$$ = [[$DirItem], '{path}'];
+				$$ = [[$DirItem], "{path}"];
 			}
 		| PATH DirItem
 			{
@@ -283,7 +309,7 @@ PATH
 		;
 
 Slashes
-		: DIV
+		: '/'
 		| ROOT
 		;
 
@@ -291,15 +317,15 @@ Path
 		: PATH
 		| ROOT
 			{
-				$$ = [[$ROOT], '{path}'];
+				$$ = [[$ROOT], "{path}"];
 			}
 		| PARENT_PATH
 			{
-				$$ = [[$PARENT_PATH], '{path}'];
+				$$ = [[$PARENT_PATH], "{path}"];
 			}
 		| CURRENT_PATH
 			{
-				$$ = [[$CURRENT_PATH], '{path}'];
+				$$ = [[$CURRENT_PATH], "{path}"];
 			}
 		| Path Slashes
 		;
@@ -321,9 +347,9 @@ PrimaryExpr
 		| '[' ']' FUNC_ARROW '{' FUNC_BODY '}'
 			{ $$ = [[], "{func}", $FUNC_BODY]; }
 
-		| "*" Object
+		| AsteriskObject
 			{
-				$$ = [$Object, "{asterisk}"]
+				$$ = [$AsteriskObject, "{asterisk}"]
 			}
 
 		| "&" Object
@@ -331,40 +357,48 @@ PrimaryExpr
 				$$ = [$Object, "{ampersand}"]
 			}
 
-		| OPENPARAN MultiLineExpr CLOSEPARAN
+		| '(' MultiLineExpr ')'
 			{
 				$$ = makeExpr($MultiLineExpr);
 			}
 
 		| '{' '}'
 			{
-				$$ = [[], '{object}'];
+				$$ = [[], "{object}"];
 			}
 		| '{' PropertyList '}'
 			{
-				$$ = [$2, '{object}'];
+				$$ = [$2, "{object}"];
 			}
 		| PropertyField
 			{
-				$$ = [$PropertyField, '{method}', 'field']
+				$$ = [$PropertyField, "{method}", "field"]
 			}
 		| Object
 
 		| NAT
 			{
-				$$ = [$NAT, '{atomic}'];
+				$$ = [$NAT, "{atomic}"];
+			}
+		| NULL
+			{
+				$$ = [$NULL, "{atomic}"];
+			}
+		| UNDEFINED
+			{
+				$$ = [$UNDEFINED, "{atomic}"];
 			}
 		| FALSE
 			{
-				$$ = [$FALSE, '{atomic}'];
+				$$ = [$FALSE, "{atomic}"];
 			}
 		| TRUE
 			{
-				$$ = [$TRUE, '{atomic}'];
+				$$ = [$TRUE, "{atomic}"];
 			}
 		| STRING_LITERAL
 			{
-				$$ = [$STRING_LITERAL, '{atomic}'];
+				$$ = [$STRING_LITERAL, "{atomic}"];
 			}
 		| Path
 		;
@@ -552,7 +586,7 @@ FUNC_BODY
 		: NullableSourceElements
 		| Expr
 			{
-				$$ = [[makeExpr($Expr)], '{seq}'];
+				$$ = [[makeExpr($Expr)], "{seq}"];
 			}
 		;
 
@@ -566,7 +600,7 @@ ExprStatement
 DefStatement
 		: VAR DEF Expr NEWLINE
 			{
-				$$ = [[$VAR, '{atomic}', '{var}'], ':=', makeExpr($3)];
+				$$ = [[$VAR, "{atomic}", "{var}"], ":=", makeExpr($3)];
 			}
 		;
 
@@ -575,9 +609,9 @@ AssignStatement
 			{
 				$$ = [$1, '=', makeExpr($3)];
 			}
-		| '*' Object ASSIGN_OPERATOR Expr NEWLINE
+		| AsteriskObject ASSIGN_OPERATOR Expr NEWLINE
 			{
-				$$ = [makeExpr($Expr), $Object];
+				$$ = [makeExpr($Expr), $AsteriskObject];
 			}
 		;
 
@@ -622,7 +656,7 @@ IfStatement
 EmptyStatement
 		: NEWLINE
 			{
-				$$ = [[], '{empty}'];
+				$$ = [[], "{empty}"];
 			}
 		;
 
@@ -633,9 +667,131 @@ WhileStatement
 			}
 		;
 
+FnObjectArgs
+		: DOT_VAR MultiLineSEP FnArg
+		| FnObjectArgs MultiLineSEP DOT_VAR MultiLineSEP FnArg
+		;
+
+LITERAL
+		: NAT
+		| STRING_LITERAL
+		| TRUE
+		| FALSE
+		| NULL
+		| UNDEFINED
+		;
+
+FnArgCondition
+		: VAR OptMultiLineSEP Operator OptMultiLineSEP LITERAL
+		| LITERAL OptMultiLineSEP Operator OptMultiLineSEP VAR 
+		| "(" FnArgCondition ")"
+		| "!" FnArgCondition
+		;
+
+FnArgConditions
+		: FnArgCondition
+		| FnArgConditions OptMultiLineSEP OR OptMultiLineSEP FnArgCondition
+		| FnArgConditions OptMultiLineSEP AND OptMultiLineSEP FnArgCondition
+		;
+
+FnArgType
+		: FnArg
+		;
+
+OptFnArgList
+		:
+			{
+				$$ = []
+			}
+		| FnArgList
+		;
+
+OptFnObjectArgs
+		:
+		| FnObjectArgs
+		;
+
+FnArg
+		: var
+			{
+				$$ = [$var, "{atomic}", "{var}"]
+			}
+		| NAT
+		| STRING_LITERAL
+		| "{" OptFnObjectArgs "}"
+		| "[" OptFnArgList "]"
+		| var "@[" OptFnArgList "]"
+		| var "@{" OptFnObjectArgs "}"
+		| var "@{" OptFnObjectArgs "}" "@(" FnArgConditions ")"
+		| var "@(" FnArgConditions ")"
+		| var "@(" FnArgConditions ")" "@{" OptFnObjectArgs "}"
+		| '(' var MultiLineSEP FnArgType ')'
+			{
+				$$ = [$2, "{atomic}", "{var}"]
+			}
+		| '(' FnArg ')'
+			{
+				$$ = $2
+			}
+		;
+
+FnArgList
+		: FnArg
+			{
+				$$ = [$FnArg]
+			}
+		| FnArgList MultiLineSEP FnArg
+			{
+				$FnArgList.push($FnArg);	
+				$$ = $FnArgList;
+			}
+		;
+
+FnStatement
+		: VAR FN OptMultiLineSEP ASSIGN_OPERATOR Expr NEWLINE
+			{
+				$$ = [[$VAR, "{atomic}", "{var}"],
+					"{fn}", [], [[makeExpr($Expr)], "{seq}"]];
+			}
+//		| VAR DOT_VAR FN ASSIGN_OPERATOR Expr NEWLINE
+//			{
+//				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
+//						"{fn}", [], [[makeExpr($Expr)], "{seq}"]];
+//			}
+		| VAR FN OptMultiLineSEP FnArgList ASSIGN_OPERATOR Expr NEWLINE
+			{
+				$$ = [[$VAR, "{atomic}", "{var}"],
+					"{fn}", $FnArgList, [[makeExpr($Expr)], "{seq}"]];
+			}
+//		| VAR DOT_VAR FN FnArgList ASSIGN_OPERATOR Expr NEWLINE
+//			{
+//				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
+//					"{fn}", $FnArgList, [[makeExpr($Expr)], "{seq}"]];
+//			}
+		| VAR FN "=>" "{" FUNC_BODY "}" NEWLINE
+			{
+				$$ = [[$VAR, "{atomic}", "{var}"], "{fn}", [], $FUNC_BODY];
+			}
+//		| VAR DOT_VAR FN "=>" "{" FUNC_BODY "}" NEWLINE
+//			{
+//				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
+//					"{fn}", [], $FUNC_BODY];
+//			}
+		| VAR FN OptMultiLineSEP FnArgList  "=>" "{" FUNC_BODY "}" NEWLINE
+			{
+				$$ = [[$VAR, "{atomic}", "{var}"], "{fn}", $FnArgList, $FUNC_BODY];
+			}
+//		| VAR DOT_VAR FN FnArgList "=>" "{" FUNC_BODY "}" NEWLINE
+//			{
+//				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
+//					"{fn}", $FnArgList, $FUNC_BODY];
+//			}
+		;
+
 Statement
 		: ExprStatement
 		| AssignStatement
+		| FnStatement
 		| DefStatement
 		| IfStatement
 		| WhileStatement
