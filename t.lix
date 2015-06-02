@@ -1,7 +1,17 @@
 #!/usr/local/bin/node
 
-# inc fn (x Number) = x + 1
-# inc fn (x) = x + 1
-inc fn (x Number) = x + 1
+max fn [a b] => {
+	if (a > b) {
+		a
+	} else {
+		b
+	}
+}
 
-inc call 1 | print
+[3 4] | max | print
+
+f fn [x [y [z]]] => {
+	x + y | + z
+}
+
+f call [1 [2 [3]]] | print

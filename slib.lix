@@ -32,7 +32,10 @@ getUniqVarName := []->{ '_' + (getCount call) }
 
 generateFuncArgs := [args env ctx]->{
 	args map [i]->{
-		varname := i.0 transformVarName
+		varname := i.(0) transformVarName
+		if (i.3 == "{tmp}") {
+			varname = i.0
+		}
 		env.(varname) = true
 		varname
 	} | .join ', '
@@ -283,6 +286,9 @@ generateAssign := [expr env ctx def]->{
 }
 
 generateFunc := [expr env ctx def]->{
+	if (expr.(3) == undefined) {
+		expr.(3) = []
+	}
 	funcEnv := env env_new
 	args := expr.0 generateFuncArgs funcEnv ctx0
 	tmpVar := (getUniqVarName call)
@@ -290,12 +296,17 @@ generateFunc := [expr env ctx def]->{
 	def := GenerateDefNew call
 	body := expr.2 generate funcEnv ctx0 def
 	['(function (' args ') {\n'
-		'var ' ('arguments' transformVarName) ' = arguments\n'
+		'var ' ('arguments' transformVarName) ' = arguments;\n'
+		(expr.3 .join ";\n") ";\n"
 		(def.defineVar call) ";\n"
 		(def.appendExpr call) ";\n"
 		'return ' body ";\n"
 	'})'] .join ''
 }
+
+# generateFnArgsDestructor := [expr env ctx def]->{
+# 	expr.(0) def.defineDestructed
+# }
 
 generateFn := [expr env ctx def]->{
 	expr.(1) = ":="
@@ -317,14 +328,20 @@ GenerateDefNew := []->{
 	vars := {}
 	fns := {}
 	funcs := []
+	destructed := null
 
 	{
-		.generateFn []->{
+		.defineDestructed [d]->{
+			destructed = d
+		}
+		.desctructedVars []->{
+			destructed .join ";\n"
 		}
 		.defineFn [name func condition]->{
 			if (fns.(name) == undefined) {
 				fns.(name) = []
 			}
+
 			fns.(name) .push {
 				.func func
 				.condition condition
@@ -403,6 +420,7 @@ generateOpTable := {
 	.'{.}' 									generateFieldAccess
 	.'{module}' 						generateModule
 	.'{func}' 							generateFunc
+#	.'{fnArgsDestructor}' 	generateFnArgsDestructor
 	.'{fn}' 								generateFn
 	.'{ampersand}' 					generateAmpersand
 	.'{asterisk}' 					generateAsterisk
@@ -752,15 +770,89 @@ flattenAmpersand := [expr define]->{
 	expr
 }
 
+flattenAtomicDestructor := [arg]->{
+	[] 
+}
+
+getAtomicExprVarName := [expr]->{
+	varName := expr.(0) transformVarName
+	if (expr.(3) == "{tmp}") {
+		varName = expr.(0)
+	}
+	varName
+}
+
+flatternArrayDestructor := [args arrayName]->{
+	ret := []
+	args foreach [item index]->{
+		varName := item.(0) | getFnArgExpr | getAtomicExprVarName
+		ret .push (["var " varName " = " arrayName "[" index "]"] .join "")
+		ret = ret .concat (item flattenDestructor item.(0))
+	}
+	ret
+}
+
+flattenListDestructor := [args varName]->{
+	args.(2) flatternArrayDestructor args.(0).(0)
+}
+
+flattenDestructorOp := {
+	."{atomic}" flattenAtomicDestructor
+	."{list}" flattenListDestructor
+}
+
+getFlattenDestructorOp := [hint]->{
+	ret := flatternArrayDestructor
+	if (flattenDestructorOp.(hint)) {
+		ret = flattenDestructorOp.(hint)
+	}
+	ret
+}
+
+flattenDestructor := [args varName]->{
+	args.(1) getFlattenDestructorOp | call args varName
+}
+
+flattenArgumentsDestructor := [args]->{
+	ret := []
+	args foreach [item]->{
+		ret = ret .concat (item flattenDestructor item.(0))
+	}
+	ret
+}
+
+getFnArgExpr := [expr]->{
+	if (expr.(1) == "{atomic}") {
+		expr
+	} else {
+		expr.(0)
+	}
+}
+
+getFuncArgsNameList := [args]->{
+	ret := []
+	args foreach [item]->{
+		ret .push (item getFnArgExpr)
+	}
+	ret
+}
+
+
 flattenFn := [expr define]->{
-	func := [expr.(2) "{func}" expr.(3)] flatten define
-	[expr.(0) "{fn}" func] 
+	seq := expr.(3)
+	destructor := expr.(2) flattenArgumentsDestructor
+#	seq.(0) = [[destructor "{fnArgsDestructor}"]] .concat seq.(0)
+	funcArgsNameList := expr.(2) getFuncArgsNameList
+	func := [funcArgsNameList "{func}" seq destructor] flatten define
+	[expr.(0) "{fn}" func]
 }
 
 flattenAsterisk := [expr define]->{
 	expr.1 = ['call' '{atomic}' '{var}']
 	expr flatten define
 }
+
+identity := [x]->{x}
 
 flattenOpTable := {
 	.'{start}' 							flattenStart
@@ -770,6 +862,7 @@ flattenOpTable := {
 	.'{.}' 									flattenFieldAccess
 	.'{module}' 						flattenModule
 	.'{func}' 							flattenFunc
+#	.'{fnArgsDestructor}' 	identity
 	.'{fn}' 								flattenFn
 	.'{ampersand}' 					flattenAmpersand
 	.'{asterisk}' 					flattenAsterisk

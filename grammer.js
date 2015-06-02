@@ -448,6 +448,11 @@ case 137:
 				this.$ = [$$[$0], "{atomic}", "{var}"]
 			
 break;
+case 141:
+				$var = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				this.$ = [$var, "{list}", $$[$0-1]]
+			
+break;
 case 147:
 				this.$ = [$$[$0-3], "{atomic}", "{var}"]
 			
@@ -649,6 +654,16 @@ parse: function parse(input) {
     }
     return true;
 }};
+
+	var count = 0;
+	var uniqVarNamePrefix = "_u_";
+	function getCounter() {
+		return count ++;
+	}
+
+	function getUniqVarName() {
+		return uniqVarNamePrefix + getCounter();
+	}
 
 	function makeExpr(expr) {
 		if (expr.length === 1) {

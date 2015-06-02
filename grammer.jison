@@ -5,6 +5,16 @@
 %start Program
 
 %{
+	var count = 0;
+	var uniqVarNamePrefix = "_u_";
+	function getCounter() {
+		return count ++;
+	}
+
+	function getUniqVarName() {
+		return uniqVarNamePrefix + getCounter();
+	}
+
 	function makeExpr(expr) {
 		if (expr.length === 1) {
 			expr.push("{mono}");
@@ -720,6 +730,10 @@ FnArg
 		| STRING_LITERAL
 		| "{" OptFnObjectArgs "}"
 		| "[" OptFnArgList "]"
+			{
+				$var = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$var, "{list}", $OptFnArgList]
+			}
 		| var "@[" OptFnArgList "]"
 		| var "@{" OptFnObjectArgs "}"
 		| var "@{" OptFnObjectArgs "}" "@(" FnArgConditions ")"
