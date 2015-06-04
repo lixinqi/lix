@@ -304,13 +304,28 @@ generateFunc := [expr env ctx def]->{
 	'})'] .join ''
 }
 
-# generateFnArgsDestructor := [expr env ctx def]->{
-# 	expr.(0) def.defineDestructed
-# }
+generateFn := [expr0 env ctx prevDef]->{
 
-generateFn := [expr env ctx def]->{
-	expr.(1) = ":="
-	expr generate env ctx def
+	funcName := getUniqVarName call
+
+	expr := expr0.(2)
+	if (expr.(3) == undefined) {
+		expr.(3) = []
+	}
+	funcEnv := env env_new
+	args := expr.0 generateFuncArgs funcEnv ctx0
+	tmpVar := (getUniqVarName call)
+
+	def := GenerateDefNew call
+	body := expr.2 generate funcEnv ctx0 def
+	['function ' funcName '(' args ') {\n'
+		'var ' ('arguments' transformVarName) ' = arguments;\n'
+		(expr.3 .join ";\n") ";\n"
+		(def.defineVar call) ";\n"
+		(def.appendExpr call) ";\n"
+		'return ' body ";\n"
+	'}'] .join '' | prevDef.appendExpr
+	[expr0.(0) ":=" [funcName "{atomic}" "{var}" "{tmp}"]] generate env ctx prevDef
 }
 
 generateExpr := [expr env ctx def]->{
