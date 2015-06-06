@@ -785,7 +785,7 @@ flattenAmpersand := [expr define]->{
 	expr
 }
 
-flattenAtomicDestructor := [arg]->{
+flattenAnyTypeDestructor := [arg]->{
 	[] 
 }
 
@@ -797,27 +797,53 @@ getAtomicExprVarName := [expr]->{
 	varName
 }
 
-flatternArrayDestructor := [args arrayName]->{
+flattenArrayDestructor := [args arrayName]->{
 	ret := []
-	args foreach [item index]->{
-		varName := item.(0) | getFnArgExpr | getAtomicExprVarName
+	args.(2) foreach [item index]->{
+		varName := item.(0) | getAtomicExprVarName
 		ret .push (["var " varName " = " arrayName "[" index "]"] .join "")
-		ret = ret .concat (item flattenDestructor item.(0))
+		ret = ret .concat (item flattenDestructor varName)
 	}
 	ret
 }
 
-flattenListDestructor := [args varName]->{
-	args.(2) flatternArrayDestructor args.(0).(0)
+flattenVAArgsDestructor := [args arrayName]->{
+	tail_lenth := args.(4).length
+	ret := []
+
+	args.(2) foreach [item index]->{
+		varName := item.(0) | getAtomicExprVarName
+		if (arrayName != "arguments") {
+			ret .push (["var " varName " = " arrayName "[" index "]"] .join "")
+		}
+		ret = ret .concat (item flattenDestructor varName)
+	}
+	
+	if (args.(3).(1) == "{va_arg}") {
+		varName := args.(3).(0) | getAtomicExprVarName
+		ret .push (["var " varName " = Array.prototype.slice.call("
+			arrayName ", " args.(2).length ", " arrayName ".length - " tail_lenth ")"] .join "")
+	}
+		
+	args.(4) foreach [item index]->{
+		varName := item.(0) | getAtomicExprVarName
+		ret .push (["var " varName " = "
+				arrayName "[" arrayName ".length - " (tail_lenth - index) "]"] .join "")
+		ret = ret .concat (item flattenDestructor varName)
+	}
+	ret
 }
 
+
 flattenDestructorOp := {
-	."{atomic}" flattenAtomicDestructor
-	."{list}" flattenListDestructor
+	."{any_type_arg}" 				flattenAnyTypeDestructor
+	."{anonymous_va_arg}" 		flattenAnyTypeDestructor
+	."{array_arg}" 						flattenArrayDestructor
+	."{va_args}" 							flattenVAArgsDestructor
 }
 
 getFlattenDestructorOp := [hint]->{
-	ret := flatternArrayDestructor
+	ret := flattenArrayDestructor
 	if (flattenDestructorOp.(hint)) {
 		ret = flattenDestructorOp.(hint)
 	}
@@ -829,25 +855,13 @@ flattenDestructor := [args varName]->{
 }
 
 flattenArgumentsDestructor := [args]->{
-	ret := []
-	args foreach [item]->{
-		ret = ret .concat (item flattenDestructor item.(0))
-	}
-	ret
-}
-
-getFnArgExpr := [expr]->{
-	if (expr.(1) == "{atomic}") {
-		expr
-	} else {
-		expr.(0)
-	}
+	args flattenDestructor "arguments"
 }
 
 getFuncArgsNameList := [args]->{
 	ret := []
-	args foreach [item]->{
-		ret .push (item getFnArgExpr)
+	args.(2) foreach [item]->{
+		ret .push item.(0)
 	}
 	ret
 }
@@ -856,6 +870,7 @@ getFuncArgsNameList := [args]->{
 flattenFn := [expr define]->{
 	seq := expr.(3)
 	destructor := expr.(2) flattenArgumentsDestructor
+#	destructor := expr.(2) flattenArgumentsDestructor
 #	seq.(0) = [[destructor "{fnArgsDestructor}"]] .concat seq.(0)
 	funcArgsNameList := expr.(2) getFuncArgsNameList
 	func := [funcArgsNameList "{func}" seq destructor] flatten define

@@ -45,6 +45,8 @@
 <<EOF>> 												{ return 'EOF'; }
 
 '...'														{ return '...'; }	
+'..*'														{ return '..*'; }	
+'*..'														{ return '*..'; }	
 
 "/"+"("\s*(("#".*)?\n+)*\s* 		{ return 'DIRITEM_PARAN'; }
 '.''/'+"("\s*(("#".*)?\n+)*\s*	{ return 'CURRENT_DIRITEM_PARAN'; }
@@ -66,7 +68,14 @@
 "*"[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]*
 																{ return "ASTERISK_VAR" }
 
-"&"  													{ return "&"; }
+\s*(("#".*)?\n+)*\s*"&"\s*(("#".*)?\n+)*\s*
+															{ return "&"; }
+
+\s*(("#".*)?\n+)*\s*"U"\s*(("#".*)?\n+)*\s*
+    													{ return "U"; }
+
+"?" 													{ return "?"; }
+
 "@{"\s*  											{ return "@{"; }
 "@["\s* 											{ return "@["; }
 "@("\s*  											{ return "@("; }
@@ -124,7 +133,7 @@
 \s+"and"\s+										{ return 'AND'; }
 \s+"or"\s+										{ return 'OR'; }
 
-[+-]?[0-9]+("."[0-9]*)?([Ee][+-]?[0-9]+)?  		{ return 'NAT'; }
+[+-]?[0-9]+("."[0-9]+)?([Ee][+-]?[0-9]+)?  		{ return 'NAT'; }
 [\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]* 				{ return 'var'; }
 
 '$'"("\s*(("#".*)?\n+)*\s* 				{ return 'DOLLAR_PARAN'; }
@@ -145,6 +154,12 @@
 
 \s+":="\s+  									{ return 'DEF'; }
 \s+"="\s+  										{ return 'ASSIGN_OPERATOR'; }
+
+\s*(("#".*)?\n+)*\s*":"\s*(("#".*)?\n+)*\s*
+															{ return ":"; }
+
+"!" 													{ return "!"; }
+
 
 \s+       										{ return 'SEP'; }
 /lex
@@ -691,19 +706,6 @@ LITERAL
 		| UNDEFINED
 		;
 
-FnArgCondition
-		: VAR OptMultiLineSEP Operator OptMultiLineSEP LITERAL
-		| LITERAL OptMultiLineSEP Operator OptMultiLineSEP VAR 
-		| "(" FnArgCondition ")"
-		| "!" FnArgCondition
-		;
-
-FnArgConditions
-		: FnArgCondition
-		| FnArgConditions OptMultiLineSEP OR OptMultiLineSEP FnArgCondition
-		| FnArgConditions OptMultiLineSEP AND OptMultiLineSEP FnArgCondition
-		;
-
 FnArgType
 		: FnArg
 		;
@@ -711,9 +713,10 @@ FnArgType
 OptFnArgList
 		:
 			{
-				$$ = []
+				$$ = [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
+					"{array_arg}", []]
 			}
-		| FnArgList
+		| FnVAList
 		;
 
 OptFnObjectArgs
@@ -724,40 +727,85 @@ OptFnObjectArgs
 FnArg
 		: var
 			{
-				$$ = [$var, "{atomic}", "{var}"]
+				$$ = [[$var, "{atomic}", "{var}"], "{any_type_arg}"]
 			}
-		| NAT
-		| STRING_LITERAL
-		| "{" OptFnObjectArgs "}"
-		| "[" OptFnArgList "]"
-			{
-				$var = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
-				$$ = [$var, "{list}", $OptFnArgList]
-			}
-		| var "@[" OptFnArgList "]"
-		| var "@{" OptFnObjectArgs "}"
-		| var "@{" OptFnObjectArgs "}" "@(" FnArgConditions ")"
-		| var "@(" FnArgConditions ")"
-		| var "@(" FnArgConditions ")" "@{" OptFnObjectArgs "}"
-		| '(' var MultiLineSEP FnArgType ')'
+		| FnArgTypeLiteralExpr
+		| '(' FnArgTypeExpr ')'
+		| '!' FnArgTypeLiteralExpr
+		| '!' '(' FnArgTypeExpr ')'
+		| '?' FnArgTypeLiteralExpr
+		| '?' '(' FnArgTypeExpr ')'
+		| '(' var ':' FnArgTypeExpr ')'
 			{
 				$$ = [$2, "{atomic}", "{var}"]
 			}
-		| '(' FnArg ')'
+		;
+
+FnArgTypeLiteralExpr
+		: LITERAL
+		| "*.." NAT
+		| NAT "..*"
+		| "{" OptFnObjectArgs "}"
+		| "[" OptFnArgList "]"
 			{
-				$$ = $2
+				$$ = $OptFnArgList;
 			}
+		;
+
+FnArgTypePrimaryExpr
+		: var
+		| FnArgTypeLiteralExpr
+		| '(' FnArgTypeExpr ')'
+		| '!' FnArgTypePrimaryExpr
+		| '?' FnArgTypePrimaryExpr
+		;
+
+FnArgTypeExpr
+		: FnArgTypePrimaryExpr
+		| FnArgTypeExpr "U" FnArgTypePrimaryExpr
+		| FnArgTypeExpr "&" FnArgTypePrimaryExpr
 		;
 
 FnArgList
 		: FnArg
 			{
-				$$ = [$FnArg]
+				$$ = [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
+					"{array_arg}", [$FnArg]]
 			}
 		| FnArgList MultiLineSEP FnArg
 			{
-				$FnArgList.push($FnArg);	
+				$FnArgList[2].push($FnArg);	
 				$$ = $FnArgList;
+			}
+		;
+
+FnVAArg
+		: "..."
+			{
+				$$ = [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], "{anonymous_va_arg}"];
+			}
+		| "..." var
+			{
+				$$ = [[$var, "{atomic}", "{var}"], "{va_arg}"];
+			}
+		;
+
+FnVAList
+		: FnArgList
+		| FnVAArg MultiLineSEP FnArgList
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"]
+				$$ = [$name, "{va_args}", [], $FnVAArg, $FnArgList[2]];
+			}
+		| FnArgList MultiLineSEP FnVAArg MultiLineSEP FnArgList
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"]
+				$$ = [$name, "{va_args}", $1[2], $FnVAArg, $5[2]];
+			}
+		| FnArgList MultiLineSEP FnVAArg 
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"]
+				$$ = [$name, "{va_args}", $FnArgList[2], $FnVAArg, []];
 			}
 		;
 
@@ -765,40 +813,43 @@ FnStatement
 		: VAR FN OptMultiLineSEP ASSIGN_OPERATOR Expr NEWLINE
 			{
 				$$ = [[$VAR, "{atomic}", "{var}"],
-					"{fn}", [], [[makeExpr($Expr)], "{seq}"]];
+					"{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
+					"{array_arg}", []], [[makeExpr($Expr)], "{seq}"]];
 			}
 //		| VAR DOT_VAR FN ASSIGN_OPERATOR Expr NEWLINE
 //			{
 //				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
 //						"{fn}", [], [[makeExpr($Expr)], "{seq}"]];
 //			}
-		| VAR FN OptMultiLineSEP FnArgList ASSIGN_OPERATOR Expr NEWLINE
+		| VAR FN OptMultiLineSEP FnVAList ASSIGN_OPERATOR Expr NEWLINE
 			{
 				$$ = [[$VAR, "{atomic}", "{var}"],
-					"{fn}", $FnArgList, [[makeExpr($Expr)], "{seq}"]];
+					"{fn}", $FnVAList, [[makeExpr($Expr)], "{seq}"]];
 			}
-//		| VAR DOT_VAR FN FnArgList ASSIGN_OPERATOR Expr NEWLINE
+//		| VAR DOT_VAR FN FnVAList ASSIGN_OPERATOR Expr NEWLINE
 //			{
 //				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
-//					"{fn}", $FnArgList, [[makeExpr($Expr)], "{seq}"]];
+//					"{fn}", $FnVAList, [[makeExpr($Expr)], "{seq}"]];
 //			}
 		| VAR FN "=>" "{" FUNC_BODY "}" NEWLINE
 			{
-				$$ = [[$VAR, "{atomic}", "{var}"], "{fn}", [], $FUNC_BODY];
+				$$ = [[$VAR, "{atomic}", "{var}"], "{fn}",
+						[[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
+						"{array_arg}", []], $FUNC_BODY];
 			}
 //		| VAR DOT_VAR FN "=>" "{" FUNC_BODY "}" NEWLINE
 //			{
 //				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
 //					"{fn}", [], $FUNC_BODY];
 //			}
-		| VAR FN OptMultiLineSEP FnArgList  "=>" "{" FUNC_BODY "}" NEWLINE
+		| VAR FN OptMultiLineSEP FnVAList  "=>" "{" FUNC_BODY "}" NEWLINE
 			{
-				$$ = [[$VAR, "{atomic}", "{var}"], "{fn}", $FnArgList, $FUNC_BODY];
+				$$ = [[$VAR, "{atomic}", "{var}"], "{fn}", $FnVAList, $FUNC_BODY];
 			}
-//		| VAR DOT_VAR FN FnArgList "=>" "{" FUNC_BODY "}" NEWLINE
+//		| VAR DOT_VAR FN FnVAList "=>" "{" FUNC_BODY "}" NEWLINE
 //			{
 //				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
-//					"{fn}", $FnArgList, $FUNC_BODY];
+//					"{fn}", $FnVAList, $FUNC_BODY];
 //			}
 		;
 

@@ -1,23 +1,5 @@
 #!/usr/local/bin/node
 
-inc fn x = x + 1
+f fn [x ...xs y z] = [xs y z]
 
-inc_inc_print = inc >> inc >> print
-
-3 inc_inc_print
-
-# max fn [a b] => {
-# 	if (a > b) {
-# 		a
-# 	} else {
-# 		b
-# 	}
-# }
-# 
-# [3 4] | max | print
-# 
-# f fn [x [y [z]]] => {
-# 	x + y | + z
-# }
-# 
-# f call [1 [2 [3]]] | print
+[3 9527 520 3 4] | f | print

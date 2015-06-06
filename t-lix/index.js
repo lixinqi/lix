@@ -5,52 +5,46 @@ require.lixLoadingCache = {};
 var Lrequire = _require(require);
 var L__dirname = __dirname;
 var L__filename = __filename;
-var Linc, _1, _2, Linc_inc_print, _3;
-function _5(Lx) {
+var Lf, _0, _1;
+function _3(_u_2) {
 	var Larguments = arguments;
+	var _u_2 = arguments[0];
+	var Lx = _u_2[0];
+	var Lxs = Array.prototype.slice.call(_u_2, 1, _u_2.length - 2);
+	var Ly = _u_2[_u_2.length - 2];
+	var Lz = _u_2[_u_2.length - 1];
 	;
-	var _0;
-	function _7(s) {
+	function _5(s) {
 		switch (s[2]) {
 			case 0:
-				s[2] = 1;
-				lix(s, L__add__(Lx, 1));
-			case 1:
-				_0 = s[3]
+				s[3] = [Lxs, Ly, Lz]
 			default:
 		}
 		return s[3]
 	}
 	;
-	return _7;
+	return _5;
 };
-function _4(s) {
+function _2(s) {
 	switch (s[2]) {
 		case 0:
 			s[2] = 1;
 			lix(s, Ltrap(Lprint));
 		case 1:
-			s[3] = Linc = _5;
+			s[3] = Lf = _3;
 		case 2:
 			s[2] = 3;
-			lix(s, L__compose__(Linc, Linc));
+			lix(s, Lf([3, 9527, 520, 3, 4]));
 		case 3:
-			_1 = s[3];
+			_0 = s[3];
 		case 4:
 			s[2] = 5;
-			lix(s, L__compose__(_1, Lprint));
+			lix(s, Lprint(_0));
 		case 5:
-			_2 = s[3];
-		case 6:
-			s[3] = Linc_inc_print = _2;
-		case 7:
-			s[2] = 8;
-			lix(s, Linc_inc_print(3));
-		case 8:
-			_3 = s[3]
+			_1 = s[3]
 		default:
 	}
 	return s[3]
 }
 ;
-module.exports = _4
+module.exports = _2
