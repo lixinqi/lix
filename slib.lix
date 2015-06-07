@@ -59,11 +59,16 @@ generateSeq := [expr env ctx def]->{
 			] join
 		}
 	}
-	body := expr.0 map [item index]->{
+	body := []
+	expr.0 foreach [item index]->{
 		current := (getCount call)
 		stmt := item generate env (current ctx) def
-		stmt := ['case ' current ':\n' stmt] join
-	} | .join ";\n"
+		if (stmt) {
+			body .push (['case ' current ':\n' stmt] join)
+		}
+		stmt
+	}
+	body = body .join ";\n"
 
 	[
 		'function ' funcName '(s) {\n'
@@ -280,7 +285,11 @@ generateAssign := [expr env ctx def]->{
 	} else {
 		varname := (expr.0 generate env ctx0 def)
 		value := (expr.2 generate env ctx def)
-		ret = [varname " = " value] | join
+		if (value != undefined) {
+			ret = [varname " = " value] | join
+		} else {
+			ret = undefined
+		}
 	}
 	ret
 }
@@ -299,7 +308,8 @@ generateFunc := [expr env ctx def]->{
 		'var ' ('arguments' transformVarName) ' = arguments;\n'
 		(expr.3 .join ";\n") ";\n"
 		(def.defineVar call) ";\n"
-		(def.appendExpr call) ";\n"
+		(def.appendExpr call)
+		(def.definedFns call)
 		'return ' body ";\n"
 	'})'] .join ''
 }
@@ -313,7 +323,7 @@ generateFn := [expr0 env ctx prevDef]->{
 		expr.(3) = []
 	}
 	funcEnv := env env_new
-	args := expr.0 generateFuncArgs funcEnv ctx0
+	args := expr.(0) generateFuncArgs funcEnv ctx0
 	tmpVar := (getUniqVarName call)
 
 	def := GenerateDefNew call
@@ -323,9 +333,12 @@ generateFn := [expr0 env ctx prevDef]->{
 		(expr.3 .join ";\n") ";\n"
 		(def.defineVar call) ";\n"
 		(def.appendExpr call) ";\n"
+		(def.definedFns call) ";\n"
 		'return ' body ";\n"
 	'}'] .join '' | prevDef.appendExpr
-	[expr0.(0) ":=" [funcName "{atomic}" "{var}" "{tmp}"]] generate env ctx prevDef
+	expr0.(0) | getAtomicExprVarName | prevDef.defineFn funcName expr0.(3) expr.(0).length
+	undefined
+#	[expr0.(0) ":=" [funcName "{atomic}" "{var}" "{tmp}"]] generate env ctx prevDef
 }
 
 generateExpr := [expr env ctx def]->{
@@ -337,6 +350,50 @@ generateExpr := [expr env ctx def]->{
 		}
 	}
 	[func '(' args ')'] | join | ctx
+}
+
+predefineFn := [name candidates]->{
+	body := []
+	prefix := "_fn_"
+	getArgListString := [n]->{
+		ret := []
+		i := 0
+		while (i < n) {
+			ret .push (prefix + i)
+			i = i + 1
+		}
+		ret .join ", "
+	}
+	max_narg := 0
+	candidates foreach [item]->{
+		if (item.narg > max_narg) {
+			max_narg = item.narg
+		}
+
+		condition := item.condition flattenArgumentsCondition
+
+		stmt := ["return " item.func "(" (getArgListString call item.narg) ");\n"] .join ""
+		if (item.condition.(1) == "{va_args}") {
+			stmt := ["return " item.func ".apply(" item.func ", arguments);\n"] .join ""
+		}
+
+		if (condition) {
+			stmt = [
+				"if (" condition ") {\n"
+						stmt
+				"}\n"
+			] .join ""
+		}
+		body .push stmt
+	}
+
+	body = body .join ""
+
+	[
+		"function " name "(" (getArgListString call max_narg) ") {\n"
+			body
+		"}\n"
+	] .join ""
 }
 
 GenerateDefNew := []->{
@@ -352,7 +409,7 @@ GenerateDefNew := []->{
 		.desctructedVars []->{
 			destructed .join ";\n"
 		}
-		.defineFn [name func condition]->{
+		.defineFn [name func condition narg]->{
 			if (fns.(name) == undefined) {
 				fns.(name) = []
 			}
@@ -360,7 +417,15 @@ GenerateDefNew := []->{
 			fns.(name) .push {
 				.func func
 				.condition condition
+				.narg narg
 			}
+		}
+		.definedFns []->{
+			ret := []
+			fns foreach [item name]->{
+				ret .push (name predefineFn item)
+			}
+			ret .join "\n"
 		}
 		.defineVar [v]->{
 			if (v) {
@@ -399,6 +464,7 @@ generateStart := [expr env ctx def]->{
 		"var L__filename = __filename;\n"
 		(def.defineVar call) ";\n"
 		(def.appendExpr call) ";\n"
+		(def.definedFns call) ";\n"
 		body
 	] join
 }
@@ -435,7 +501,6 @@ generateOpTable := {
 	.'{.}' 									generateFieldAccess
 	.'{module}' 						generateModule
 	.'{func}' 							generateFunc
-#	.'{fnArgsDestructor}' 	generateFnArgsDestructor
 	.'{fn}' 								generateFn
 	.'{ampersand}' 					generateAmpersand
 	.'{asterisk}' 					generateAsterisk
@@ -831,6 +896,53 @@ flattenArrayDestructor := [args arrayName]->{
 	ret
 }
 
+flattenArrayCondition := [args arrayName]->{
+	len := args.(2).length
+	ret := []
+	if (arrayName != "arguments") {
+		ret .push (["Array.isArray(" arrayName ")"] .join "")
+	}
+	ret .push ([arrayName ".length == " len] .join "")
+
+	args.(2) foreach [item index]->{
+		cond := item flattenCondition ([arrayName "[" index "]"] .join "")
+		if (cond) {
+			ret .push (["(" cond ")"] .join "")
+		}
+	}
+
+	ret .join " && "
+}
+
+flattenVAArgsCondition := [args arrayName]->{
+	len := args.(2).length + args.(4).length
+
+	ret := []
+	if (arrayName != "arguments") {
+		ret .push (["Array.isArray(" arrayName ")"] .join "")
+	}
+	if (len > 0) {
+		ret .push ([arrayName ".length >= " len] .join "")
+	}
+
+	args.(2) foreach [item index]->{
+		cond := item flattenCondition ([arrayName "[" index "]"] .join "")
+		if (cond) {
+			ret .push (["(" cond ")"] .join "")
+		}
+	}
+
+	args.(4) foreach [item index]->{
+		cond := item flattenCondition ([arrayName "["
+				arrayName ".length - " (args.(4).length - index)
+			"]"] .join "")
+		if (cond) {
+			ret .push (["(" cond ")"] .join "")
+		}
+	}
+	ret .join " && "
+}
+
 flattenVAArgsDestructor := [args arrayName]->{
 	tail_lenth := args.(4).length
 	ret := []
@@ -858,6 +970,20 @@ flattenVAArgsDestructor := [args arrayName]->{
 	ret
 }
 
+flattenAnyTypeCondition := [args varName]->{
+	null
+}
+
+flattenConditionOp := {
+	."{any_type_arg}" 				flattenAnyTypeCondition
+	."{anonymous_va_arg}" 		flattenAnyTypeCondition
+	."{array_arg}" 						flattenArrayCondition
+	."{va_args}" 							flattenVAArgsCondition
+#	."{object_arg}" 					flattenObjectCondition
+#	."{index_arg}" 						flattenIndexCondition
+#	."{field_arg}" 						flattenFieldCondition
+}
+
 flattenDestructorOp := {
 	."{any_type_arg}" 				flattenAnyTypeDestructor
 	."{anonymous_va_arg}" 		flattenAnyTypeDestructor
@@ -876,8 +1002,24 @@ getFlattenDestructorOp := [hint]->{
 	ret
 }
 
+getFlattenConditionOp := [hint]->{
+	ret := flattenArrayCondition
+	if (flattenConditionOp.(hint)) {
+		ret = flattenConditionOp.(hint)
+	}
+	ret
+}
+
 flattenDestructor := [args varName]->{
 	args.(1) getFlattenDestructorOp | call args varName
+}
+
+flattenCondition := [args varName]->{
+	args.(1) getFlattenConditionOp | call args varName
+}
+
+flattenArgumentsCondition := [args]->{
+	args flattenCondition "arguments"
 }
 
 flattenArgumentsDestructor := [args]->{
@@ -896,11 +1038,11 @@ getFuncArgsNameList := [args]->{
 flattenFn := [expr define]->{
 	seq := expr.(3)
 	destructor := expr.(2) flattenArgumentsDestructor
-#	destructor := expr.(2) flattenArgumentsDestructor
-#	seq.(0) = [[destructor "{fnArgsDestructor}"]] .concat seq.(0)
 	funcArgsNameList := expr.(2) getFuncArgsNameList
+#	condition := expr.(2) flattenArgumentsCondition
+	condition := expr.(2)
 	func := [funcArgsNameList "{func}" seq destructor] flatten define
-	[expr.(0) "{fn}" func]
+	[expr.(0) "{fn}" func condition]
 }
 
 flattenAsterisk := [expr define]->{
@@ -918,7 +1060,6 @@ flattenOpTable := {
 	.'{.}' 									flattenFieldAccess
 	.'{module}' 						flattenModule
 	.'{func}' 							flattenFunc
-#	.'{fnArgsDestructor}' 	identity
 	.'{fn}' 								flattenFn
 	.'{ampersand}' 					flattenAmpersand
 	.'{asterisk}' 					flattenAsterisk

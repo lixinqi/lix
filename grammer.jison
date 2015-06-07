@@ -822,6 +822,11 @@ FnVAArg
 
 FnVAList
 		: FnArgList
+		| FnVAArg
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"]
+				$$ = [$name, "{va_args}", [], $FnVAArg, []];
+			}
 		| FnVAArg MultiLineSEP FnArgList
 			{
 				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"]

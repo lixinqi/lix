@@ -1,5 +1,20 @@
 #!/usr/local/bin/node
 
-f fn {."first" fst .second snd .9527 [x y z]} = [fst snd x y z]
 
-{.first 0 .second 10 .9527 ["fine" "good" "nice"]} | f | print
+f fn [] = ["zero"]
+f fn [x] = ["one" x]
+f fn [x y] = ["two" x y]
+f fn [x y z] = ["three" x y z]
+f fn [x y z ...xs t] = ["more than three" x y z xs t]
+f fn x = ["single"]
+f fn ... = ["error"]
+
+f call [] | print
+f call [1] | print
+f call [1 2] | print
+f call [1 2 3] | print
+
+f call [1 2 3 4] | print
+f call [1 2 3 4 5] | print
+f call 1 2 3 4 5 | print
+f call 1 | print
