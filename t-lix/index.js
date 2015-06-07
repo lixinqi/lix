@@ -6,18 +6,20 @@ var Lrequire = _require(require);
 var L__dirname = __dirname;
 var L__filename = __filename;
 var Lf, _0, _1;
-function _3(_u_2) {
+function _3(_u_0) {
 	var Larguments = arguments;
-	var _u_2 = arguments[0];
-	var Lx = _u_2[0];
-	var Lxs = Array.prototype.slice.call(_u_2, 1, _u_2.length - 2);
-	var Ly = _u_2[_u_2.length - 2];
-	var Lz = _u_2[_u_2.length - 1];
+	var _u_0 = arguments[0];
+	var Lfst = _u_0["first"];
+	var Lsnd = _u_0.second;
+	var _u_1 = _u_0[9527];
+	var Lx = _u_1[0];
+	var Ly = _u_1[1];
+	var Lz = _u_1[2];
 	;
 	function _5(s) {
 		switch (s[2]) {
 			case 0:
-				s[3] = [Lxs, Ly, Lz]
+				s[3] = [Lfst, Lsnd, Lx, Ly, Lz]
 			default:
 		}
 		return s[3]
@@ -34,7 +36,11 @@ function _2(s) {
 			s[3] = Lf = _3;
 		case 2:
 			s[2] = 3;
-			lix(s, Lf([3, 9527, 520, 3, 4]));
+			lix(s, Lf({
+				first: 0,
+				second: 10,
+				9527: ["fine", "good", "nice"]
+			}));
 		case 3:
 			_0 = s[3];
 		case 4:

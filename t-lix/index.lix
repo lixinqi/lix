@@ -1,5 +1,5 @@
 #!/usr/local/bin/node
 
-f fn [x ...xs y z] = [xs y z]
+f fn {."first" fst .second snd .9527 [x y z]} = [fst snd x y z]
 
-[3 9527 520 3 4] | f | print
+{.first 0 .second 10 .9527 ["fine" "good" "nice"]} | f | print

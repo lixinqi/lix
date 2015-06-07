@@ -797,6 +797,30 @@ getAtomicExprVarName := [expr]->{
 	varName
 }
 
+flattenIndexDestructor := [args objName]->{
+	ret := []
+	varName := args.(2).(0) | getAtomicExprVarName 
+	ret .push (["var " varName " = " objName "[" args.(0) "]"] .join "")
+	ret = ret .concat (args.(2) flattenDestructor varName)
+	ret
+}
+
+flattenFieldDestructor := [args objName]->{
+	ret := []
+	varName := args.(2).(0) | getAtomicExprVarName 
+	ret .push (["var " varName " = " objName "." args.(0) ] .join "")
+	ret = ret .concat (args.(2) flattenDestructor varName)
+	ret
+}
+
+flattenObjectDestructor := [args objName]->{
+	ret := []
+	args.(2) foreach [item index]->{
+		ret = ret .concat (item flattenDestructor objName)
+	}
+	ret
+}
+
 flattenArrayDestructor := [args arrayName]->{
 	ret := []
 	args.(2) foreach [item index]->{
@@ -834,12 +858,14 @@ flattenVAArgsDestructor := [args arrayName]->{
 	ret
 }
 
-
 flattenDestructorOp := {
 	."{any_type_arg}" 				flattenAnyTypeDestructor
 	."{anonymous_va_arg}" 		flattenAnyTypeDestructor
 	."{array_arg}" 						flattenArrayDestructor
 	."{va_args}" 							flattenVAArgsDestructor
+	."{object_arg}" 					flattenObjectDestructor
+	."{index_arg}" 						flattenIndexDestructor
+	."{field_arg}" 						flattenFieldDestructor
 }
 
 getFlattenDestructorOp := [hint]->{

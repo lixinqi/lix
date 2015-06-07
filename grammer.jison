@@ -692,9 +692,32 @@ WhileStatement
 			}
 		;
 
-FnObjectArgs
+FnObjectFieldArg
 		: DOT_VAR MultiLineSEP FnArg
-		| FnObjectArgs MultiLineSEP DOT_VAR MultiLineSEP FnArg
+			{
+				$$ = [$DOT_VAR.substring(1), "{field_arg}", $FnArg];
+			}
+		| NUMERIC_INDEX MultiLineSEP FnArg
+			{
+				$$ = [$NUMERIC_INDEX.substring(1), "{index_arg}", $FnArg];
+			}
+		| "." STRING_LITERAL MultiLineSEP FnArg
+			{
+				$$ = [$STRING_LITERAL, "{index_arg}", $FnArg];
+			}
+		;
+
+FnObjectArgs
+		: FnObjectFieldArg
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{object_arg}", [$FnObjectFieldArg]];
+			}
+		| FnObjectArgs MultiLineSEP FnObjectFieldArg
+			{
+				$FnObjectArgs[2].push($FnObjectFieldArg);
+				$$ = $FnObjectArgs;
+			}
 		;
 
 LITERAL
@@ -721,6 +744,10 @@ OptFnArgList
 
 OptFnObjectArgs
 		:
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{object_arg}", []];
+			}
 		| FnObjectArgs
 		;
 
@@ -746,6 +773,9 @@ FnArgTypeLiteralExpr
 		| "*.." NAT
 		| NAT "..*"
 		| "{" OptFnObjectArgs "}"
+			{
+				$$ = $OptFnObjectArgs;
+			}
 		| "[" OptFnArgList "]"
 			{
 				$$ = $OptFnArgList;

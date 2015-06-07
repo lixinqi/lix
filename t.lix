@@ -1,5 +1,22 @@
 #!/usr/local/bin/node
 
-f fn [x ...xs y z] = [xs y z]
 
-[3 9527 520 3 4] | f | print
+f fn {."first" fst .second snd .9527 [x y z]} = [fst snd x y z]
+
+p pattern fst snd x y z = {."first" fst .second snd .9527 [x y z]}
+
+f fn (x: (p desctruct fst snd x y)) = [fst snd x y z]
+
+{
+	.first 0
+	.second 10
+	.9527 ["fine" "good" "nice"]
+} | f | print
+
+pair fn x y = [x y]
+pair fn [x y] = [x y]
+pair fn {.fst x .snd y} = [x y]
+
+p pattern d x y = [x y]
+p pattern d x y = {.fst x .snd y}
+
