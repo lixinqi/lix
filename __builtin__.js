@@ -1021,7 +1021,7 @@ function identity(x) {
 	};
 
 	this.Lcall = function (fn) {
-		return fn.apply(fn, array_slice(arguments, 1));
+		return fn.apply(fn, arguments);
 	};
 
 	this.LArray = Array.prototype;
