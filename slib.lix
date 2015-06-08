@@ -919,7 +919,8 @@ flattenArrayDestructor := [args arrayName]->{
 	args.(2) foreach [item index]->{
 		varName := item.(0) | getAtomicExprVarName
 		ret .push (["var " varName " = "
-			arrayName " ? " arrayName "[" index "] : undefined" ] .join "")
+			arrayName "[" index "]"
+		] .join "")
 		ret = ret .concat (item flattenDestructor varName)
 	}
 	ret
@@ -980,7 +981,8 @@ flattenVAArgsDestructor := [args arrayName]->{
 		varName := item.(0) | getAtomicExprVarName
 		if (arrayName != "arguments") {
 			ret .push (["var " varName " = "
-				arrayName " ? " arrayName "[" index "] : undefined" ] .join "")
+				arrayName "[" index "]"
+			] .join "")
 		}
 		ret = ret .concat (item flattenDestructor varName)
 	}
@@ -993,8 +995,8 @@ flattenVAArgsDestructor := [args arrayName]->{
 		
 	args.(4) foreach [item index]->{
 		varName := item.(0) | getAtomicExprVarName
-		ret .push (["var " varName " = " arrayName " ? "
-				arrayName "[" arrayName ".length - " (tail_lenth - index) "] : undefined"
+		ret .push (["var " varName " = "
+				arrayName "[" arrayName ".length - " (tail_lenth - index) "]"
 		] .join "")
 		ret = ret .concat (item flattenDestructor varName)
 	}
