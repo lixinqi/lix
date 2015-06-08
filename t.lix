@@ -1,20 +1,15 @@
 #!/usr/local/bin/node
 
+fib fn ((0 U 1 U 2) & (1 U 2 U 3)) = 1
+fib call 1 | print
+fib call 1 | print
 
-f fn [] = ["zero"]
-f fn [x] = ["one" x]
-f fn [x y] = ["two" x y]
-f fn [x y z] = ["three" x y z]
-f fn [x y z ...xs t] = ["more than three" x y z xs t]
-f fn x = ["single"]
-f fn ... = ["error"]
-
-f call [] | print
-f call [1] | print
-f call [1 2] | print
-f call [1 2 3] | print
-
-f call [1 2 3 4] | print
-f call [1 2 3 4 5] | print
-f call 1 2 3 4 5 | print
-f call 1 | print
+# fib fn (x: 2..*) = (x - 1 | fib) + (x - 2 | fib)
+# fib fn ... = "error"
+# 
+# fib call 0 | print
+# fib call 1 | print
+# fib call 2 | print
+# fib call 3 | print
+# fib call 4 | print
+# fib call -1 | print

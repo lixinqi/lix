@@ -62,6 +62,8 @@
 '.''/'+													{	return 'CURRENT_PATH'; }
 '/''/'+													{	return 'ROOT'; }
 
+".."														{ return ".."; }
+
 "."[0-9]+  											{ return 'NUMERIC_INDEX'; }
 "."[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]*
 																{ return "DOT_VAR" }
@@ -758,20 +760,48 @@ FnArg
 			}
 		| FnArgTypeLiteralExpr
 		| '(' FnArgTypeExpr ')'
+			{
+				$$ = $FnArgTypeExpr;
+			}
 		| '!' FnArgTypeLiteralExpr
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{not_arg}", $FnArgTypeLiteralExpr]
+			}
 		| '!' '(' FnArgTypeExpr ')'
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{not_arg}", $FnArgTypeExpr]
+			}
 		| '?' FnArgTypeLiteralExpr
 		| '?' '(' FnArgTypeExpr ')'
 		| '(' var ':' FnArgTypeExpr ')'
 			{
-				$$ = [$2, "{atomic}", "{var}"]
+				$$ = [[$2, "{atomic}", "{var}"], "{named_arg}", $FnArgTypeExpr]
 			}
 		;
 
 FnArgTypeLiteralExpr
 		: LITERAL
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{literal_arg}", $LITERAL]
+			}
 		| "*.." NAT
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{lt_arg}", $NAT]
+			}
+		| NAT ".." NAT
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{between_arg}", $1, $3]
+			}
 		| NAT "..*"
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{ge_arg}", $NAT]
+			}
 		| "{" OptFnObjectArgs "}"
 			{
 				$$ = $OptFnObjectArgs;
@@ -786,14 +816,29 @@ FnArgTypePrimaryExpr
 		: var
 		| FnArgTypeLiteralExpr
 		| '(' FnArgTypeExpr ')'
+			{
+				$$ = $FnArgTypeExpr;
+			}
 		| '!' FnArgTypePrimaryExpr
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{not_arg}", $FnArgTypePrimaryExpr]
+			}
 		| '?' FnArgTypePrimaryExpr
 		;
 
 FnArgTypeExpr
 		: FnArgTypePrimaryExpr
 		| FnArgTypeExpr "U" FnArgTypePrimaryExpr
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{or_arg}", $FnArgTypeExpr, $FnArgTypePrimaryExpr]
+			}
 		| FnArgTypeExpr "&" FnArgTypePrimaryExpr
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{and_arg}", $FnArgTypeExpr, $FnArgTypePrimaryExpr]
+			}
 		;
 
 FnArgList

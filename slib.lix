@@ -886,11 +886,40 @@ flattenObjectDestructor := [args objName]->{
 	ret
 }
 
+flattenNotDestructor := [args varName]->{
+	(args.(2) flattenDestructor varName)
+}
+
+flattenAndDestructor := [args varName]->{
+	ret := []
+	ret = ret .concat (args.(2) flattenDestructor varName)
+	ret = ret .concat (args.(3) flattenDestructor varName)
+	ret
+}
+
+flattenOrDestructor := [args varName]->{
+	ret := []
+	ret = ret .concat (args.(2) flattenDestructor varName)
+	ret = ret .concat (args.(3) flattenDestructor varName)
+	ret
+}
+
+flattenNamedDestructor := [args oldName]->{
+	ret := []
+	varName := args.(0) | getAtomicExprVarName
+	if (oldName != "arguments") {
+		ret .push (["var " varName " = " oldName] .join "")
+	}
+	ret = ret .concat (args.(2) flattenDestructor varName)
+	ret
+}
+
 flattenArrayDestructor := [args arrayName]->{
 	ret := []
 	args.(2) foreach [item index]->{
 		varName := item.(0) | getAtomicExprVarName
-		ret .push (["var " varName " = " arrayName "[" index "]"] .join "")
+		ret .push (["var " varName " = "
+			arrayName " ? " arrayName "[" index "] : undefined" ] .join "")
 		ret = ret .concat (item flattenDestructor varName)
 	}
 	ret
@@ -950,7 +979,8 @@ flattenVAArgsDestructor := [args arrayName]->{
 	args.(2) foreach [item index]->{
 		varName := item.(0) | getAtomicExprVarName
 		if (arrayName != "arguments") {
-			ret .push (["var " varName " = " arrayName "[" index "]"] .join "")
+			ret .push (["var " varName " = "
+				arrayName " ? " arrayName "[" index "] : undefined" ] .join "")
 		}
 		ret = ret .concat (item flattenDestructor varName)
 	}
@@ -963,8 +993,9 @@ flattenVAArgsDestructor := [args arrayName]->{
 		
 	args.(4) foreach [item index]->{
 		varName := item.(0) | getAtomicExprVarName
-		ret .push (["var " varName " = "
-				arrayName "[" arrayName ".length - " (tail_lenth - index) "]"] .join "")
+		ret .push (["var " varName " = " arrayName " ? "
+				arrayName "[" arrayName ".length - " (tail_lenth - index) "] : undefined"
+		] .join "")
 		ret = ret .concat (item flattenDestructor varName)
 	}
 	ret
@@ -974,11 +1005,56 @@ flattenAnyTypeCondition := [args varName]->{
 	null
 }
 
+flattenLiteralArgCondition := [args varName]->{
+	[varName " === " args.(2)] .join ""
+}
+
+flattenLTArgCondition := [args varName]->{
+	[varName " < " args.(2)] .join ""
+}
+
+flattenBetweenArgCondition := [args varName]->{
+	[varName " >= " args.(2) " && " varName " < " args.(3)] .join ""
+}
+
+flattenGEArgCondition := [args varName]->{
+	[varName " >= " args.(2)] .join ""
+}
+
+flattenNamedArgCondition := [args varName]->{
+	args.(2) flattenCondition varName
+}
+
+flattenNotArgCondition := [args varName]->{
+	cond0 := args.(2) flattenCondition varName
+	["!(" cond0 ")"] .join ""
+}
+
+flattenAndArgCondition := [args varName]->{
+	cond0 := args.(2) flattenCondition varName
+	cond1 := args.(3) flattenCondition varName
+	["(" cond0 ") && (" cond1 ")"] .join ""
+}
+
+flattenOrArgCondition := [args varName]->{
+	cond0 := args.(2) flattenCondition varName
+	cond1 := args.(3) flattenCondition varName
+	["(" cond0 ") || (" cond1 ")"] .join ""
+}
+
 flattenConditionOp := {
 	."{any_type_arg}" 				flattenAnyTypeCondition
 	."{anonymous_va_arg}" 		flattenAnyTypeCondition
 	."{array_arg}" 						flattenArrayCondition
 	."{va_args}" 							flattenVAArgsCondition
+	."{literal_arg}" 					flattenLiteralArgCondition
+	."{lt_arg}" 							flattenLTArgCondition
+	."{between_arg}" 					flattenBetweenArgCondition
+	."{ge_arg}" 							flattenGEArgCondition
+	."{named_arg}" 						flattenNamedArgCondition
+	."{or_arg}" 							flattenOrArgCondition
+	."{and_arg}" 							flattenAndArgCondition
+	."{not_arg}" 							flattenNotArgCondition
 #	."{object_arg}" 					flattenObjectCondition
 #	."{index_arg}" 						flattenIndexCondition
 #	."{field_arg}" 						flattenFieldCondition
@@ -989,6 +1065,14 @@ flattenDestructorOp := {
 	."{anonymous_va_arg}" 		flattenAnyTypeDestructor
 	."{array_arg}" 						flattenArrayDestructor
 	."{va_args}" 							flattenVAArgsDestructor
+	."{literal_arg}" 					flattenAnyTypeDestructor
+	."{lt_arg}" 							flattenAnyTypeDestructor
+	."{between_arg}" 					flattenAnyTypeDestructor
+	."{ge_arg}" 							flattenAnyTypeDestructor
+	."{named_arg}" 						flattenNamedDestructor
+	."{not_arg}" 							flattenNotDestructor
+	."{and_arg}" 							flattenAndDestructor
+	."{or_arg}" 							flattenOrDestructor
 	."{object_arg}" 					flattenObjectDestructor
 	."{index_arg}" 						flattenIndexDestructor
 	."{field_arg}" 						flattenFieldDestructor
