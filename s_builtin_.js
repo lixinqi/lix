@@ -757,27 +757,6 @@ var TRAP = 5;
 		}
 	}
 
-	var global_trap = function () {
-		var Larguments = arguments;
-		var defer_stack = [];
-		;
-		function _2(_cb, _step, _cont, _ret, cb_defer) {
-			switch (_step) {
-
-				default:
-			}
-			thisDefer(defer_stack, false)(function () {
-				_cb(_ret);
-			}, 0);
-			if (_cont) {
-				_cb(_ret);
-			} else {
-				return _ret;
-			}
-		};
-		return _2;
-	}
-
 
 	this.L__compose__ = (function (Lf0, Lf1) {
 				var Larguments = arguments
@@ -1302,81 +1281,81 @@ var TRAP = 5;
 		return fn.apply(fn, array_slice(arguments, 1));
 	};
 
-	this.LArray = Array.prototype;
+	this.LArray = Array;
 
-	Array.prototype.Join = function (arr, glue) {
+	Array.Join = Array.prototype.Join = function (arr, glue) {
 		return function () {
 			return arr.join(glue)
 		}
 	}
 
-	Array.prototype.IsArray = function (arr) {
+	Array.IsArray = Array.prototype.IsArray = function (arr) {
 		return function () {
 			return Array.isArray(arr);
 		};
 	}
 
-	Array.prototype.ToString = function (arr) {
+	Array.ToString = Array.prototype.ToString = function (arr) {
 		return function () {
 			return arr.toString();
 		};
 	}
 
-	Array.prototype.ToLocaleString = function (arr) {
+	Array.ToLocaleString = Array.prototype.ToLocaleString = function (arr) {
 		return function () {
 			return arr.toLocaleString();
 		};
 	}
 
-	Array.prototype.Concat = function (a, b) {
+	Array.Concat = Array.prototype.Concat = function (a, b) {
 		return function () {
 			return a.concat(b);
 		};
 	}
 
-	Array.prototype.Push = function (a, b) {
+	Array.Push = Array.prototype.Push = function (a, b) {
 		return function () {
 			return a.push(b);
 		};
 	}
 
-	Array.prototype.Unshift = function (a, b) {
+	Array.Unshift = Array.prototype.Unshift = function (a, b) {
 		return function () {
 			return a.unshift(b);
 		};
 	}
 
-	Array.prototype.Pop = function (a) {
+	Array.Pop = Array.prototype.Pop = function (a) {
 		return function () {
 			return a.pop();
 		};
 	}
 
-	Array.prototype.Shift = function (a) {
+	Array.Shift = Array.prototype.Shift = function (a) {
 		return function () {
 			return a.shift();
 		};
 	}
 
-	Array.prototype.Reverse = function (a) {
+	Array.Reverse = Array.prototype.Reverse = function (a) {
 		return function () {
 			return a.reverse();
 		};
 	}
 
-	Array.prototype.Slice = function (a, start, end) {
+	Array.Slice = Array.prototype.Slice = function (a, start, end) {
 		return function () {
 			return array_slice(a, start, end);
 		};
 	}
 
-	Array.prototype.IndexOf = function (a, elem, start) {
+	Array.IndexOf = Array.prototype.IndexOf = function (a, elem, start) {
 		return function () {
 			return a.indexOf(elem, start);
 		};
 	}
 
-	Array.prototype.LastIndexOf = function (a, elem, start) {
+	Array.LastIndexOf = Array.prototype.LastIndexOf = function (a, elem, start) {
 		if (arguments.length == 2) {
 			start = a.length
 		}
@@ -1385,320 +1364,322 @@ var TRAP = 5;
 		};
 	}
 
-	Array.prototype.Length = function (a) {
+	Array.Length = Array.prototype.Length = function (a) {
 		return function () {
 			return a.length;
 		};
 	}
 	var array_slice = Array.prototype.slice.unCurrying();
-	Array.prototype.Splice = function (a) {
+	Array.Splice = Array.prototype.Splice = function (a) {
 		var args = array_slice(arguments, 1);
 		return function () {
 			return Array.prototype.splice.apply(a, args);
 		};
 	}
 
-	this.LObject = Object.prototype;
-	Object.prototype.Keys = function (a) {
+	this.LObject = Object;
+	Object.Keys = Object.prototype.Keys = function (a) {
 		return function () {
 			return Object.keys(a);
 		};
 	}
 
-	Object.prototype.GetPrototypeOf = function (a) {
+	Object.GetPrototypeOf = Object.prototype.GetPrototypeOf = function (a) {
 		return function () {
 			return Object.getPrototypeOf(a);
 		};
 	}
 
-	Object.prototype.GetOwnPropertyDescriptor = function (o, p) {
+	Object.GetOwnPropertyDescriptor = Object.prototype.GetOwnPropertyDescriptor = function (o, p) {
 		return function () {
 			return Object.getOwnPropertyDescriptor(o, p);
 		};
 	}
 
-	Object.prototype.GetOwnPropertyNames = function (o) {
+	Object.GetOwnPropertyNames = Object.prototype.GetOwnPropertyNames = function (o) {
 		return function () {
 			return Object.getOwnPropertyNames(o);
 		};
 	}
 
-	Object.prototype.Create = function (o) {
+	Object.Create = Object.prototype.Create = function (o) {
 		return function () {
 			return Object.create(o);
 		};
 	}
 
-	Object.prototype.DefineProperty = function (o, p, attribute) {
+	Object.DefineProperty = Object.prototype.DefineProperty = function (o, p, attribute) {
 		return function () {
 			return Object.defineProperty(o, p, attribute);
 		};
 	}
 
-	Object.prototype.DefineProperties = function (o, properties) {
+	Object.DefineProperties = Object.prototype.DefineProperties = function (o, properties) {
 		return function () {
 			return Object.defineProperties(o, properties);
 		};
 	}
 
-	Object.prototype.Seal = function (o) {
+	Object.Seal = Object.prototype.Seal = function (o) {
 		return function () {
 			return Object.seal(o);
 		};
 	}
 
-	Object.prototype.Freeze = function (o) {
+	Object.Freeze = Object.prototype.Freeze = function (o) {
 		return function () {
 			return Object.freeze(o);
 		};
 	}
 
-	Object.prototype.PreventExtensions = function (o) {
+	Object.PreventExtensions = Object.prototype.PreventExtensions = function (o) {
 		return function () {
 			return Object.preventExtensions(o);
 		};
 	}
 
-	Object.prototype.IsSealed = function (o) {
+	Object.IsSealed = Object.prototype.IsSealed = function (o) {
 		return function () {
 			return Object.isSealed(o);
 		};
 	}
 
-	Object.prototype.IsFrozen = function (o) {
+	Object.IsFrozen = Object.prototype.IsFrozen = function (o) {
 		return function () {
 			return Object.isFrozen(o);
 		};
 	}
 
-	Object.prototype.IsExtensible = function (o) {
+	Object.IsExtensible = Object.prototype.IsExtensible = function (o) {
 		return function () {
 			return Object.isExtensible(o);
 		};
 	}
 
-	Object.prototype.ToString = function (o) {
+	Object.ToString = Object.prototype.ToString = function (o) {
 		return function () {
 			return o.toString();
 		};
 	}
 
-	Object.prototype.ToLocaleString = function (o) {
+	Object.ToLocaleString = Object.prototype.ToLocaleString = function (o) {
 		return function () {
 			return o.toLocaleString();
 		};
 	}
 
-	Object.prototype.ValueOf = function (o) {
+	Object.ValueOf = Object.prototype.ValueOf = function (o) {
 		return function () {
 			return o.valueOf();
 		};
 	}
 
-	Object.prototype.HasOwnProperty = function (o, v) {
+	Object.HasOwnProperty = Object.prototype.HasOwnProperty = function (o, v) {
 		return function () {
 			return o.hasOwnProperty(v);
 		};
 	}
 
-	Object.prototype.IsPrototypeOf = function (o, v) {
+	Object.IsPrototypeOf = Object.prototype.IsPrototypeOf = function (o, v) {
 		return function () {
 			return o.isPrototypeOf(v);
 		};
 	}
 
-	Object.prototype.PropertyIsEnumerable = function (o, v) {
+	Object.PropertyIsEnumerable = Object.prototype.PropertyIsEnumerable = function (o, v) {
 		return function () {
 			return o.propertyIsEnumerable(v);
 		};
 	}
 
-	this.LString = String.prototype
+	this.LString = String
 
-		String.prototype.FromCharCode = function () {
+		String.FromCharCode = String.prototype.FromCharCode = function () {
 			var args = array_slice(arguments);
 			return function () {
 				return String.fromCharCode.apply(null, args);
 			};
 		};
 
-	String.prototype.ToString = function (a) {
+	String.ToString = String.prototype.ToString = function (a) {
 		return function () {
 			return a.toString();
 		}
 	}
 
-	String.prototype.ValueOf = function (a) {
+	String.ValueOf = String.prototype.ValueOf = function (a) {
 		return function () {
 			return a.valueOf();
 		}
 	}
 
-	String.prototype.CharAt = function (a, pos) {
+	String.CharAt = String.prototype.CharAt = function (a, pos) {
 		return function () {
 			return a.charAt(pos);
 		}
 	}
 
-	String.prototype.CharCodeAt = function (a, pos) {
+	String.CharCodeAt = String.prototype.CharCodeAt = function (a, pos) {
 		return function () {
 			return a.charCodeAt(pos);
 		}
 	}
 
-	String.prototype.Concat = function (str) {
+	String.Concat = String.prototype.Concat = function (str) {
 		var args = array_slice(arguments, 1);
 		return function () {
 			return str.concat.apply(str, args);
 		}
 	}
 
-	String.prototype.IndexOf = function (str, pos) {
+	String.IndexOf = String.prototype.IndexOf = function (str, pos) {
 		return function () {
 			return str.indexOf(pos);
 		}
 	}
 
-	String.prototype.LastIndexOf = function (str, pos) {
+	String.LastIndexOf = String.prototype.LastIndexOf = function (str, pos) {
 		return function () {
 			return str.lastIndexOf(pos);
 		}
 	}
 
-	String.prototype.LocaleCompare = function (str, pos) {
+	String.LocaleCompare = String.prototype.LocaleCompare = function (str, pos) {
 		return function () {
 			return str.localeCompare(pos);
 		}
 	}
 
-	String.prototype.Match = function (str, r) {
+	String.Match = String.prototype.Match = function (str, r) {
 		return function () {
 			return str.match(r);
 		}
 	}
 
-	String.prototype.Replace = function (str, searchValue, replaceValue) {
+	String.Replace = String.prototype.Replace = function (str, searchValue, replaceValue) {
 		return function () {
 			return str.replace(searchValue, replaceValue);
 		}
 	}
 
-	String.prototype.Search = function (str, r) {
+	String.Search = String.prototype.Search = function (str, r) {
 		return function () {
 			return str.search(r);
 		}
 	}
 
-	String.prototype.Slice = function (str, start, end) {
+	String.Slice = String.prototype.Slice = function (str, start, end) {
 		return function () {
 			return str.slice(start, end);
 		}
 	}
 
-	String.prototype.Split = function (str, separator, limit) {
+	String.Split = String.prototype.Split = function (str, separator, limit) {
 		return function () {
 			return str.split(separator, limit);
 		}
 	}
 
-	String.prototype.Substring = function (str, start, end) {
+	String.Substring = String.prototype.Substring = function (str, start, end) {
 		return function () {
 			return str.substring(start, end);
 		}
 	}
 
-	String.prototype.ToLowerCase = function (str) {
+	String.ToLowerCase = String.prototype.ToLowerCase = function (str) {
 		return function () {
 			return str.toLowerCase();
 		}
 	}
 
-	String.prototype.ToLocaleLowerCase = function (str) {
+	String.ToLocaleLowerCase = String.prototype.ToLocaleLowerCase = function (str) {
 		return function () {
 			return str.toLocaleLowerCase();
 		}
 	}
 
-	String.prototype.IsString = function (str) {
+	String.IsString = String.prototype.IsString = function (str) {
 		return function () {
 			return typeof str == 'string';
 		}
 	}
 
-	String.prototype.ToUpperCase = function (str) {
+	String.ToUpperCase = String.prototype.ToUpperCase = function (str) {
 		return function () {
 			return str.toUpperCase();
 		}
 	}
 
-	String.prototype.ToLocaleUpperCase = function (str) {
+	String.ToLocaleUpperCase = String.prototype.ToLocaleUpperCase = function (str) {
 		return function () {
 			return str.toLocaleUpperCase();
 		}
 	}
 
-	String.prototype.Trim = function (str) {
+	String.Trim = String.prototype.Trim = function (str) {
 		return function () {
 			return str.trim();
 		}
 	}
 
-	String.prototype.Length = function (str) {
+	String.Length = String.prototype.Length = function (str) {
 		return function () {
 			return str.length;
 		}
 	}
 
-	Boolean.prototype.ToString = function (b) {
+	this.LBoolean = Boolean;
+
+	Boolean.ToString = Boolean.prototype.ToString = function (b) {
 		return function () {
 			return b.toString();
 		}
 	}
 
-	Boolean.prototype.ValueOf = function (v) {
+	Boolean.ValueOf = Boolean.prototype.ValueOf = function (v) {
 		return function () {
 			return v.valueOf();
 		}
 	}
 
-	this.LNumber = Number.prototype;
+	this.LNumber = Number;
 	Number.prototype.MAX_VALUE = Number.MAX_VALUE
-		Number.prototype.MIN_VALUE = Number.MIN_VALUE
-		Number.prototype.NaN = Number.NaN
-		Number.prototype.NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY
-		Number.prototype.POSITIVE_INFINITY = Number.POSITIVE_INFINITY
+	Number.prototype.MIN_VALUE = Number.MIN_VALUE
+	Number.prototype.NaN = Number.NaN
+	Number.prototype.NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY
+	Number.prototype.POSITIVE_INFINITY = Number.POSITIVE_INFINITY
 
-		Number.prototype.ToString = function (v) {
+		Number.ToString = Number.prototype.ToString = function (v) {
 			return function () {
 				return v.toString();
 			}
 		}
 
-	Number.prototype.ToLocaleString = function (v) {
+	Number.ToLocaleString = Number.prototype.ToLocaleString = function (v) {
 		return function () {
 			return v.toLocaleString();
 		}
 	}
 
-	Number.prototype.ValueOf = function (v) {
+	Number.ValueOf = Number.prototype.ValueOf = function (v) {
 		return function () {
 			return v.valueOf();
 		}
 	}
 
-	Number.prototype.ToFixed = function (v, fractionDigits) {
+	Number.ToFixed = Number.prototype.ToFixed = function (v, fractionDigits) {
 		return function () {
 			return v.toFixed(fractionDigits);
 		}
 	}
 
-	Number.prototype.ToExponential = function (v, fractionDigits) {
+	Number.ToExponential = Number.prototype.ToExponential = function (v, fractionDigits) {
 		return function () {
 			return v.toExponential(fractionDigits);
 		}
 	}
 
-	Number.prototype.ToPrecision = function (v, precision) {
+	Number.ToPrecision = Number.prototype.ToPrecision = function (v, precision) {
 		return function () {
 			return v.toPrecision(v, precision);
 		}
@@ -1841,296 +1822,296 @@ var TRAP = 5;
 		}
 	}
 
-	this.LDate = Date.prototype;
+	this.LDate = Date;
 
-	Date.prototype.Parse = function (str) {
+	Date.Parse = Date.prototype.Parse = function (str) {
 		return function () {
 			return Date.parse(str);
 		}
 	}
 
-	Date.prototype.UTC = function () {
+	Date.UTC = Date.prototype.UTC = function () {
 		var args = array_slice(arguments);
 		return function () {
 			return Date.UTC.apply(null, args);
 		}
 	}
 
-	Date.prototype.Now = function () {
+	Date.Now = Date.prototype.Now = function () {
 		return function () {
 			return Date.now();
 		}
 	}
 
-	Date.prototype.ToString = function (x) {
+	Date.ToString = Date.prototype.ToString = function (x) {
 		return function () {
 			return x.toString();
 		}
 	}
 
-	Date.prototype.ToDateString = function (x) {
+	Date.ToDateString = Date.prototype.ToDateString = function (x) {
 		return function () {
 			return x.toDateString();
 		}
 	}
 
-	Date.prototype.ToTimeString = function (x) {
+	Date.ToTimeString = Date.prototype.ToTimeString = function (x) {
 		return function () {
 			return x.toTimeString();
 		}
 	}
 
-	Date.prototype.ToLocaleString = function (x) {
+	Date.ToLocaleString = Date.prototype.ToLocaleString = function (x) {
 		return function () {
 			return x.toLocaleString();
 		}
 	}
 
-	Date.prototype.ToLocaleDateString = function (x) {
+	Date.ToLocaleDateString = Date.prototype.ToLocaleDateString = function (x) {
 		return function () {
 			return x.toLocaleDateString();
 		}
 	}
 
-	Date.prototype.ToLocaleTimeString = function (x) {
+	Date.ToLocaleTimeString = Date.prototype.ToLocaleTimeString = function (x) {
 		return function () {
 			return x.toLocaleTimeString();
 		}
 	}
 
-	Date.prototype.ValueOf = function (x) {
+	Date.ValueOf = Date.prototype.ValueOf = function (x) {
 		return function () {
 			return x.valueOf();
 		}
 	}
 
-	Date.prototype.GetTime = function (x) {
+	Date.GetTime = Date.prototype.GetTime = function (x) {
 		return function () {
 			return x.getTime();
 		}
 	}
 
-	Date.prototype.GetFullYear = function (x) {
+	Date.GetFullYear = Date.prototype.GetFullYear = function (x) {
 		return function () {
 			return x.getFullYear();
 		}
 	}
 
-	Date.prototype.GetUTCFullYear = function (x) {
+	Date.GetUTCFullYear = Date.prototype.GetUTCFullYear = function (x) {
 		return function () {
 			return x.getUTCFullYear();
 		}
 	}
 
-	Date.prototype.GetMonth = function (x) {
+	Date.GetMonth = Date.prototype.GetMonth = function (x) {
 		return function () {
 			return x.getMonth();
 		}
 	}
 
-	Date.prototype.GetUTCMonth = function (x) {
+	Date.GetUTCMonth = Date.prototype.GetUTCMonth = function (x) {
 		return function () {
 			return x.getUTCMonth();
 		}
 	}
 
-	Date.prototype.GetDate = function (x) {
+	Date.GetDate = Date.prototype.GetDate = function (x) {
 		return function () {
 			return x.getDate();
 		}
 	}
 
-	Date.prototype.GetUTCDate = function (x) {
+	Date.GetUTCDate = Date.prototype.GetUTCDate = function (x) {
 		return function () {
 			return x.getUTCDate();
 		}
 	}
 
-	Date.prototype.GetDay = function (x) {
+	Date.GetDay = Date.prototype.GetDay = function (x) {
 		return function () {
 			return x.getDay();
 		}
 	}
 
-	Date.prototype.GetUTCDay = function (x) {
+	Date.GetUTCDay = Date.prototype.GetUTCDay = function (x) {
 		return function () {
 			return x.getUTCDay();
 		}
 	}
 
-	Date.prototype.GetHours = function (x) {
+	Date.GetHours = Date.prototype.GetHours = function (x) {
 		return function () {
 			return x.getHours();
 		}
 	}
 
-	Date.prototype.GetUTCHours = function (x) {
+	Date.GetUTCHours = Date.prototype.GetUTCHours = function (x) {
 		return function () {
 			return x.getUTCHours();
 		}
 	}
 
-	Date.prototype.GetMinutes = function (x) {
+	Date.GetMinutes = Date.prototype.GetMinutes = function (x) {
 		return function () {
 			return x.getMinutes();
 		}
 	}
 
-	Date.prototype.GetUTCMinutes = function (x) {
+	Date.GetUTCMinutes = Date.prototype.GetUTCMinutes = function (x) {
 		return function () {
 			return x.getUTCMinutes();
 		}
 	}
 
-	Date.prototype.GetSeconds = function (x) {
+	Date.GetSeconds = Date.prototype.GetSeconds = function (x) {
 		return function () {
 			return x.getSeconds();
 		}
 	}
 
-	Date.prototype.GetUTCSeconds = function (x) {
+	Date.GetUTCSeconds = Date.prototype.GetUTCSeconds = function (x) {
 		return function () {
 			return x.getUTCSeconds();
 		}
 	}
 
-	Date.prototype.GetMilliseconds = function (x) {
+	Date.GetMilliseconds = Date.prototype.GetMilliseconds = function (x) {
 		return function () {
 			return x.getMilliseconds();
 		}
 	}
 
-	Date.prototype.GetUTCMilliseconds = function (x) {
+	Date.GetUTCMilliseconds = Date.prototype.GetUTCMilliseconds = function (x) {
 		return function () {
 			return x.getUTCMilliseconds();
 		}
 	}
 
-	Date.prototype.GetTimezoneOffset = function (x) {
+	Date.GetTimezoneOffset = Date.prototype.GetTimezoneOffset = function (x) {
 		return function () {
 			return x.getTimezoneOffset();
 		}
 	}
 
-	Date.prototype.SetTime = function (x, v) {
+	Date.SetTime = Date.prototype.SetTime = function (x, v) {
 		return function () {
 			return x.setTime(v);
 		}
 	}
 
-	Date.prototype.SetMilliseconds = function (x, v) {
+	Date.SetMilliseconds = Date.prototype.SetMilliseconds = function (x, v) {
 		return function () {
 			return x.setMilliseconds(v);
 		}
 	}
 
-	Date.prototype.SetMilliseconds = function (x, v) {
+	Date.SetMilliseconds = Date.prototype.SetMilliseconds = function (x, v) {
 		return function () {
 			return x.setMilliseconds(v);
 		}
 	}
 
-	Date.prototype.SetUTCMilliseconds = function (x, v) {
+	Date.SetUTCMilliseconds = Date.prototype.SetUTCMilliseconds = function (x, v) {
 		return function () {
 			return x.setUTCMilliseconds(v);
 		}
 	}
 
-	Date.prototype.SetSeconds = function (x) {
+	Date.SetSeconds = Date.prototype.SetSeconds = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
 			return x.setSeconds.apply(x, args);
 		}
 	}
 
-	Date.prototype.SetUTCSeconds = function (x) {
+	Date.SetUTCSeconds = Date.prototype.SetUTCSeconds = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
 			return x.setUTCSeconds.apply(x, args);
 		}
 	}
 
-	Date.prototype.SetMinutes = function (x) {
+	Date.SetMinutes = Date.prototype.SetMinutes = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
 			return x.setMinutes.apply(x, args);
 		}
 	}
 
-	Date.prototype.SetUTCMinutes = function (x) {
+	Date.SetUTCMinutes = Date.prototype.SetUTCMinutes = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
 			return x.setUTCMinutes.apply(x, args);
 		}
 	}
 
-	Date.prototype.SetHours = function (x) {
+	Date.SetHours = Date.prototype.SetHours = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
 			return x.setHours.apply(x, args);
 		}
 	}
 
-	Date.prototype.SetUTCHours = function (x) {
+	Date.SetUTCHours = Date.prototype.SetUTCHours = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
 			return x.setUTCHours.apply(x, args);
 		}
 	}
 
-	Date.prototype.SetDate = function (x, v) {
+	Date.SetDate = Date.prototype.SetDate = function (x, v) {
 		return function () {
 			return x.setDate(v);
 		}
 	}
 
-	Date.prototype.SetUTCDate = function (x, v) {
+	Date.SetUTCDate = Date.prototype.SetUTCDate = function (x, v) {
 		return function () {
 			return x.setUTCDate(v);
 		}
 	}
 
-	Date.prototype.SetMonth = function (x) {
+	Date.SetMonth = Date.prototype.SetMonth = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
 			return x.setMonth.apply(x, args);
 		}
 	}
 
-	Date.prototype.SetUTCMonth = function (x) {
+	Date.SetUTCMonth = Date.prototype.SetUTCMonth = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
 			return x.setUTCMonth.apply(x, args);
 		}
 	}
 
-	Date.prototype.SetFullYear = function (x) {
+	Date.SetFullYear = Date.prototype.SetFullYear = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
 			return x.setFullYear.apply(x, args);
 		}
 	}
 
-	Date.prototype.SetUTCFullYear = function (x) {
+	Date.SetUTCFullYear = Date.prototype.SetUTCFullYear = function (x) {
 		var args = array_slice(arguments, 1);
 		return function () {
 			return x.setUTCFullYear.apply(x, args);
 		}
 	}
 
-	Date.prototype.ToUTCString = function (x) {
+	Date.ToUTCString = Date.prototype.ToUTCString = function (x) {
 		return function () {
 			return x.toUTCString();
 		}
 	}
 
-	Date.prototype.ToISOString = function (x) {
+	Date.ToISOString = Date.prototype.ToISOString = function (x) {
 		return function () {
 			return x.toISOString();
 		}
 	}
 
-	Date.prototype.ToJSON = function (x, key) {
+	Date.ToJSON = Date.prototype.ToJSON = function (x, key) {
 		return function () {
 			return x.toJSON(key);
 		}
@@ -2150,21 +2131,21 @@ var TRAP = 5;
 		}
 	}
 
-	this.LRegExp = RegExp.prototype
+	this.LRegExp = RegExp
 
-		RegExp.prototype.Exec = function (r, str) {
+		RegExp.Exec = RegExp.prototype.Exec = function (r, str) {
 			return function () {
 				return r.exec(str);
 			}
 		}
 
-	RegExp.prototype.Test = function (r, str) {
+	RegExp.Test = RegExp.prototype.Test = function (r, str) {
 		return function () {
 			return r.test(str);
 		}
 	}
 
-	RegExp.prototype.ToString = function (r) {
+	RegExp.ToString = RegExp.prototype.ToString = function (r) {
 		return function () {
 			return r.toString();
 		}
@@ -2177,18 +2158,18 @@ var TRAP = 5;
 		}
 	}
 
-	Error.prototype.ToString = function (e) {
+	Error.ToString = Error.prototype.ToString = function (e) {
 		return function () {
 			return e.toString();
 		}
 	}
 
-	this.LError = Error.prototype;
-	this.LEvalError = EvalError.prototype;
-	this.LReferenceError = ReferenceError.prototype;
-	this.LSyntaxError = SyntaxError.prototype;
-	this.LTypeError = TypeError.prototype;
-	this.LURIError = URIError.prototype;
+	this.LError = Error;
+	this.LEvalError = EvalError;
+	this.LReferenceError = ReferenceError;
+	this.LSyntaxError = SyntaxError;
+	this.LTypeError = TypeError;
+	this.LURIError = URIError;
 
 	this.LJSON = JSON
 		JSON.Parse = function () {
@@ -2205,6 +2186,6 @@ var TRAP = 5;
 		}
 	}
 
-	this.LFunction = Function.prototype;
+	this.LFunction = Function;
 })();
 

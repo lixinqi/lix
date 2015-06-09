@@ -919,7 +919,7 @@ flattenArrayDestructor := [args arrayName]->{
 	args.(2) foreach [item index]->{
 		varName := item.(0) | getAtomicExprVarName
 		ret .push (["var " varName " = "
-			arrayName "[" index "]"
+			arrayName " ? " arrayName "[" index "] : undefined"
 		] .join "")
 		ret = ret .concat (item flattenDestructor varName)
 	}
@@ -936,6 +936,30 @@ flattenArrayCondition := [args arrayName]->{
 
 	args.(2) foreach [item index]->{
 		cond := item flattenCondition ([arrayName "[" index "]"] .join "")
+		if (cond) {
+			ret .push (["(" cond ")"] .join "")
+		}
+	}
+
+	ret .join " && "
+}
+
+flattenIndexCondition := [args objectName]->{
+	args.(2) flattenCondition ([objectName "[" args.(0) "]"] .join "")
+}
+
+flattenFieldCondition := [args objectName]->{
+	args.(2) flattenCondition ([objectName "." args.(0)] .join "")
+}
+
+flattenObjectCondition := [args objectName]->{
+	ret := []
+	if (objectName != "arguments") {
+		ret .push objectName
+	}
+
+	args.(2) foreach [item index]->{
+		cond := item flattenCondition objectName
 		if (cond) {
 			ret .push (["(" cond ")"] .join "")
 		}
@@ -981,7 +1005,7 @@ flattenVAArgsDestructor := [args arrayName]->{
 		varName := item.(0) | getAtomicExprVarName
 		if (arrayName != "arguments") {
 			ret .push (["var " varName " = "
-				arrayName "[" index "]"
+				arrayName " ? " arrayName "[" index "] : undefined"
 			] .join "")
 		}
 		ret = ret .concat (item flattenDestructor varName)
@@ -995,8 +1019,8 @@ flattenVAArgsDestructor := [args arrayName]->{
 		
 	args.(4) foreach [item index]->{
 		varName := item.(0) | getAtomicExprVarName
-		ret .push (["var " varName " = "
-				arrayName "[" arrayName ".length - " (tail_lenth - index) "]"
+		ret .push (["var " varName " = " arrayName " ? "
+				arrayName "[" arrayName ".length - " (tail_lenth - index) "] : undefined"
 		] .join "")
 		ret = ret .concat (item flattenDestructor varName)
 	}
@@ -1044,6 +1068,21 @@ flattenOrArgCondition := [args varName]->{
 	["(" cond0 ") || (" cond1 ")"] .join ""
 }
 
+flattenTypeCondition := [args varName]->{
+	ret := null
+	if (args.(0) == 'Number') {
+		ret = ["typeof " varName " == 'number'"] .join ""
+	} (args.(0) == 'String') {
+		ret = ["typeof " varName " == 'string'"] .join ""
+	} (args.(0) == 'Function') {
+		ret = ["typeof " varName " == 'function'"] .join ""
+	} (args.(0) == 'Boolean') {
+		ret = ["typeof " varName " == 'boolean'"] .join ""
+	} else {
+		[varName " instanceof " (args.(0) transformVarName)] .join ""
+	}
+}
+
 flattenConditionOp := {
 	."{any_type_arg}" 				flattenAnyTypeCondition
 	."{anonymous_va_arg}" 		flattenAnyTypeCondition
@@ -1057,9 +1096,10 @@ flattenConditionOp := {
 	."{or_arg}" 							flattenOrArgCondition
 	."{and_arg}" 							flattenAndArgCondition
 	."{not_arg}" 							flattenNotArgCondition
-#	."{object_arg}" 					flattenObjectCondition
-#	."{index_arg}" 						flattenIndexCondition
-#	."{field_arg}" 						flattenFieldCondition
+	."{object_arg}" 					flattenObjectCondition
+	."{type_arg}" 						flattenTypeCondition
+	."{index_arg}" 						flattenIndexCondition
+	."{field_arg}" 						flattenFieldCondition
 }
 
 flattenDestructorOp := {
@@ -1076,6 +1116,7 @@ flattenDestructorOp := {
 	."{and_arg}" 							flattenAndDestructor
 	."{or_arg}" 							flattenOrDestructor
 	."{object_arg}" 					flattenObjectDestructor
+	."{type_arg}" 						flattenAnyTypeDestructor
 	."{index_arg}" 						flattenIndexDestructor
 	."{field_arg}" 						flattenFieldDestructor
 }

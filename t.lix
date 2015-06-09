@@ -1,24 +1,2 @@
 #!/usr/local/bin/node
 
-f fn [(x: 0 U 1) ...y] => {
-	y print
-	9257
-}
-
-[0] f | print
-[0  3 4 5] f | print
-
-# fib fn (0 U 1) = 1
-# fib fn (x: 2..*) = (x - 1 | fib) + (x - 2 | fib)
-# 
-# fib fn = "zero args"
-# fib fn ... = "error"
-# 
-# fib call 0 | print
-# fib call 1 | print
-# fib call 2 | print
-# fib call 3 | print
-# fib call 4 | print
-# fib call -1 | print
-# fib call "good" | print
-# fib call | print

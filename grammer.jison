@@ -731,10 +731,6 @@ LITERAL
 		| UNDEFINED
 		;
 
-FnArgType
-		: FnArg
-		;
-
 OptFnArgList
 		:
 			{
@@ -814,6 +810,9 @@ FnArgTypeLiteralExpr
 
 FnArgTypePrimaryExpr
 		: var
+			{
+				$$ = [$var, "{type_arg}"]
+			}
 		| FnArgTypeLiteralExpr
 		| '(' FnArgTypeExpr ')'
 			{
