@@ -352,6 +352,27 @@ generateExpr := [expr env ctx def]->{
 	[func '(' args ')'] | join | ctx
 }
 
+fnArgsTempVarDefine := []->{
+	vars := []
+	{
+		.newVar []->{
+			ret := (['_at' (getUniqVarName call)] .join "")
+			vars .push ret
+			ret
+		}
+		.vars []->{
+			vars
+		}
+		.varToStr []->{
+			ret := null
+			if (vars.length) {
+				ret = ['var ' (vars .join ", ") ";\n"] .join ""
+			}
+			ret
+		}
+	}
+}
+
 predefineFn := [name candidates]->{
 	body := []
 	prefix := "_fn_"
@@ -370,7 +391,8 @@ predefineFn := [name candidates]->{
 			max_narg = item.narg
 		}
 
-		condition := item.condition flattenArgumentsCondition
+		def := (fnArgsTempVarDefine call)
+		condition := item.condition flattenArgumentsCondition def
 
 		stmt := ["return " item.func "(" (getArgListString call item.narg) ");\n"] .join ""
 		if (item.condition.(1) == "{va_args}") {
@@ -379,6 +401,7 @@ predefineFn := [name candidates]->{
 
 		if (condition) {
 			stmt = [
+				(def.varToStr call)
 				"if (" condition ") {\n"
 						stmt
 				"}\n"
@@ -926,7 +949,7 @@ flattenArrayDestructor := [args arrayName]->{
 	ret
 }
 
-flattenArrayCondition := [args arrayName]->{
+flattenArrayCondition := [args arrayName def]->{
 	len := args.(2).length
 	ret := []
 	if (arrayName != "arguments") {
@@ -935,31 +958,39 @@ flattenArrayCondition := [args arrayName]->{
 	ret .push ([arrayName ".length == " len] .join "")
 
 	args.(2) foreach [item index]->{
-		cond := item flattenCondition ([arrayName "[" index "]"] .join "")
+		newVar := def.newVar call
+		expr := ([arrayName "[" index "]"] .join "")
+		cond := item flattenCondition newVar def
 		if (cond) {
-			ret .push (["(" cond ")"] .join "")
+			ret .push (["((" newVar ' = ' expr ") || 1) && (" cond ")"] .join "")
 		}
 	}
 
 	ret .join " && "
 }
 
-flattenIndexCondition := [args objectName]->{
-	args.(2) flattenCondition ([objectName "[" args.(0) "]"] .join "")
+flattenIndexCondition := [args objectName def]->{
+	newVar := def.newVar call
+	expr := ([objectName "[" args.(0) "]"] .join "")
+	ret := args.(2) flattenCondition newVar def
+	["((" newVar ' = ' expr ") || 1) && (" ret ")"] .join ""
 }
 
-flattenFieldCondition := [args objectName]->{
-	args.(2) flattenCondition ([objectName "." args.(0)] .join "")
+flattenFieldCondition := [args objectName def]->{
+	newVar := def.newVar call
+	expr := ([objectName "." args.(0)] .join "")
+	ret := args.(2) flattenCondition newVar def
+	["((" newVar ' = ' expr ") || 1) && (" ret ")"] .join ""
 }
 
-flattenObjectCondition := [args objectName]->{
+flattenObjectCondition := [args objectName def]->{
 	ret := []
 	if (objectName != "arguments") {
 		ret .push objectName
 	}
 
 	args.(2) foreach [item index]->{
-		cond := item flattenCondition objectName
+		cond := item flattenCondition objectName def
 		if (cond) {
 			ret .push (["(" cond ")"] .join "")
 		}
@@ -968,7 +999,7 @@ flattenObjectCondition := [args objectName]->{
 	ret .join " && "
 }
 
-flattenVAArgsCondition := [args arrayName]->{
+flattenVAArgsCondition := [args arrayName def]->{
 	len := args.(2).length + args.(4).length
 
 	ret := []
@@ -980,18 +1011,29 @@ flattenVAArgsCondition := [args arrayName]->{
 	}
 
 	args.(2) foreach [item index]->{
-		cond := item flattenCondition ([arrayName "[" index "]"] .join "")
+		newVar := def.newVar call
+		expr := ([arrayName "[" index "]"] .join "")
+		cond := item flattenCondition newVar def
 		if (cond) {
-			ret .push (["(" cond ")"] .join "")
+			ret .push (["((" newVar ' = ' expr ") || 1) && (" cond ")"] .join "")
 		}
 	}
 
 	args.(4) foreach [item index]->{
-		cond := item flattenCondition ([arrayName "["
+#		cond := item flattenCondition ([arrayName "["
+#				arrayName ".length - " (args.(4).length - index)
+#			"]"] .join "") def
+#		if (cond) {
+#			ret .push (["(" cond ")"] .join "")
+#		}
+
+		newVar := def.newVar call
+		expr := ([arrayName "["
 				arrayName ".length - " (args.(4).length - index)
 			"]"] .join "")
+		cond := item flattenCondition newVar def
 		if (cond) {
-			ret .push (["(" cond ")"] .join "")
+			ret .push (["((" newVar ' = ' expr ") || 1) && (" cond ")"] .join "")
 		}
 	}
 	ret .join " && "
@@ -1027,48 +1069,48 @@ flattenVAArgsDestructor := [args arrayName]->{
 	ret
 }
 
-flattenAnyTypeCondition := [args varName]->{
+flattenAnyTypeCondition := [args varName def]->{
 	null
 }
 
-flattenLiteralArgCondition := [args varName]->{
+flattenLiteralArgCondition := [args varName def]->{
 	[varName " === " args.(2)] .join ""
 }
 
-flattenLTArgCondition := [args varName]->{
+flattenLTArgCondition := [args varName def]->{
 	[varName " < " args.(2)] .join ""
 }
 
-flattenBetweenArgCondition := [args varName]->{
+flattenBetweenArgCondition := [args varName def]->{
 	[varName " >= " args.(2) " && " varName " < " args.(3)] .join ""
 }
 
-flattenGEArgCondition := [args varName]->{
+flattenGEArgCondition := [args varName def]->{
 	[varName " >= " args.(2)] .join ""
 }
 
-flattenNamedArgCondition := [args varName]->{
-	args.(2) flattenCondition varName
+flattenNamedArgCondition := [args varName def]->{
+	args.(2) flattenCondition varName def
 }
 
-flattenNotArgCondition := [args varName]->{
-	cond0 := args.(2) flattenCondition varName
+flattenNotArgCondition := [args varName def]->{
+	cond0 := args.(2) flattenCondition varName def
 	["!(" cond0 ")"] .join ""
 }
 
-flattenAndArgCondition := [args varName]->{
-	cond0 := args.(2) flattenCondition varName
-	cond1 := args.(3) flattenCondition varName
+flattenAndArgCondition := [args varName def]->{
+	cond0 := args.(2) flattenCondition varName def
+	cond1 := args.(3) flattenCondition varName def
 	["(" cond0 ") && (" cond1 ")"] .join ""
 }
 
-flattenOrArgCondition := [args varName]->{
-	cond0 := args.(2) flattenCondition varName
-	cond1 := args.(3) flattenCondition varName
+flattenOrArgCondition := [args varName def]->{
+	cond0 := args.(2) flattenCondition varName def
+	cond1 := args.(3) flattenCondition varName def
 	["(" cond0 ") || (" cond1 ")"] .join ""
 }
 
-flattenTypeCondition := [args varName]->{
+flattenTypeCondition := [args varName def]->{
 	ret := null
 	if (args.(0) == 'Number') {
 		ret = ["typeof " varName " == 'number'"] .join ""
@@ -1083,11 +1125,15 @@ flattenTypeCondition := [args varName]->{
 	}
 }
 
+flattenVACondArgCondition := [args varName def]->{
+}
+
 flattenConditionOp := {
 	."{any_type_arg}" 				flattenAnyTypeCondition
 	."{anonymous_va_arg}" 		flattenAnyTypeCondition
 	."{array_arg}" 						flattenArrayCondition
 	."{va_args}" 							flattenVAArgsCondition
+	."{va_cond_arg}" 					flattenVACondArgCondition
 	."{literal_arg}" 					flattenLiteralArgCondition
 	."{lt_arg}" 							flattenLTArgCondition
 	."{between_arg}" 					flattenBetweenArgCondition
@@ -1141,12 +1187,12 @@ flattenDestructor := [args varName]->{
 	args.(1) getFlattenDestructorOp | call args varName
 }
 
-flattenCondition := [args varName]->{
-	args.(1) getFlattenConditionOp | call args varName
+flattenCondition := [args varName def]->{
+	args.(1) getFlattenConditionOp | call args varName def
 }
 
-flattenArgumentsCondition := [args]->{
-	args flattenCondition "arguments"
+flattenArgumentsCondition := [args def]->{
+	args flattenCondition "arguments" def
 }
 
 flattenArgumentsDestructor := [args]->{

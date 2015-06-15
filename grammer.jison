@@ -862,6 +862,15 @@ FnVAArg
 			{
 				$$ = [[$var, "{atomic}", "{var}"], "{va_arg}"];
 			}
+//		| "..." "(" FnArgTypeExpr ")"
+//			{
+//				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+//				$$ = [$name, "{va_cond_arg}", $FnArgTypeExpr];
+//			}
+//		| "..." "(" var ':' FnArgTypeExpr ")"
+//			{
+//				$$ = [[$var, "{atomic}", "{var}"], "{va_cond_arg}", $FnArgTypeExpr];
+//			}
 		;
 
 FnVAList

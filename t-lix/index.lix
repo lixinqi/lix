@@ -1,13 +1,16 @@
 #!/usr/local/bin/node
 
-f fn (x: Number U "2") = x
-f fn (x: Object) = "object"
-f fn ... = "error"
+pair fn (x: Number) (y: Number) = [x y]
+pair fn [(x: Number) (y: Number)] = [x y]
+pair fn {.fst (x: Number) .snd (y: Number)} = [x y]
 
-f call 0 | print
-f call 2 | print
+pair call 3 4 | print
+pair call [3 4] | print
+pair call {.fst 3 .snd 4} | print
 
-f call "2" | print
-f call {} | print
-f call true | print
+f fn {.data [(x: Number) (y: Number)]} = [x y]
+f call {.data [3 4]} | print
 
+p fn (x: Number) (y: Number) ... (z: Number) = [x y z]
+
+p call 3 4 5 | print
