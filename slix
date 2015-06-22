@@ -1,5 +1,7 @@
 #!/bin/bash
 
 cmd="./slix.js $1 $2"
+# echo $cmd
 jsFile=$($cmd)
+# echo node ./run-slix.js $jsFile
 node ./run-slix.js $jsFile

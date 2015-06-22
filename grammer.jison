@@ -69,8 +69,13 @@
 																{ return "DOT_VAR" }
 "*"[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]*
 																{ return "ASTERISK_VAR" }
+"&"[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]*
+																{ return "AMPSAND_VAR" }
 
-\s*(("#".*)?\n+)*\s*"&"\s*(("#".*)?\n+)*\s*
+\s*(("#".*)?\n+)*\s*"&"\s+(("#".*)?\n+)*\s*
+															{ return "&"; }
+
+\s*(("#".*)?\n+)*\s*"&"\s*(("#".*)?\n+)+\s*
 															{ return "&"; }
 
 \s*(("#".*)?\n+)*\s*"U"\s*(("#".*)?\n+)*\s*
@@ -123,6 +128,7 @@
 
 
 \s+'fn'												{ return 'FN'; }
+\s+'match'										{ return 'MATCH'; }
 'if'													{ return 'IF'; }
 'else'												{ return 'ELSE'; }
 'while'												{ return 'WHILE'; }
@@ -245,6 +251,17 @@ Field
 			}
 		;
 	
+AmpsandObject
+		: AMPSAND_VAR
+			{
+				$$ = [$AMPSAND_VAR.substring(1), "{atomic}", "{var}"];
+			}
+		| AmpsandObject PropertyField
+			{
+				$$ = [$1, "{.}", $PropertyField];
+			}
+		;
+
 AsteriskObject
 		: ASTERISK_VAR
 			{
@@ -379,10 +396,15 @@ PrimaryExpr
 				$$ = [$AsteriskObject, "{asterisk}"]
 			}
 
-		| "&" Object
+		| AmpsandObject
 			{
-				$$ = [$Object, "{ampersand}"]
+				$$ = [$AmpsandObject, "{ampersand}"]
 			}
+
+//		| "&" Object
+//			{
+//				$$ = [$Object, "{ampersand}"]
+//			}
 
 		| '(' MultiLineExpr ')'
 			{
@@ -811,7 +833,11 @@ FnArgTypeLiteralExpr
 FnArgTypePrimaryExpr
 		: var
 			{
-				$$ = [$var, "{type_arg}"]
+				if ($var == '_') {
+					$$ = [[$var, "{atomic}", "{var}"], "{any_type_arg}"]
+				} else {
+					$$ = [$var, "{type_arg}"]
+				}
 			}
 		| FnArgTypeLiteralExpr
 		| '(' FnArgTypeExpr ')'
@@ -897,6 +923,43 @@ FnVAList
 			}
 		;
 
+MatchCase
+		: FnArgTypeExpr "=>" OptMultiLineSEP "{" FUNC_BODY "}"
+			{
+				$$ = [null, "{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
+					"{array_arg}", [$FnArgTypeExpr]], $FUNC_BODY];
+			}
+		;
+
+MatchCaseList
+		: MatchCase
+			{
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"]
+				$MatchCase[0] = $name;
+				$$ = [$name, "{matchCaseList}", [$MatchCase]];
+			}
+		| MatchCaseList MultiLineSEP MatchCase
+			{
+				$MatchCase[0] = $MatchCaseList[0];
+				$MatchCaseList[2].push($MatchCase);
+				$$ = $MatchCaseList;
+			}
+		;
+
+MatchStatement
+		:	PrimaryExpr MATCH MultiLineSEP "{" "}" NEWLINE
+			{
+				$$ = [null, "{empty}"]	
+			}
+		| PrimaryExpr MATCH MultiLineSEP "{" MatchCaseList MultiLineSEP "}" NEWLINE
+			{
+				$MatchCaseList[2].push([$MatchCaseList[0],
+					"{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
+					"{any_type_arg}"], [[], "{seq}"]]);
+				$$ = [makeExpr($PrimaryExpr), "match", $MatchCaseList]
+			}
+		;
+
 FnStatement
 		: VAR FN OptMultiLineSEP ASSIGN_OPERATOR Expr NEWLINE
 			{
@@ -945,6 +1008,7 @@ Statement
 		: ExprStatement
 		| AssignStatement
 		| FnStatement
+		| MatchStatement
 		| DefStatement
 		| IfStatement
 		| WhileStatement
@@ -954,7 +1018,7 @@ Statement
 NullableSourceElements
 		:
 			{
-				$$ = [[], '{seq}'];
+				$$ = [[], "{seq}"];
 			}
 		| SourceElements
 		;
@@ -962,7 +1026,7 @@ NullableSourceElements
 SourceElements
     : Statement
 			{
-					$$ = [[$Statement], '{seq}'];
+					$$ = [[$Statement], "{seq}"];
 			}
     | SourceElements Statement
 			{
@@ -974,13 +1038,13 @@ SourceElements
 Program
 		:
 			{
-				$$ = [[], '{start}'];
+				$$ = [[], "{start}"];
 				//lixlib.compile($$);
 				return $$;
 			}
 		| SourceElements EOF
 			{
-				$$ = [$SourceElements, '{start}'];
+				$$ = [$SourceElements, "{start}"];
 				//lixlib.compile($$);
 				return $$;
 			}

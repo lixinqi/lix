@@ -1,16 +1,27 @@
 #!/usr/local/bin/node
 
-pair fn (x: Number) (y: Number) = [x y]
-pair fn [(x: Number) (y: Number)] = [x y]
-pair fn {.fst (x: Number) .snd (y: Number)} = [x y]
+[1 2 3] match {
+	Boolean => {
+		'boolean' print
+	}
+	0..* => {
+		'> 0' print
+	}
 
-pair call 3 4 | print
-pair call [3 4] | print
-pair call {.fst 3 .snd 4} | print
+	Number => {
+		'number' print
+	}
 
-f fn {.data [(x: Number) (y: Number)]} = [x y]
-f call {.data [3 4]} | print
+	String => {
+		'string' print
+	}
 
-p fn (x: Number) (y: Number) ... (z: Number) = [x y z]
+	Array & {.length 3..*} => {
+		'array' print
+	}
 
-p call 3 4 5 | print
+	_ => {
+		'else' print
+	}
+}
+

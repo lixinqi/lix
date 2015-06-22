@@ -727,7 +727,9 @@ var TRAP = 5;
 	this._require = function (__require) {
 		return function (name) {
 			if (__require.lixCache[name] === undefined) {
-				var moduleName = name + '-lix';
+//				var moduleName = name + '-lix';
+				var moduleName = name + '.lix.js';
+//				console.log(moduleName);
 
 				if (__require.lixLoadingCache[name]) {//loading
 					return function () {
@@ -938,7 +940,7 @@ var TRAP = 5;
 			return _4;
 			});
 
-	this.L__vcompose__ = (function (Ldf0, Ldf1) {
+	this.L__xcompose__ = (function (Ldf0, Ldf1) {
 		var Larguments = arguments
 		;
 	function _7(s) {
@@ -1024,7 +1026,7 @@ var TRAP = 5;
 	return _7;
 	}); 
 
-	this.L__rvcompose__ = (function (Ldf1, Ldf0) {
+	this.L__rxcompose__ = (function (Ldf1, Ldf0) {
 		var Larguments = arguments
 		;
 	function _7(s) {

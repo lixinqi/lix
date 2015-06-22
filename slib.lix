@@ -679,11 +679,11 @@ flattenReverseCompose := [expr define]->{
 }
 
 flattenReverseCPSCompose := [expr define]->{
-	expr flattenBasicOp '__rvcompose__' define
+	expr flattenBasicOp '__rxcompose__' define
 }
 
 flattenCPSCompose := [expr define]->{
-	expr flattenBasicOp '__vcompose__' define
+	expr flattenBasicOp '__xcompose__' define
 }
 
 flattenDef := flattenAssign
@@ -1078,15 +1078,16 @@ flattenLiteralArgCondition := [args varName def]->{
 }
 
 flattenLTArgCondition := [args varName def]->{
-	[varName " < " args.(2)] .join ""
+	["typeof(" varName ") == 'number' && " varName " < " args.(2)] .join ""
 }
 
 flattenBetweenArgCondition := [args varName def]->{
-	[varName " >= " args.(2) " && " varName " < " args.(3)] .join ""
+	["typeof(" varName ") == 'number' && "
+		varName " >= " args.(2) " && " varName " < " args.(3)] .join ""
 }
 
 flattenGEArgCondition := [args varName def]->{
-	[varName " >= " args.(2)] .join ""
+	["typeof(" varName ") == 'number' && " varName " >= " args.(2) ] .join ""
 }
 
 flattenNamedArgCondition := [args varName def]->{
@@ -1223,6 +1224,18 @@ flattenAsterisk := [expr define]->{
 	expr flatten define
 }
 
+flattenMatch := [expr define]->{
+	f := expr.(2) flatten define 
+	[expr.(0) f]
+}
+
+flattenMatchCaseList := [expr define]->{
+	expr.(2) foreach [item]->{
+		item flatten define | define
+	}
+	expr.(0)
+}
+
 identity := [x]->{x}
 
 flattenOpTable := {
@@ -1256,6 +1269,8 @@ flattenOpTable := {
 	.'while'								flattenWhile
 	.'break' 								flattenBreak
 	.'defer' 								flattenDefer
+	.'match' 								flattenMatch
+	."{matchCaseList}" 			flattenMatchCaseList
 }
 
 flattenOp := [hint]->{

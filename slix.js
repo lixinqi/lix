@@ -63,8 +63,9 @@ function mkdirP(inputName)
 
 function saveJsCode(inputName, jsCode)
 {
-	var outputDir = mkdirP(inputName);
-	var outputFileName = outputDir + '/index.js'; 
+//	var outputDir = mkdirP(inputName);
+//	var outputFileName = outputDir + '/index.js'; 
+	var outputFileName = inputName + '.js'; 
 	require('fs').writeFileSync(outputFileName, jsCode);
 	return outputFileName;
 }
@@ -93,7 +94,7 @@ function compileAndSave(inputFileName)
 	var content = getLixContent(inputFileName);
 	var jsCode = compile(content, inputFileName);
 	var outputFileName = saveJsCode(inputFileName, jsCode);
-	saveLixCode(inputFileName);
+//	saveLixCode(inputFileName);
 	return outputFileName
 }
 
