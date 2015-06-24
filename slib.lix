@@ -7,6 +7,10 @@ RET := '3'
 DEFER := '4'
 TRAP := '5'
 
+[]->{
+	3
+}
+
 join := [arr]->{ arr .join "" }
 
 map := [arr cb]->{

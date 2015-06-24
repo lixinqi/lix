@@ -44,6 +44,7 @@
 %%
 <<EOF>> 												{ return 'EOF'; }
 
+';'														{ return ';'; }	
 '...'														{ return '...'; }	
 '..*'														{ return '..*'; }	
 '*..'														{ return '*..'; }	
@@ -115,14 +116,14 @@
 \s*"<<"\s+										{ return "<<"; }
 */
 
-\s*(("#".*)?\n+)+\s*       		{ return 'NEWLINE'; }
+"{"\s*(("#".*)?\n+)*\s* 			{ return '{'; }
+\s*(("#".*)?\n+)*\s*"}"       { return '}'; }
 
+\s*(("#".*)?\n+)+\s*       		{ return 'NEWLINE'; }
 
 
 "("\s*       									{ return '('; }
 \s*")"      									{ return ')'; }
-"{"\s*(("#".*)?\n+)*\s* 			{ return '{'; }
-\s*"}"       									{ return '}'; }
 "["\s*(("#".*)?\n+)*\s*  			{ return '['; }
 \s*"]"       									{ return ']'; }
 
@@ -383,13 +384,21 @@ PrimaryExpr
 			{
 				$$ = [$ArrayLiteral, "{array}"];
 			}
-		| '[' ArrayLiteral ']' FUNC_ARROW '{' FUNC_BODY '}'
+		| '[' ArrayLiteral ']' FUNC_ARROW '{' '}'
 			{
-				$$ = [$ArrayLiteral, "{func}", $FUNC_BODY];
+				$$ = [$ArrayLiteral, "{func}", [[], "{seq}"]];
 			}
 
-		| '[' ']' FUNC_ARROW '{' FUNC_BODY '}'
-			{ $$ = [[], "{func}", $FUNC_BODY]; }
+		| '[' ArrayLiteral ']' FUNC_ARROW '{' SourceElements '}'
+			{
+				$$ = [$ArrayLiteral, "{func}", $SourceElements];
+			}
+
+		| '[' ']' FUNC_ARROW '{' SourceElements '}'
+			{ $$ = [[], "{func}", $SourceElements]; }
+
+		| '[' ']' FUNC_ARROW '{' '}'
+			{ $$ = [[], "{func}", [[], "{seq}"]]; }
 
 		| AsteriskObject
 			{
@@ -632,33 +641,33 @@ Expr
 		;
 
 FUNC_BODY
-		: NullableSourceElements
-		| Expr
-			{
-				$$ = [[makeExpr($Expr)], "{seq}"];
-			}
+		: SourceElements
+//		| Expr
+//			{
+//				$$ = [[makeExpr($Expr)], "{seq}"];
+//			}
 		;
 
 ExprStatement
-		: Expr NEWLINE
+		: Expr
 			{
 				$$ = makeExpr($Expr);
 			}
 		;
 
 DefStatement
-		: VAR DEF Expr NEWLINE
+		: VAR DEF Expr
 			{
 				$$ = [[$VAR, "{atomic}", "{var}"], ":=", makeExpr($3)];
 			}
 		;
 
 AssignStatement
-		: Object ASSIGN_OPERATOR Expr NEWLINE
+		: Object ASSIGN_OPERATOR Expr
 			{
 				$$ = [$1, '=', makeExpr($3)];
 			}
-		| AsteriskObject ASSIGN_OPERATOR Expr NEWLINE
+		| AsteriskObject ASSIGN_OPERATOR Expr
 			{
 				$$ = [makeExpr($Expr), $AsteriskObject];
 			}
@@ -670,13 +679,13 @@ OptSEP
 		;
 
 IfCaseStatement
-		: OptSEP PrimaryExpr OptSEP '{' NullableSourceElements '}'
+		: OptSEP PrimaryExpr OptSEP '{' SourceElements '}'
 			{
-				$$ = [[makeExpr($PrimaryExpr), $NullableSourceElements]];
+				$$ = [[makeExpr($PrimaryExpr), $SourceElements]];
 			}
-		| IfCaseStatement OptSEP PrimaryExpr OptSEP '{' NullableSourceElements '}'
+		| IfCaseStatement OptSEP PrimaryExpr OptSEP '{' SourceElements '}'
 			{
-				$1.push([makeExpr($PrimaryExpr), $NullableSourceElements]);
+				$1.push([makeExpr($PrimaryExpr), $SourceElements]);
 				$$ = $1
 			}
 		;
@@ -686,9 +695,9 @@ IfStatementNoNL
 			{
 				$$ = [$IfCaseStatement, 'if'];
 			}
-		| IF IfCaseStatement OptSEP ELSE OptSEP '{' NullableSourceElements '}'
+		| IF IfCaseStatement OptSEP ELSE OptSEP '{' SourceElements '}'
 			{
-				$IfCaseStatement.push([$NullableSourceElements, 'else']);
+				$IfCaseStatement.push([$SourceElements, 'else']);
 				$$ = [$IfCaseStatement, 'if'];
 			}
 		| IF IfCaseStatement OptSEP ELSE OptSEP IfStatementNoNL
@@ -699,20 +708,20 @@ IfStatementNoNL
 		;
 
 IfStatement
-		: IfStatementNoNL NEWLINE
+		: IfStatementNoNL
 		;
 
 EmptyStatement
-		: NEWLINE
+		: 
 			{
 				$$ = [[], "{empty}"];
 			}
 		;
 
 WhileStatement
-		: WHILE SEP PrimaryExpr SEP '{' NullableSourceElements '}' NEWLINE
+		: WHILE SEP PrimaryExpr SEP '{' SourceElements '}'
 			{
-				$$ = [makeExpr($PrimaryExpr), 'while', $NullableSourceElements]
+				$$ = [makeExpr($PrimaryExpr), 'while', $SourceElements]
 			}
 		;
 
@@ -924,10 +933,10 @@ FnVAList
 		;
 
 MatchCase
-		: FnArgTypeExpr "=>" OptMultiLineSEP "{" FUNC_BODY "}"
+		: FnArgTypeExpr "=>" OptMultiLineSEP "{" SourceElements "}"
 			{
 				$$ = [null, "{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
-					"{array_arg}", [$FnArgTypeExpr]], $FUNC_BODY];
+					"{array_arg}", [$FnArgTypeExpr]], $SourceElements];
 			}
 		;
 
@@ -947,11 +956,11 @@ MatchCaseList
 		;
 
 MatchStatement
-		:	PrimaryExpr MATCH MultiLineSEP "{" "}" NEWLINE
+		:	PrimaryExpr MATCH MultiLineSEP "{" "}"
 			{
 				$$ = [null, "{empty}"]	
 			}
-		| PrimaryExpr MATCH MultiLineSEP "{" MatchCaseList MultiLineSEP "}" NEWLINE
+		| PrimaryExpr MATCH MultiLineSEP "{" MatchCaseList MultiLineSEP "}"
 			{
 				$MatchCaseList[2].push([$MatchCaseList[0],
 					"{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
@@ -961,7 +970,7 @@ MatchStatement
 		;
 
 FnStatement
-		: VAR FN OptMultiLineSEP ASSIGN_OPERATOR Expr NEWLINE
+		: VAR FN OptMultiLineSEP ASSIGN_OPERATOR Expr
 			{
 				$$ = [[$VAR, "{atomic}", "{var}"],
 					"{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
@@ -972,7 +981,7 @@ FnStatement
 //				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
 //						"{fn}", [], [[makeExpr($Expr)], "{seq}"]];
 //			}
-		| VAR FN OptMultiLineSEP FnVAList ASSIGN_OPERATOR Expr NEWLINE
+		| VAR FN OptMultiLineSEP FnVAList ASSIGN_OPERATOR Expr
 			{
 				$$ = [[$VAR, "{atomic}", "{var}"],
 					"{fn}", $FnVAList, [[makeExpr($Expr)], "{seq}"]];
@@ -982,25 +991,25 @@ FnStatement
 //				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
 //					"{fn}", $FnVAList, [[makeExpr($Expr)], "{seq}"]];
 //			}
-		| VAR FN "=>" "{" FUNC_BODY "}" NEWLINE
+		| VAR FN "=>" "{" SourceElements "}"
 			{
 				$$ = [[$VAR, "{atomic}", "{var}"], "{fn}",
 						[[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
-						"{array_arg}", []], $FUNC_BODY];
+						"{array_arg}", []], $SourceElements];
 			}
-//		| VAR DOT_VAR FN "=>" "{" FUNC_BODY "}" NEWLINE
+//		| VAR DOT_VAR FN "=>" "{" SourceElements "}" NEWLINE
 //			{
 //				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
-//					"{fn}", [], $FUNC_BODY];
+//					"{fn}", [], $SourceElements];
 //			}
-		| VAR FN OptMultiLineSEP FnVAList  "=>" "{" FUNC_BODY "}" NEWLINE
+		| VAR FN OptMultiLineSEP FnVAList  "=>" "{" SourceElements "}"
 			{
-				$$ = [[$VAR, "{atomic}", "{var}"], "{fn}", $FnVAList, $FUNC_BODY];
+				$$ = [[$VAR, "{atomic}", "{var}"], "{fn}", $FnVAList, $SourceElements];
 			}
-//		| VAR DOT_VAR FN FnVAList "=>" "{" FUNC_BODY "}" NEWLINE
+//		| VAR DOT_VAR FN FnVAList "=>" "{" SourceElements "}" NEWLINE
 //			{
 //				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
-//					"{fn}", $FnVAList, $FUNC_BODY];
+//					"{fn}", $FnVAList, $SourceElements];
 //			}
 		;
 
@@ -1012,15 +1021,31 @@ Statement
 		| DefStatement
 		| IfStatement
 		| WhileStatement
-		| EmptyStatement
+//		| EmptyStatement
 		;
 
-NullableSourceElements
+//NullableSourceElements
+//		:
+//			{
+//				$$ = [[], "{seq}"];
+//			}
+//		: SourceElements
+//		;
+
+OptNEWLINE
 		:
-			{
-				$$ = [[], "{seq}"];
-			}
-		| SourceElements
+		| NEWLINE
+		;
+
+OptStatementSeperator
+		:
+		| StatementSeperator
+		| OptStatementSeperator StatementSeperator
+		;
+
+StatementSeperator
+		: NEWLINE
+		| ';'
 		;
 
 SourceElements
@@ -1028,7 +1053,8 @@ SourceElements
 			{
 					$$ = [[$Statement], "{seq}"];
 			}
-    | SourceElements Statement
+//    | SourceElements StatementSeperator
+    | SourceElements NEWLINE Statement
 			{
 				$SourceElements[0].push($Statement);
 				$$ = $SourceElements;
@@ -1036,13 +1062,13 @@ SourceElements
     ;   
 
 Program
-		:
+		: OptNEWLINE EOF
 			{
-				$$ = [[], "{start}"];
+				$$ = [[[], "{seq}"], "{start}"];
 				//lixlib.compile($$);
 				return $$;
 			}
-		| SourceElements EOF
+		| OptNEWLINE SourceElements OptNEWLINE EOF
 			{
 				$$ = [$SourceElements, "{start}"];
 				//lixlib.compile($$);

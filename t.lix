@@ -1,5 +1,13 @@
 #!/usr/local/bin/node
 
+f := []->{
+	f0 call
+
+	f0 fn = 3
+}
+
+f | call | print
+
 [1 2 3] match {
 	Boolean => {
 		'boolean' print
