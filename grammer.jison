@@ -44,7 +44,8 @@
 %%
 <<EOF>> 												{ return 'EOF'; }
 
-';'														{ return ';'; }	
+"\\"\s*(("#".*)?\n+)*\s*				{ return "LAMBDA"; }	
+';'															{ return ';'; }	
 '...'														{ return '...'; }	
 '..*'														{ return '..*'; }	
 '*..'														{ return '*..'; }	
@@ -96,7 +97,7 @@
 \s*(("#".*)?\n+)*\s*"=>"\s*(("#".*)?\n+)*\s*						
 															{ return '=>'; }
 
-\s*(("#".*)?\n+)*\s*"->"\s*(("#".*)?\n+)*\s*   { return 'FUNC_ARROW'; }
+\s*(("#".*)?\n+)*\s*"->"\s*(("#".*)?\n+)*\s*   { return "->"; }
 \s*(("#".*)?\n+)+\s*"and"\s*(("#".*)?\n+)*\s*	{ return 'NLAND'; }
 \s*(("#".*)?\n+)+\s*"or"\s*(("#".*)?\n+)*\s*	{ return 'NLOR'; }
 
@@ -384,20 +385,36 @@ PrimaryExpr
 			{
 				$$ = [$ArrayLiteral, "{array}"];
 			}
-		| '[' ArrayLiteral ']' FUNC_ARROW '{' '}'
+		| '[' ArrayLiteral ']' "->" '{' '}'
 			{
 				$$ = [$ArrayLiteral, "{func}", [[], "{seq}"]];
 			}
 
-		| '[' ArrayLiteral ']' FUNC_ARROW '{' SourceElements '}'
+		| LAMBDA LambdaArgList "->" '{' '}'
+			{
+				$$ = [$LambdaArgList, "{func}", [[], "{seq}"]];
+			}
+
+		| '[' ArrayLiteral ']' "->" '{' SourceElements '}'
 			{
 				$$ = [$ArrayLiteral, "{func}", $SourceElements];
 			}
 
-		| '[' ']' FUNC_ARROW '{' SourceElements '}'
+		| LAMBDA LambdaArgList "->" '{' SourceElements '}'
+			{
+				$$ = [$LambdaArgList, "{func}", $SourceElements];
+			}
+
+		| '[' ']' "->" '{' SourceElements '}'
 			{ $$ = [[], "{func}", $SourceElements]; }
 
-		| '[' ']' FUNC_ARROW '{' '}'
+		| LAMBDA "->" '{' SourceElements '}'
+			{ $$ = [[], "{func}", $SourceElements]; }
+
+		| '[' ']' "->" '{' '}'
+			{ $$ = [[], "{func}", [[], "{seq}"]]; }
+
+		| LAMBDA "->" '{' '}'
 			{ $$ = [[], "{func}", [[], "{seq}"]]; }
 
 		| AsteriskObject
@@ -459,6 +476,18 @@ PrimaryExpr
 				$$ = [$STRING_LITERAL, "{atomic}"];
 			}
 		| Path
+		;
+
+LambdaArgList
+		: var
+			{
+				$$ = [[$var, "{atomic}", "{var}"]];
+			}
+		| LambdaArgList MultiLineSEP var
+			{
+				$LambdaArgList.push([$var, "{atomic}", "{var}"]);
+				$$ = $LambdaArgList;
+			}
 		;
 
 ArrayLiteral
@@ -640,13 +669,13 @@ Expr
 
 		;
 
-FUNC_BODY
-		: SourceElements
+//FUNC_BODY
+//		: SourceElements
 //		| Expr
 //			{
 //				$$ = [[makeExpr($Expr)], "{seq}"];
 //			}
-		;
+//		;
 
 ExprStatement
 		: Expr

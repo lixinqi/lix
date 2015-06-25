@@ -1,35 +1,9 @@
 #!/usr/local/bin/node
 
-f := []->{
-	f0 call
-
-	f0 fn = 3
-}
-
-f | call | print
-
-[1 2 3] match {
-	Boolean => {
-		'boolean' print
-	}
-	0..* => {
-		'> 0' print
-	}
-
-	Number => {
-		'number' print
-	}
-
-	String => {
-		'string' print
-	}
-
-	Array & {.length 3..*} => {
-		'array' print
-	}
-
-	_ => {
-		'else' print
-	}
-}
+\->{  } | call | print
+\x->{  } | call | print
+\->{ 3 } | call | print
+\x->{ 3 } | call | print
+\x y->{ [x y] } | call 3 4 | print
+\([_0 _1])
 
