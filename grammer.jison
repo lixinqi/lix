@@ -35,7 +35,10 @@
 		console.error(expr);
 		return expr;
 	}
-
+	var short_cut_lambda_args = [];
+	for (var i = 0; i < 10; i ++) {
+		short_cut_lambda_args.push(["_" + i, "{atomic}", "{var}"]);
+	}
 //	lixlib = require("./lixlib.js");
 //	lixlib = require("./lib.lix.js");
 %}
@@ -392,7 +395,21 @@ PrimaryExpr
 
 		| LAMBDA LambdaArgList "->" '{' '}'
 			{
-				$$ = [$LambdaArgList, "{func}", [[], "{seq}"]];
+				$$ = [[], "{func}", [[], "{seq}"]];
+			}
+		| LAMBDA "(" MultiLineExpr ")"
+			{
+				$$ = [short_cut_lambda_args, "{func}", [[makeExpr($MultiLineExpr)], "{seq}"]];
+			}
+
+		| LAMBDA '{' '}'
+			{
+				$$ = [[], "{func}", [[], "{seq}"]];
+			}
+
+		| LAMBDA '{' SourceElements '}'
+			{
+				$$ = [short_cut_lambda_args, "{func}", $SourceElements];
 			}
 
 		| '[' ArrayLiteral ']' "->" '{' SourceElements '}'
@@ -402,7 +419,7 @@ PrimaryExpr
 
 		| LAMBDA LambdaArgList "->" '{' SourceElements '}'
 			{
-				$$ = [$LambdaArgList, "{func}", $SourceElements];
+				$$ = [$LambdaArgList, "{lambda}", $SourceElements];
 			}
 
 		| '[' ']' "->" '{' SourceElements '}'
@@ -427,10 +444,7 @@ PrimaryExpr
 				$$ = [$AmpsandObject, "{ampersand}"]
 			}
 
-//		| "&" Object
-//			{
-//				$$ = [$Object, "{ampersand}"]
-//			}
+		| Match
 
 		| '(' MultiLineExpr ')'
 			{
@@ -478,14 +492,43 @@ PrimaryExpr
 		| Path
 		;
 
-LambdaArgList
+LambdaArrayArgList
 		: var
 			{
-				$$ = [[$var, "{atomic}", "{var}"]];
+				$$ = [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"],
+					"{array_arg}", [[[$var, "{atomic}", "{var}"], "{any_type_arg}"]]];
 			}
-		| LambdaArgList MultiLineSEP var
+		| LambdaArrayArgList MultiLineSEP var
 			{
-				$LambdaArgList.push([$var, "{atomic}", "{var}"]);
+				$LambdaArrayArgList[2].push([[$var, "{atomic}", "{var}"], "{any_type_arg}"]);
+				$$ = $LambdaArrayArgList;
+			}
+		;
+
+LambdaArg
+		: var
+			{
+				$$ = [[$var, "{atomic}", "{var}"], "{any_type_arg}"];
+			}
+		| '[' ']'
+			{
+				$$ = [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], "{array_arg}", []];
+			}
+		| '[' LambdaArrayArgList ']'
+			{
+				$$ = $LambdaArrayArgList
+			}
+		;
+
+LambdaArgList
+		: LambdaArg
+			{
+				$$ = [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"],
+						"{array_arg}", [$LambdaArg]];
+			}
+		| LambdaArgList MultiLineSEP LambdaArg
+			{
+				$LambdaArgList[2].push($LambdaArg);
 				$$ = $LambdaArgList;
 			}
 		;
@@ -962,11 +1005,16 @@ FnVAList
 		;
 
 MatchCase
-		: FnArgTypeExpr "=>" OptMultiLineSEP "{" SourceElements "}"
+		: FnArgTypeExpr "->" "{" SourceElements "}"
 			{
 				$$ = [null, "{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
 					"{array_arg}", [$FnArgTypeExpr]], $SourceElements];
 			}
+//		| FnArgTypeExpr "=>" Expr
+//			{
+//				$$ = [null, "{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
+//					"{array_arg}", [$FnArgTypeExpr]], [[makeExpr($Expr)], "{seq}"]];
+//			}
 		;
 
 MatchCaseList
@@ -982,14 +1030,15 @@ MatchCaseList
 				$MatchCaseList[2].push($MatchCase);
 				$$ = $MatchCaseList;
 			}
+		| MatchCaseList MultiLineSEP
 		;
 
-MatchStatement
+Match
 		:	PrimaryExpr MATCH MultiLineSEP "{" "}"
 			{
 				$$ = [null, "{empty}"]	
 			}
-		| PrimaryExpr MATCH MultiLineSEP "{" MatchCaseList MultiLineSEP "}"
+		| PrimaryExpr MATCH MultiLineSEP "{" MatchCaseList "}"
 			{
 				$MatchCaseList[2].push([$MatchCaseList[0],
 					"{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
@@ -999,43 +1048,43 @@ MatchStatement
 		;
 
 FnStatement
-		: VAR FN OptMultiLineSEP ASSIGN_OPERATOR Expr
-			{
-				$$ = [[$VAR, "{atomic}", "{var}"],
-					"{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
-					"{array_arg}", []], [[makeExpr($Expr)], "{seq}"]];
-			}
-//		| VAR DOT_VAR FN ASSIGN_OPERATOR Expr NEWLINE
-//			{
-//				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
-//						"{fn}", [], [[makeExpr($Expr)], "{seq}"]];
-//			}
-		| VAR FN OptMultiLineSEP FnVAList ASSIGN_OPERATOR Expr
-			{
-				$$ = [[$VAR, "{atomic}", "{var}"],
-					"{fn}", $FnVAList, [[makeExpr($Expr)], "{seq}"]];
-			}
-//		| VAR DOT_VAR FN FnVAList ASSIGN_OPERATOR Expr NEWLINE
-//			{
-//				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
-//					"{fn}", $FnVAList, [[makeExpr($Expr)], "{seq}"]];
-//			}
-		| VAR FN "=>" "{" SourceElements "}"
+		: VAR FN "->" "{" SourceElements "}"
 			{
 				$$ = [[$VAR, "{atomic}", "{var}"], "{fn}",
 						[[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
 						"{array_arg}", []], $SourceElements];
 			}
-//		| VAR DOT_VAR FN "=>" "{" SourceElements "}" NEWLINE
+//		| VAR DOT_VAR FN "->" "{" SourceElements "}" NEWLINE
 //			{
 //				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
 //					"{fn}", [], $SourceElements];
 //			}
-		| VAR FN OptMultiLineSEP FnVAList  "=>" "{" SourceElements "}"
+//		| VAR FN OptMultiLineSEP "=>" Expr
+//			{
+//				$$ = [[$VAR, "{atomic}", "{var}"],
+//					"{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
+//					"{array_arg}", []], [[makeExpr($Expr)], "{seq}"]];
+//			}
+//		| VAR DOT_VAR FN "=>" Expr NEWLINE
+//			{
+//				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
+//						"{fn}", [], [[makeExpr($Expr)], "{seq}"]];
+//			}
+//		| VAR FN OptMultiLineSEP FnVAList "=>" Expr
+//			{
+//				$$ = [[$VAR, "{atomic}", "{var}"],
+//					"{fn}", $FnVAList, [[makeExpr($Expr)], "{seq}"]];
+//			}
+//		| VAR DOT_VAR FN FnVAList "=>" Expr NEWLINE
+//			{
+//				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
+//					"{fn}", $FnVAList, [[makeExpr($Expr)], "{seq}"]];
+//			}
+		| VAR FN OptMultiLineSEP FnVAList  "->" "{" SourceElements "}"
 			{
 				$$ = [[$VAR, "{atomic}", "{var}"], "{fn}", $FnVAList, $SourceElements];
 			}
-//		| VAR DOT_VAR FN FnVAList "=>" "{" SourceElements "}" NEWLINE
+//		| VAR DOT_VAR FN FnVAList "->" "{" SourceElements "}" NEWLINE
 //			{
 //				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
 //					"{fn}", $FnVAList, $SourceElements];
@@ -1046,7 +1095,7 @@ Statement
 		: ExprStatement
 		| AssignStatement
 		| FnStatement
-		| MatchStatement
+//		| MatchStatement
 		| DefStatement
 		| IfStatement
 		| WhileStatement

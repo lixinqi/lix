@@ -1,9 +1,34 @@
 #!/usr/local/bin/node
 
-\->{  } | call | print
-\x->{  } | call | print
-\->{ 3 } | call | print
-\x->{ 3 } | call | print
-\x y->{ [x y] } | call 3 4 | print
-\([_0 _1])
+N | until > 5
+	| map \([_0 (_0 + 1)])
+	| hook print
+	| force
+	| &pairs
+
+'---' print
+pairs
+	| map \[x y]->{[y x]}
+	| hook print
+	| exec
+
+array2xlist fn (arr: Array) -> {
+	[append]->{
+		i := 0
+		while (i < arr.length) {
+			arr.(i) append i
+			i = i + 1
+		}
+	}
+}
+
+xlist2array fn (xl: Function) -> {
+	ret = []
+	xl call \x->{
+		ret .Push x
+	}
+	ret
+}
+
+force fn (xl: Function) -> { xl | xlist2array  | array2xlist }
 

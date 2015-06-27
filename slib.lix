@@ -945,9 +945,11 @@ flattenArrayDestructor := [args arrayName]->{
 	ret := []
 	args.(2) foreach [item index]->{
 		varName := item.(0) | getAtomicExprVarName
-		ret .push (["var " varName " = "
-			arrayName " ? " arrayName "[" index "] : undefined"
-		] .join "")
+		if (arrayName != 'arguments') {
+			ret .push (["var " varName " = "
+				arrayName " ? " arrayName "[" index "] : undefined"
+			] .join "")
+		}
 		ret = ret .concat (item flattenDestructor varName)
 	}
 	ret
@@ -1154,6 +1156,7 @@ flattenConditionOp := {
 }
 
 flattenDestructorOp := {
+	."{atomic}" 							flattenAnyTypeDestructor
 	."{any_type_arg}" 				flattenAnyTypeDestructor
 	."{anonymous_va_arg}" 		flattenAnyTypeDestructor
 	."{array_arg}" 						flattenArrayDestructor
@@ -1207,17 +1210,29 @@ flattenArgumentsDestructor := [args]->{
 getFuncArgsNameList := [args]->{
 	ret := []
 	args.(2) foreach [item]->{
-		ret .push item.(0)
+		if (item.(1) == '{atomic}') {
+			ret .push item
+		} else {
+			ret .push item.(0)
+		}
 	}
 	ret
 }
 
+flattenLambda := [expr define]->{
+	destructor := expr.(0) flattenArgumentsDestructor
+	funcArgsNameList := expr.(0) getFuncArgsNameList
+	expr.(0) = funcArgsNameList
+	expr.(1) = "{func}"
+	expr.(2) = expr.(2) flatten define
+	expr.(3) = destructor
+	expr
+}
 
 flattenFn := [expr define]->{
 	seq := expr.(3)
 	destructor := expr.(2) flattenArgumentsDestructor
 	funcArgsNameList := expr.(2) getFuncArgsNameList
-#	condition := expr.(2) flattenArgumentsCondition
 	condition := expr.(2)
 	func := [funcArgsNameList "{func}" seq destructor] flatten define
 	[expr.(0) "{fn}" func condition]
@@ -1250,6 +1265,7 @@ flattenOpTable := {
 	.'{.}' 									flattenFieldAccess
 	.'{module}' 						flattenModule
 	.'{func}' 							flattenFunc
+	.'{lambda}' 						flattenLambda
 	.'{fn}' 								flattenFn
 	.'{ampersand}' 					flattenAmpersand
 	.'{asterisk}' 					flattenAsterisk
