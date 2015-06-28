@@ -1117,6 +1117,10 @@ flattenOrArgCondition := [args varName def]->{
 	["(" cond0 ") || (" cond1 ")"] .join ""
 }
 
+flattenProtoCondition := [args varName def]->{
+	["Object.getPrototypeOf(" varName ") === " (args.(0) transformVarName)] .join ""
+}
+
 flattenTypeCondition := [args varName def]->{
 	ret := null
 	if (args.(0) == 'Number') {
@@ -1151,6 +1155,7 @@ flattenConditionOp := {
 	."{not_arg}" 							flattenNotArgCondition
 	."{object_arg}" 					flattenObjectCondition
 	."{type_arg}" 						flattenTypeCondition
+	."{proto_arg}" 						flattenProtoCondition
 	."{index_arg}" 						flattenIndexCondition
 	."{field_arg}" 						flattenFieldCondition
 }
@@ -1171,6 +1176,7 @@ flattenDestructorOp := {
 	."{or_arg}" 							flattenOrDestructor
 	."{object_arg}" 					flattenObjectDestructor
 	."{type_arg}" 						flattenAnyTypeDestructor
+	."{proto_arg}" 						flattenAnyTypeDestructor
 	."{index_arg}" 						flattenIndexDestructor
 	."{field_arg}" 						flattenFieldDestructor
 }
@@ -1244,8 +1250,7 @@ flattenAsterisk := [expr define]->{
 }
 
 flattenMatch := [expr define]->{
-	f := expr.(2) flatten define 
-	[expr.(0) f]
+	expr.(0) flatten define 
 }
 
 flattenMatchCaseList := [expr define]->{

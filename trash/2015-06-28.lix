@@ -1,0 +1,37 @@
+#!/usr/local/bin/node
+
+f0 fn (Number proto) -> { 1 }
+f0 fn (Boolean proto) -> { 2 }
+f0 fn ... -> { 3 }
+
+f0 | call 0 | print
+f0 | call true | print
+f0 | call [] | print
+
+f := match {
+	(Number proto) -> { 1 }
+	(Boolean proto) -> { 2 }
+	... -> { 3 }
+}
+
+f | call 0 | print
+f | call true | print
+f | call [] | print
+f | call 0 2 | print
+
+match {
+	(Number instance)->{ "number" }
+	(Boolean instance)->{ "boolean" }
+	(String instance)->{ "string" }
+	(Array instance)->{ "array" }
+	(Function instance)->{ "function" }
+	x->{ x }
+} >> print | &type_print
+
+0 | type_print
+"0" | type_print
+false | type_print
+[] | type_print
+{.good 1} | type_print
+\->{} | type_print
+

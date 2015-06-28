@@ -1,34 +1,15 @@
 #!/usr/local/bin/node
 
-N | until > 5
-	| map \([_0 (_0 + 1)])
-	| hook print
-	| force
-	| &pairs
-
-'---' print
-pairs
-	| map \[x y]->{[y x]}
-	| hook print
-	| exec
-
-array2xlist fn (arr: Array) -> {
-	[append]->{
-		i := 0
-		while (i < arr.length) {
-			arr.(i) append i
-			i = i + 1
+sleep fn ms -> {
+	cc call \brk{
+		ms timeout \{
+			brk call
 		}
 	}
 }
 
-xlist2array fn (xl: Function) -> {
-	ret = []
-	xl call \x->{
-		ret .Push x
-	}
-	ret
+N | until > 5 | call \{
+	sleep call 200
+	'nice' print
 }
-
-force fn (xl: Function) -> { xl | xlist2array  | array2xlist }
 

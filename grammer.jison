@@ -123,6 +123,11 @@
 "{"\s*(("#".*)?\n+)*\s* 			{ return '{'; }
 \s*(("#".*)?\n+)*\s*"}"       { return '}'; }
 
+\s*(("#".*)?\n+)*\s*'proto'\s*(("#".*)?\n+)*\s*
+															{ return 'PROTO'; }
+\s*(("#".*)?\n+)*\s*'instance'\s*(("#".*)?\n+)*\s*
+															{ return 'INSTANCE'; }
+
 \s*(("#".*)?\n+)+\s*       		{ return 'NEWLINE'; }
 
 
@@ -133,7 +138,7 @@
 
 
 \s+'fn'												{ return 'FN'; }
-\s+'match'										{ return 'MATCH'; }
+'match'												{ return 'MATCH'; }
 'if'													{ return 'IF'; }
 'else'												{ return 'ELSE'; }
 'while'												{ return 'WHILE'; }
@@ -393,14 +398,20 @@ PrimaryExpr
 				$$ = [$ArrayLiteral, "{func}", [[], "{seq}"]];
 			}
 
-		| LAMBDA LambdaArgList "->" '{' '}'
+		| LAMBDA LambdaArgList  OptMultiLineSEP '{' '}'
 			{
 				$$ = [[], "{func}", [[], "{seq}"]];
 			}
+//		| LAMBDA LambdaArgList "->" '{' '}'
+//			{
+//				$$ = [[], "{func}", [[], "{seq}"]];
+//			}
 		| LAMBDA "(" MultiLineExpr ")"
 			{
 				$$ = [short_cut_lambda_args, "{func}", [[makeExpr($MultiLineExpr)], "{seq}"]];
 			}
+
+		| Match
 
 		| LAMBDA '{' '}'
 			{
@@ -409,7 +420,7 @@ PrimaryExpr
 
 		| LAMBDA '{' SourceElements '}'
 			{
-				$$ = [short_cut_lambda_args, "{func}", $SourceElements];
+				$$ = [[], "{func}", $SourceElements];
 			}
 
 		| '[' ArrayLiteral ']' "->" '{' SourceElements '}'
@@ -417,22 +428,27 @@ PrimaryExpr
 				$$ = [$ArrayLiteral, "{func}", $SourceElements];
 			}
 
-		| LAMBDA LambdaArgList "->" '{' SourceElements '}'
+		| LAMBDA LambdaArgList OptMultiLineSEP '{' SourceElements '}'
 			{
 				$$ = [$LambdaArgList, "{lambda}", $SourceElements];
 			}
 
+//		| LAMBDA LambdaArgList "->" '{' SourceElements '}'
+//			{
+//				$$ = [$LambdaArgList, "{lambda}", $SourceElements];
+//			}
+
 		| '[' ']' "->" '{' SourceElements '}'
 			{ $$ = [[], "{func}", $SourceElements]; }
 
-		| LAMBDA "->" '{' SourceElements '}'
-			{ $$ = [[], "{func}", $SourceElements]; }
+//		| LAMBDA "->" '{' SourceElements '}'
+//			{ $$ = [[], "{func}", $SourceElements]; }
 
 		| '[' ']' "->" '{' '}'
 			{ $$ = [[], "{func}", [[], "{seq}"]]; }
 
-		| LAMBDA "->" '{' '}'
-			{ $$ = [[], "{func}", [[], "{seq}"]]; }
+//		| LAMBDA "->" '{' '}'
+//			{ $$ = [[], "{func}", [[], "{seq}"]]; }
 
 		| AsteriskObject
 			{
@@ -443,8 +459,6 @@ PrimaryExpr
 			{
 				$$ = [$AmpsandObject, "{ampersand}"]
 			}
-
-		| Match
 
 		| '(' MultiLineExpr ')'
 			{
@@ -886,6 +900,14 @@ FnArgTypeLiteralExpr
 				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
 				$$ = [$name, "{literal_arg}", $LITERAL]
 			}
+		| '(' var PROTO ')'
+			{
+				$$ = [$var, "{type_arg}"];
+			}
+		| '(' var INSTANCE ')'
+			{
+				$$ = [$var, "{type_arg}"];
+			}
 		| "*.." NAT
 			{
 				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
@@ -914,11 +936,13 @@ FnArgTypeLiteralExpr
 FnArgTypePrimaryExpr
 		: var
 			{
-				if ($var == '_') {
-					$$ = [[$var, "{atomic}", "{var}"], "{any_type_arg}"]
-				} else {
-					$$ = [$var, "{type_arg}"]
-				}
+//				if ($var == '_') {
+//					$$ = [[$var, "{atomic}", "{var}"], "{any_type_arg}"]
+//				} else {
+//					$$ = [$var, "{type_arg}"]
+//				}
+//
+				$$ = [$var, "{type_arg}"]
 			}
 		| FnArgTypeLiteralExpr
 		| '(' FnArgTypeExpr ')'
@@ -1005,15 +1029,14 @@ FnVAList
 		;
 
 MatchCase
-		: FnArgTypeExpr "->" "{" SourceElements "}"
+		: FnVAList "->" "{" SourceElements "}"
 			{
-				$$ = [null, "{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
-					"{array_arg}", [$FnArgTypeExpr]], $SourceElements];
+				$$ = [null, "{fn}", $FnVAList, $SourceElements];
 			}
-//		| FnArgTypeExpr "=>" Expr
+//		: FnArgTypeExpr "->" "{" SourceElements "}"
 //			{
 //				$$ = [null, "{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
-//					"{array_arg}", [$FnArgTypeExpr]], [[makeExpr($Expr)], "{seq}"]];
+//					"{array_arg}", [$FnArgTypeExpr]], $SourceElements];
 //			}
 		;
 
@@ -1034,16 +1057,17 @@ MatchCaseList
 		;
 
 Match
-		:	PrimaryExpr MATCH MultiLineSEP "{" "}"
+		:	MATCH MultiLineSEP "{" "}"
 			{
-				$$ = [null, "{empty}"]	
+				$$ = [[], "{func}", [[], "{seq}"]];	
 			}
-		| PrimaryExpr MATCH MultiLineSEP "{" MatchCaseList "}"
+		| MATCH MultiLineSEP "{" MatchCaseList "}"
 			{
-				$MatchCaseList[2].push([$MatchCaseList[0],
-					"{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
-					"{any_type_arg}"], [[], "{seq}"]]);
-				$$ = [makeExpr($PrimaryExpr), "match", $MatchCaseList]
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"]
+				$MatchCaseList[2].push([$MatchCaseList[0], "{fn}",
+					[$name, "{va_args}", [], [$name, "{anonymous_va_arg}"], []],
+					[[], "{seq}"]]);
+				$$ = [$MatchCaseList, "match"]
 			}
 		;
 
