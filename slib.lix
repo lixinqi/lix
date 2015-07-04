@@ -256,6 +256,63 @@ generateAsterisk := [expr env ctx def]->{
 	[['undefined' '{atomic}' '{var}'] expr.0] generateExpr env ctx def
 }
 
+generateAmpersandObject := [expr env ctx def]->{
+	varnames := {}
+	expr.(0) foreach [item index]->{
+		varname := item getVarName
+		varnames.(index) = varname
+		if ((env.(varname) == undefined)
+			and (varname != seqFuncParamsName.ret)) {
+			[item '=' ['undefined' '{atomic}' '{var}']] generate env ctx def
+		}
+	}
+	[
+		"(function (_x) {\n"
+			"if (arguments.length && _x) {\n"
+				"return function () {\n"
+					(varnames | map [item index]->{
+						[item " = _x." index "\n"] .join ""
+					} | .join "")
+					"return _x\n"
+				"}\n"
+			"} else {\n"
+				"return function () {\n"
+					"return {" (varnames | map [item index]->{
+						[index ": " item] | .join ""
+					} |.join ", ") "}\n"
+				"}\n"
+			"}\n"
+		"})"
+	] .join ""
+}
+generateAmpersandBracket := [expr env ctx def]->{
+	varnames := []
+	expr.(0) foreach [item]->{
+		varname := item getVarName
+		varnames .push varname
+		if ((env.(varname) == undefined)
+			and (varname != seqFuncParamsName.ret)) {
+			[item '=' ['undefined' '{atomic}' '{var}']] generate env ctx def
+		}
+	}
+	[
+		"(function (_x) {\n"
+			"if (arguments.length && _x) {\n"
+				"return function () {\n"
+					(varnames | map [item index]->{
+						[item " = _x[" index "]\n"] .join ""
+					} | .join "")
+					"return _x\n"
+				"}\n"
+			"} else {\n"
+				"return function () {\n"
+					"return [" (varnames .join ", ") "]\n"
+				"}\n"
+			"}\n"
+		"})"
+	] .join ""
+}
+
 generateAmpersand := [expr env ctx def]->{
 	if (expr.(0).(1) == '{atomic}') {
 		varname := expr.(0) getVarName
@@ -530,6 +587,8 @@ generateOpTable := {
 	.'{func}' 							generateFunc
 	.'{fn}' 								generateFn
 	.'{ampersand}' 					generateAmpersand
+	.'{ampersand_bracket}' 	generateAmpersandBracket
+	.'{ampersand_object}' 	generateAmpersandObject
 	.'{asterisk}' 					generateAsterisk
 	.'{array}' 							generateArray
 	.'{object}' 						generateObjectLiteral
@@ -874,6 +933,14 @@ flattenDefer := [expr define]->{
 }
 
 flattenAmpersand := [expr define]->{
+	expr
+}
+
+flattenAmpersandObject := [expr define]->{
+	expr
+}
+
+flattenAmpersandBracket := [expr define]->{
 	expr
 }
 
@@ -1273,6 +1340,8 @@ flattenOpTable := {
 	.'{lambda}' 						flattenLambda
 	.'{fn}' 								flattenFn
 	.'{ampersand}' 					flattenAmpersand
+	.'{ampersand_bracket}' 	flattenAmpersandBracket
+	.'{ampersand_object}' 	flattenAmpersandObject
 	.'{asterisk}' 					flattenAsterisk
 	.'{array}' 							flattenArray
 	.'{object}' 						flattenObjectLiteral

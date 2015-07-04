@@ -77,6 +77,10 @@
 "&"[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]*
 																{ return "AMPSAND_VAR" }
 
+"&["\s*(("#".*)?\n+)*\s* 				{ return "&[" }
+"&{"\s*(("#".*)?\n+)*\s* 				{ return "&{" }
+
+
 \s*(("#".*)?\n+)*\s*"&"\s+(("#".*)?\n+)*\s*
 															{ return "&"; }
 
@@ -295,12 +299,13 @@ Object
 		| DOLLAR_PARAN MultiLineExpr ')'
 			{
 				$$ = [makeExpr($3), "{module}", "{index}"];
-			} 
+			}
 		| Object PropertyField
 			{
 				$$ = [$1, "{.}", $PropertyField];
 			}
 		;
+
 
 Property
 		: PropertyField MultiLineSEP PrimaryExpr
@@ -323,7 +328,7 @@ PropertyList
 				$PropertyList.push($Property);
 				$$ = $PropertyList;
 			}
-		| PropertyList NEWLINE
+		| PropertyList MultiLineSEP
 //		| PropertyList NEWLINE Property
 //			{
 //				$PropertyList.push($Property);
@@ -384,6 +389,18 @@ Path
 		| Path Slashes
 		;
 
+VarList
+		: var
+			{
+				$$ = [[$var, "{atomic}", "{var}"]];
+			}
+		| VarList MultiLineSEP var
+			{
+				$VarList.push([$var, "{atomic}", "{var}"]);
+				$$ = $VarList;
+			}
+		;	
+
 PrimaryExpr
 		: '[' ']'
 			{
@@ -398,14 +415,10 @@ PrimaryExpr
 				$$ = [$ArrayLiteral, "{func}", [[], "{seq}"]];
 			}
 
-		| LAMBDA LambdaArgList  OptMultiLineSEP '{' '}'
+		| LAMBDA LambdaArgList "->" '{' '}'
 			{
 				$$ = [[], "{func}", [[], "{seq}"]];
 			}
-//		| LAMBDA LambdaArgList "->" '{' '}'
-//			{
-//				$$ = [[], "{func}", [[], "{seq}"]];
-//			}
 		| LAMBDA "(" MultiLineExpr ")"
 			{
 				$$ = [short_cut_lambda_args, "{func}", [[makeExpr($MultiLineExpr)], "{seq}"]];
@@ -428,27 +441,22 @@ PrimaryExpr
 				$$ = [$ArrayLiteral, "{func}", $SourceElements];
 			}
 
-		| LAMBDA LambdaArgList OptMultiLineSEP '{' SourceElements '}'
+		| LAMBDA LambdaArgList "->" '{' SourceElements '}'
 			{
 				$$ = [$LambdaArgList, "{lambda}", $SourceElements];
 			}
 
-//		| LAMBDA LambdaArgList "->" '{' SourceElements '}'
-//			{
-//				$$ = [$LambdaArgList, "{lambda}", $SourceElements];
-//			}
-
 		| '[' ']' "->" '{' SourceElements '}'
 			{ $$ = [[], "{func}", $SourceElements]; }
 
-//		| LAMBDA "->" '{' SourceElements '}'
-//			{ $$ = [[], "{func}", $SourceElements]; }
+		| LAMBDA "->" '{' SourceElements '}'
+			{ $$ = [[], "{func}", $SourceElements]; }
 
 		| '[' ']' "->" '{' '}'
 			{ $$ = [[], "{func}", [[], "{seq}"]]; }
 
-//		| LAMBDA "->" '{' '}'
-//			{ $$ = [[], "{func}", [[], "{seq}"]]; }
+		| LAMBDA "->" '{' '}'
+			{ $$ = [[], "{func}", [[], "{seq}"]]; }
 
 		| AsteriskObject
 			{
@@ -458,6 +466,29 @@ PrimaryExpr
 		| AmpsandObject
 			{
 				$$ = [$AmpsandObject, "{ampersand}"]
+			}
+		| "&[" OptMultiLineSEP "]"
+			{
+				$$ = [[], "{ampersand_bracket}"];
+			}
+
+		| "&[" $VarList OptMultiLineSEP "]"
+			{
+				$$ = [$VarList, "{ampersand_bracket}"];
+			}
+
+		| "&{" OptMultiLineSEP "}"
+			{
+				$$ = [{}, "{ampersand_object}"];
+			}
+
+		| "&{" $VarList OptMultiLineSEP"}"
+			{
+				var $Fields = {}
+				for (var i in $VarList) {
+					$Fields[$VarList[i][0]] = $VarList[i];
+				}
+				$$ = [$Fields, "{ampersand_object}"];
 			}
 
 		| '(' MultiLineExpr ')'

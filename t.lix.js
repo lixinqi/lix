@@ -5,104 +5,73 @@ require.lixLoadingCache = {};
 var Lrequire = _require(require);
 var L__dirname = __dirname;
 var L__filename = __filename;
-var _3, _6;
-function _8(Lms) {
-var Larguments = arguments;
-;
-var _2;
-function _10(s) {
-switch (s[2]) {
-case 0:
-s[2] = 1;
-lix(s, Lcall(Lcc, (function (Lbrk) {
-var Larguments = arguments;
-;
-var _1;
-function _12(s) {
-switch (s[2]) {
-case 0:
-s[2] = 1;
-lix(s, Ltimeout(Lms, (function () {
-var Larguments = arguments;
-;
-var _0;
-function _14(s) {
-switch (s[2]) {
-case 0:
-s[2] = 1;
-lix(s, Lcall(Lbrk));
-case 1:
-_0 = s[3]
-default:
-}
-return s[3]
-}
-return _14;
-})));
-case 1:
-_1 = s[3]
-default:
-}
-return s[3]
-}
-return _12;
-})));
-case 1:
-_2 = s[3]
-default:
-}
-return s[3]
-}
-;
-;
-return _10;
-};
-function _7(s) {
+var La, Lx, Ly, Lz, _0, _1, _2, _3, _4;
+function _5(s) {
 switch (s[2]) {
 case 0:
 s[2] = 1;
 lix(s, Ltrap(Lprint));
+case 1:
+s[3] = La = {
+x: 4,
+y: 5,
+z: 6
+};
 case 2:
 s[2] = 3;
-lix(s, Luntil(LN, L__gt__, 5));
+lix(s, (function (_x) {
+if (arguments.length && _x) {
+return function () {
+Lx = _x[0]
+Ly = _x[1]
+Lz = _x[2]
+return _x
+}
+} else {
+return function () {
+return [Lx, Ly, Lz]
+}
+}
+})([3, 2, 1]));
 case 3:
-_3 = s[3];
+_0 = s[3];
 case 4:
 s[2] = 5;
-lix(s, Lcall(_3, (function () {
-var Larguments = arguments;
-;
-var _4, _5;
-function _16(s) {
-switch (s[2]) {
-case 0:
-s[2] = 1;
-lix(s, Lcall(Lsleep, 200));
-case 1:
-_4 = s[3];
-case 2:
-s[2] = 3;
-lix(s, Lprint('nice'));
-case 3:
-_5 = s[3]
-default:
-}
-return s[3]
-}
-return _16;
-})));
+lix(s, Lprint(_0));
 case 5:
-_6 = s[3]
+_1 = s[3];
+case 6:
+s[2] = 7;
+lix(s, Lprint([Lx, Ly, Lz]));
+case 7:
+_2 = s[3];
+case 8:
+s[2] = 9;
+lix(s, (function (_x) {
+if (arguments.length && _x) {
+return function () {
+Lx = _x.x
+Ly = _x.y
+Lz = _x.z
+return _x
+}
+} else {
+return function () {
+return {x: Lx, y: Ly, z: Lz}
+}
+}
+})(La));
+case 9:
+_3 = s[3];
+case 10:
+s[2] = 11;
+lix(s, Lprint([Lx, Ly, Lz]));
+case 11:
+_4 = s[3]
 default:
 }
 return s[3]
 }
 ;
-function Lsleep(_fn_0) {
-var _at_17;
-if (arguments.length == 1) {
-return _8(_fn_0);
-}
-}
 ;
-module.exports = _7
+module.exports = _5
