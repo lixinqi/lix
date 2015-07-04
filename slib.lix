@@ -268,10 +268,10 @@ generateAmpersandObject := [expr env ctx def]->{
 	}
 	[
 		"(function (_x) {\n"
-			"if (arguments.length && _x) {\n"
+			"if (arguments.length) {\n"
 				"return function () {\n"
 					(varnames | map [item index]->{
-						[item " = _x." index "\n"] .join ""
+						[item " = _x ? _x." index " : undefined\n"] .join ""
 					} | .join "")
 					"return _x\n"
 				"}\n"
@@ -297,10 +297,10 @@ generateAmpersandBracket := [expr env ctx def]->{
 	}
 	[
 		"(function (_x) {\n"
-			"if (arguments.length && _x) {\n"
+			"if (arguments.length) {\n"
 				"return function () {\n"
 					(varnames | map [item index]->{
-						[item " = _x[" index "]\n"] .join ""
+						[item " = _x ? _x[" index "] : undefined\n"] .join ""
 					} | .join "")
 					"return _x\n"
 				"}\n"

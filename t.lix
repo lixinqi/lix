@@ -10,3 +10,6 @@ a | &{x y z}
 
 [x y z] print
 
+a | &t | &{x y z}
+[x y z] print
+t print

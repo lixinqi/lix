@@ -777,7 +777,7 @@ return _uniq_var_705.join;
 }
 _uniq_var_705.join = _uniq_var_706;
 }return _uniq_var_705;
-};_uniq_var_707.__lix_func__ = true;return _uniq_var_707;})()([item, " = _x.", index, "\n"], "");
+};_uniq_var_707.__lix_func__ = true;return _uniq_var_707;})()([item, " = _x ? _x.", index, " : undefined\n"], "");
 _uniq_var_134;
 return _uniq_var_134;
 };_uniq_var_708.__lix_func__ = true;return _uniq_var_708;})());
@@ -827,7 +827,7 @@ return _uniq_var_719.join;
 }
 _uniq_var_719.join = _uniq_var_720;
 }return _uniq_var_719;
-};_uniq_var_721.__lix_func__ = true;return _uniq_var_721;})()(["(function (_x) {\n", "if (arguments.length && _x) {\n", "return function () {\n", _uniq_var_136, "return _x\n", "}\n", "} else {\n", "return function () {\n", "return {", _uniq_var_139, "}\n", "}\n", "}\n", "})"], "");
+};_uniq_var_721.__lix_func__ = true;return _uniq_var_721;})()(["(function (_x) {\n", "if (arguments.length) {\n", "return function () {\n", _uniq_var_136, "return _x\n", "}\n", "} else {\n", "return function () {\n", "return {", _uniq_var_139, "}\n", "}\n", "}\n", "})"], "");
 _uniq_var_140;
 return _uniq_var_140;
 };_uniq_var_722.__lix_func__ = true;return _uniq_var_722;})();
@@ -887,7 +887,7 @@ return _uniq_var_727.join;
 }
 _uniq_var_727.join = _uniq_var_728;
 }return _uniq_var_727;
-};_uniq_var_729.__lix_func__ = true;return _uniq_var_729;})()([item, " = _x[", index, "]\n"], "");
+};_uniq_var_729.__lix_func__ = true;return _uniq_var_729;})()([item, " = _x ? _x[", index, "] : undefined\n"], "");
 _uniq_var_150;
 return _uniq_var_150;
 };_uniq_var_730.__lix_func__ = true;return _uniq_var_730;})());
@@ -923,7 +923,7 @@ return _uniq_var_737.join;
 }
 _uniq_var_737.join = _uniq_var_738;
 }return _uniq_var_737;
-};_uniq_var_739.__lix_func__ = true;return _uniq_var_739;})()(["(function (_x) {\n", "if (arguments.length && _x) {\n", "return function () {\n", _uniq_var_152, "return _x\n", "}\n", "} else {\n", "return function () {\n", "return [", _uniq_var_153, "]\n", "}\n", "}\n", "})"], "");
+};_uniq_var_739.__lix_func__ = true;return _uniq_var_739;})()(["(function (_x) {\n", "if (arguments.length) {\n", "return function () {\n", _uniq_var_152, "return _x\n", "}\n", "} else {\n", "return function () {\n", "return [", _uniq_var_153, "]\n", "}\n", "}\n", "})"], "");
 _uniq_var_154;
 return _uniq_var_154;
 };_uniq_var_740.__lix_func__ = true;return _uniq_var_740;})();
