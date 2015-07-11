@@ -1,0 +1,1 @@
+N | map \(_0 * _0) | until > 99 | $xlist2array | print

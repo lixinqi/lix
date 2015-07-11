@@ -3803,7 +3803,7 @@ return ret;
 };_uniq_var_1127.__lix_func__ = true;return _uniq_var_1127;})();
 flattenVAArgsDestructor;
 flattenVAArgsDestructor;
-var flattenAnyTypeCondition = (function () {var _uniq_var_1128 = function (args, varName, def) {return null;
+var flattenAnyTypeCondition = (function () {var _uniq_var_1128 = function (args, varName, def) {return 1;
 };_uniq_var_1128.__lix_func__ = true;return _uniq_var_1128;})();
 flattenAnyTypeCondition;
 flattenAnyTypeCondition;

@@ -175,7 +175,7 @@
 "<"														{ return '<'; }
 
 \s+":="\s+  									{ return 'DEF'; }
-\s+"="\s+  										{ return 'ASSIGN_OPERATOR'; }
+\s+"="\s+  	{ return '='; }
 
 \s*(("#".*)?\n+)*\s*":"\s*(("#".*)?\n+)*\s*
 															{ return ":"; }
@@ -187,14 +187,9 @@
 /lex
 
 %left NEWLINE
-%left VBAR
-%left ">>="
-%left ">>>"
-%left "<<<"
-%left ">>"
-%left "<<"
+%left VBAR  ">>" "<<" ">>>" "<<<" ">>="
 %left SEP
-%left ASSIGN_OPERATOR
+%left "="
 %left FN
 
 %%
@@ -780,11 +775,11 @@ DefStatement
 		;
 
 AssignStatement
-		: Object ASSIGN_OPERATOR Expr
+		: Object "=" Expr
 			{
 				$$ = [$1, '=', makeExpr($3)];
 			}
-		| AsteriskObject ASSIGN_OPERATOR Expr
+		| AsteriskObject "=" Expr
 			{
 				$$ = [makeExpr($Expr), $AsteriskObject];
 			}
@@ -1109,41 +1104,22 @@ FnStatement
 						[[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
 						"{array_arg}", []], $SourceElements];
 			}
-//		| VAR DOT_VAR FN "->" "{" SourceElements "}" NEWLINE
-//			{
-//				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
-//					"{fn}", [], $SourceElements];
-//			}
-//		| VAR FN OptMultiLineSEP "=>" Expr
-//			{
-//				$$ = [[$VAR, "{atomic}", "{var}"],
-//					"{fn}", [[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
-//					"{array_arg}", []], [[makeExpr($Expr)], "{seq}"]];
-//			}
-//		| VAR DOT_VAR FN "=>" Expr NEWLINE
-//			{
-//				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
-//						"{fn}", [], [[makeExpr($Expr)], "{seq}"]];
-//			}
-//		| VAR FN OptMultiLineSEP FnVAList "=>" Expr
-//			{
-//				$$ = [[$VAR, "{atomic}", "{var}"],
-//					"{fn}", $FnVAList, [[makeExpr($Expr)], "{seq}"]];
-//			}
-//		| VAR DOT_VAR FN FnVAList "=>" Expr NEWLINE
-//			{
-//				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
-//					"{fn}", $FnVAList, [[makeExpr($Expr)], "{seq}"]];
-//			}
-		| VAR FN OptMultiLineSEP FnVAList  "->" "{" SourceElements "}"
+		| VAR FN "=" OptMultiLineSEP Expr
+			{
+				var expr = [["Larguments[0]", "{atomic}", "{var}", "{tmp}"], makeExpr($Expr)];
+				$$ = [[$VAR, "{atomic}", "{var}"],
+					"{fn}", $FnVAList, [[expr], "{seq}"]];
+			}
+		| VAR FN OptMultiLineSEP FnVAList "=" OptMultiLineSEP Expr
+			{
+				var expr = [["Larguments[0]", "{atomic}", "{var}", "{tmp}"], makeExpr($Expr)];
+				$$ = [[$VAR, "{atomic}", "{var}"],
+					"{fn}", $FnVAList, [[expr], "{seq}"]];
+			}
+		| VAR FN OptMultiLineSEP FnVAList "->" "{" SourceElements "}"
 			{
 				$$ = [[$VAR, "{atomic}", "{var}"], "{fn}", $FnVAList, $SourceElements];
 			}
-//		| VAR DOT_VAR FN FnVAList "->" "{" SourceElements "}" NEWLINE
-//			{
-//				$$ = [[$VAR, "{.}" , [$DOT_VAR.substring(1), "{atomic}", "{dot}"]],
-//					"{fn}", $FnVAList, $SourceElements];
-//			}
 		;
 
 Statement
