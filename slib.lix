@@ -399,7 +399,6 @@ generateFn := [expr0 env ctx prevDef]->{
 	'}'] .join '' | prevDef.appendExpr
 	expr0.(0) | getAtomicExprVarName | prevDef.defineFn funcName expr0.(3) expr.(0).length
 	undefined
-#	[expr0.(0) ":=" [funcName "{atomic}" "{var}" "{tmp}"]] generate env ctx prevDef
 }
 
 generateExpr := [expr env ctx def]->{
@@ -432,6 +431,18 @@ fnArgsTempVarDefine := []->{
 			ret
 		}
 	}
+}
+
+generatePtn := [expr env ctx def]->{
+	argDef := (fnArgsTempVarDefine call)
+	condition := expr.(2) flattenCondition "x" argDef
+	name := (expr.(0) generateAtomic)
+	[
+		"function " name "(x) {\n"
+			"return " condition ";\n"
+		"};\n"
+	] .join "" | def.appendExpr
+	name
 }
 
 predefineFn := [name candidates]->{
@@ -586,6 +597,7 @@ generateOpTable := {
 	.'{module}' 						generateModule
 	.'{func}' 							generateFunc
 	.'{fn}' 								generateFn
+	.'ptn' 									generatePtn
 	.'{ampersand}' 					generateAmpersand
 	.'{ampersand_bracket}' 	generateAmpersandBracket
 	.'{ampersand_object}' 	generateAmpersandObject
@@ -1188,6 +1200,10 @@ flattenProtoCondition := [args varName def]->{
 	["Object.getPrototypeOf(" varName ") === " (args.(0) transformVarName)] .join ""
 }
 
+flattenPtnCondition := [args varName def]->{
+	[(args.(0) transformVarName) "(" varName ")"] .join ""
+}
+
 flattenTypeCondition := [args varName def]->{
 	ret := null
 	if (args.(0) == 'Number') {
@@ -1208,6 +1224,7 @@ flattenVACondArgCondition := [args varName def]->{
 
 flattenConditionOp := {
 	."{any_type_arg}" 				flattenAnyTypeCondition
+	."{ptn_arg}" 							flattenPtnCondition
 	."{anonymous_va_arg}" 		flattenAnyTypeCondition
 	."{array_arg}" 						flattenArrayCondition
 	."{va_args}" 							flattenVAArgsCondition
@@ -1230,6 +1247,7 @@ flattenConditionOp := {
 flattenDestructorOp := {
 	."{atomic}" 							flattenAnyTypeDestructor
 	."{any_type_arg}" 				flattenAnyTypeDestructor
+	."{ptn_arg}" 							flattenAnyTypeDestructor
 	."{anonymous_va_arg}" 		flattenAnyTypeDestructor
 	."{array_arg}" 						flattenArrayDestructor
 	."{va_args}" 							flattenVAArgsDestructor
@@ -1302,6 +1320,10 @@ flattenLambda := [expr define]->{
 	expr
 }
 
+flattenPtn := [expr define]->{
+	expr
+}
+
 flattenFn := [expr define]->{
 	seq := expr.(3)
 	destructor := expr.(2) flattenArgumentsDestructor
@@ -1339,6 +1361,7 @@ flattenOpTable := {
 	.'{func}' 							flattenFunc
 	.'{lambda}' 						flattenLambda
 	.'{fn}' 								flattenFn
+	.'ptn' 									flattenPtn
 	.'{ampersand}' 					flattenAmpersand
 	.'{ampersand_bracket}' 	flattenAmpersandBracket
 	.'{ampersand_object}' 	flattenAmpersandObject

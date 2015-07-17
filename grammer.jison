@@ -141,6 +141,7 @@
 \s*"]"       									{ return ']'; }
 
 
+\s+'ptn'											{ return 'PTN'; }
 \s+'fn'												{ return 'FN'; }
 'match'												{ return 'MATCH'; }
 'if'													{ return 'IF'; }
@@ -190,7 +191,7 @@
 %left VBAR  ">>" "<<" ">>>" "<<<" ">>="
 %left SEP
 %left "="
-%left FN
+%left FN PTN
 
 %%
 
@@ -926,6 +927,10 @@ FnArgTypeLiteralExpr
 				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
 				$$ = [$name, "{literal_arg}", $LITERAL]
 			}
+		| '(' var PTN ')'
+			{
+				$$ = [$var, "{ptn_arg}"];
+			}
 		| '(' var PROTO ')'
 			{
 				$$ = [$var, "{type_arg}"];
@@ -962,12 +967,6 @@ FnArgTypeLiteralExpr
 FnArgTypePrimaryExpr
 		: var
 			{
-//				if ($var == '_') {
-//					$$ = [[$var, "{atomic}", "{var}"], "{any_type_arg}"]
-//				} else {
-//					$$ = [$var, "{type_arg}"]
-//				}
-//
 				$$ = [$var, "{type_arg}"]
 			}
 		| FnArgTypeLiteralExpr
@@ -1097,28 +1096,35 @@ Match
 			}
 		;
 
-FnStatement
-		: VAR FN "->" "{" SourceElements "}"
+PtnStatement
+		: var PTN "=" FnArgTypeExpr
 			{
-				$$ = [[$VAR, "{atomic}", "{var}"], "{fn}",
+				$$ = [[$var, "{atomic}", "{var}"], "ptn", $FnArgTypeExpr];
+			}
+		;
+
+FnStatement
+		: var FN "->" "{" SourceElements "}"
+			{
+				$$ = [[$var, "{atomic}", "{var}"], "{fn}",
 						[[getUniqVarName(), "{atomic}", "{var}", "{tmp}"], 
 						"{array_arg}", []], $SourceElements];
 			}
-		| VAR FN "=" OptMultiLineSEP Expr
+		| var FN "=" OptMultiLineSEP Expr
 			{
 				var expr = [["Larguments[0]", "{atomic}", "{var}", "{tmp}"], makeExpr($Expr)];
-				$$ = [[$VAR, "{atomic}", "{var}"],
+				$$ = [[$var, "{atomic}", "{var}"],
 					"{fn}", $FnVAList, [[expr], "{seq}"]];
 			}
-		| VAR FN OptMultiLineSEP FnVAList "=" OptMultiLineSEP Expr
+		| var FN OptMultiLineSEP FnVAList "=" OptMultiLineSEP Expr
 			{
 				var expr = [["Larguments[0]", "{atomic}", "{var}", "{tmp}"], makeExpr($Expr)];
-				$$ = [[$VAR, "{atomic}", "{var}"],
+				$$ = [[$var, "{atomic}", "{var}"],
 					"{fn}", $FnVAList, [[expr], "{seq}"]];
 			}
-		| VAR FN OptMultiLineSEP FnVAList "->" "{" SourceElements "}"
+		| var FN OptMultiLineSEP FnVAList "->" "{" SourceElements "}"
 			{
-				$$ = [[$VAR, "{atomic}", "{var}"], "{fn}", $FnVAList, $SourceElements];
+				$$ = [[$var, "{atomic}", "{var}"], "{fn}", $FnVAList, $SourceElements];
 			}
 		;
 
@@ -1126,7 +1132,7 @@ Statement
 		: ExprStatement
 		| AssignStatement
 		| FnStatement
-//		| MatchStatement
+		| PtnStatement
 		| DefStatement
 		| IfStatement
 		| WhileStatement

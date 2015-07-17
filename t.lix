@@ -1,57 +1,15 @@
 #!/usr/local/bin/node
 
-wrappedInArray fn x -> { [x] }
+L = N | until > 3
 
-leaveXlist fn (Array) 	= array2xlist >>> leaveXlist
-leaveXlist fn _ 				= Identity
+L.__xlist_signature__ = true
 
-[1 2 3 [4] [5 [6] [7 8 [9 [10 11]]]]] | leaveXlist | map \(_0 * _0) | call print
+xlist ptn = Function & {.__xlist_signature__ true}
 
-flatten fn (Array) = leaveXlist >> xlist2array 
-flatten fn _ = wrappedInArray 
+func ptn = Function & {.__xlist_signature__ !true}
 
-[1 2 3 [4] [5 [6] [7 8 [9 [10 11]]]]] | flatten | print
-
-treeLeafXlist fn {.children (Array)}	= .children >> array2xlist >>> treeLeafXlist
-treeLeafXlist fn _										= Identity
-
-{
-	.node 0.5
-	.children [
-		{.node 1}
-		{.node 2}
-		{.node 3}
-		{.node 4}
-		{
-			.node 4.5
-			.children [
-				{.node 5}
-				{.node 6}
-				{.node 7}
-				{.node 8}
-			]
-		}
-	]
-} | &data
-
-prepend fn xl0 (xl1: !Function) -> {
-	xl0 prepend (xl1 Identity)
-}
-
-prepend fn xl0 xl1 -> {
-	\append->{
-		xl1 call append
-		xl0 call append
-	}
-}
-
-data | treeLeafXlist | map .node | xlist2array | print
-
-treeNodeXlist fn {.node x .children (Array)} = .children >> array2xlist >> prepend {.node x} >>> treeNodeXlist
-
-treeNodeXlist fn _ = Identity
-
-treeNodeArray fn _ = treeNodeXlist >> map .node >> xlist2array
-
-data | treeNodeArray | print
-
+L match {
+	(func ptn) 	-> { "f" }
+	(xlist ptn) -> { L | xlist2array }
+	...					-> { 'error' }
+} | print
