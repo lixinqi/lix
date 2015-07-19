@@ -1,15 +1,4 @@
 #!/usr/local/bin/node
 
-L = N | until > 3
-
-L.__xlist_signature__ = true
-
-xlist ptn = Function & {.__xlist_signature__ true}
-
-func ptn = Function & {.__xlist_signature__ !true}
-
-L match {
-	(func ptn) 	-> { "f" }
-	(xlist ptn) -> { L | xlist2array }
-	...					-> { 'error' }
-} | print
+$a.nice = 'good'
+$("a").nice print

@@ -290,11 +290,11 @@ Object
 			}
 		| DOLLAR_STR
 			{
-				$$ = [($1).substr(1), "{module}", "{var}"];
+				$$ = [['"' + ($1).substr(1) + '"', "{atomic}"], "{module}", "{var}"];
 			}
 		| DOLLAR_PARAN MultiLineExpr ')'
 			{
-				$$ = [makeExpr($3), "{module}", "{index}"];
+				$$ = [makeExpr($MultiLineExpr), "{module}", "{index}"];
 			}
 		| Object PropertyField
 			{
@@ -929,15 +929,18 @@ FnArgTypeLiteralExpr
 			}
 		| '(' var PTN ')'
 			{
-				$$ = [$var, "{ptn_arg}"];
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{ptn_arg}", $var];
 			}
 		| '(' var PROTO ')'
 			{
-				$$ = [$var, "{type_arg}"];
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{type_arg}", $var];
 			}
 		| '(' var INSTANCE ')'
 			{
-				$$ = [$var, "{type_arg}"];
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{type_arg}", $var];
 			}
 		| "*.." NAT
 			{
@@ -967,7 +970,8 @@ FnArgTypeLiteralExpr
 FnArgTypePrimaryExpr
 		: var
 			{
-				$$ = [$var, "{type_arg}"]
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				$$ = [$name, "{type_arg}", $var]
 			}
 		| FnArgTypeLiteralExpr
 		| '(' FnArgTypeExpr ')'

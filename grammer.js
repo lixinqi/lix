@@ -140,11 +140,11 @@ case 27:
 			
 break;
 case 28:
-				this.$ = [($$[$0]).substr(1), "{module}", "{var}"];
+				this.$ = [['"' + ($$[$0]).substr(1) + '"', "{atomic}"], "{module}", "{var}"];
 			
 break;
 case 29:
-				this.$ = [makeExpr($$[$0]), "{module}", "{index}"];
+				this.$ = [makeExpr($$[$0-1]), "{module}", "{index}"];
 			
 break;
 case 30:
@@ -595,15 +595,18 @@ case 163:
 			
 break;
 case 164:
-				this.$ = [$$[$0-2], "{ptn_arg}"];
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				this.$ = [$name, "{ptn_arg}", $$[$0-2]];
 			
 break;
 case 165:
-				this.$ = [$$[$0-2], "{type_arg}"];
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				this.$ = [$name, "{type_arg}", $$[$0-2]];
 			
 break;
 case 166:
-				this.$ = [$$[$0-2], "{type_arg}"];
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				this.$ = [$name, "{type_arg}", $$[$0-2]];
 			
 break;
 case 167:
@@ -630,7 +633,8 @@ case 171:
 			
 break;
 case 172:
-				this.$ = [$$[$0], "{type_arg}"]
+				var $name = [getUniqVarName(), "{atomic}", "{var}", "{tmp}"];
+				this.$ = [$name, "{type_arg}", $$[$0]]
 			
 break;
 case 174:

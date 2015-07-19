@@ -183,6 +183,7 @@ generateField := [expr env ctx def]->{
 
 
 generateFieldAccess := [expr env ctx def]->{
+#	expr print
 	if (expr.1 == '{atomic}') {
 		expr generateAtomic env ctx0 def
 	} (expr.1 == '{.}') {
@@ -339,9 +340,9 @@ generateAmpersand := [expr env ctx def]->{
 }
 
 generateAssign := [expr env ctx def]->{
-	varname := expr.0 getVarName
+	varname := expr generateFieldAccess
 	ret := []
-	if (env.(varname) == undefined | and (varname != seqFuncParamsName.ret)) {
+	if (expr.(1) == "{atomic}" | and (env.(varname) == undefined) | and (varname != seqFuncParamsName.ret)) {
 		ret = expr generateDef env ctx def
 	} else {
 		varname := (expr.0 generate env ctx0 def)
@@ -723,7 +724,8 @@ flattenIf := [expr define]->{
 }
 
 flattenAssign := [expr define]->{
-	expr.2 = expr.2 flatten define
+	expr.(0) = expr.(0) flatten define
+	expr.(2) = expr.(2) flatten define
 	expr
 }
 
@@ -849,7 +851,7 @@ flattenFunc := [expr define]->{
 
 flattenFieldAccess := [expr define]->{
 	if (expr.1 == '{.}') {
-		expr.0 = expr.0 flattenFieldAccess define
+		expr.0 = expr.0 flatten define
 		expr.2 = expr.2 flattenField define
 	} else {
 		expr = expr flatten	define
@@ -932,7 +934,7 @@ flattenStart := [expr define]->{
 
 flattenModule := [expr define]->{
 	if (expr.2 == '{var}') {
-		name := [(['"' expr.0 '"'] .join '') '{atomic}']
+		name := expr.0
 	} else if (expr.2 == '{index}') {
 		name := expr.0 flatten define
 	}
@@ -1201,21 +1203,21 @@ flattenProtoCondition := [args varName def]->{
 }
 
 flattenPtnCondition := [args varName def]->{
-	[(args.(0) transformVarName) "(" varName ")"] .join ""
+	[(args.(2) transformVarName) "(" varName ")"] .join ""
 }
 
 flattenTypeCondition := [args varName def]->{
 	ret := null
-	if (args.(0) == 'Number') {
+	if (args.(2) == 'Number') {
 		ret = ["typeof " varName " == 'number'"] .join ""
-	} (args.(0) == 'String') {
+	} (args.(2) == 'String') {
 		ret = ["typeof " varName " == 'string'"] .join ""
-	} (args.(0) == 'Function') {
+	} (args.(2) == 'Function') {
 		ret = ["typeof " varName " == 'function'"] .join ""
-	} (args.(0) == 'Boolean') {
+	} (args.(2) == 'Boolean') {
 		ret = ["typeof " varName " == 'boolean'"] .join ""
 	} else {
-		[varName " instanceof " (args.(0) transformVarName)] .join ""
+		[varName " instanceof " (args.(2) transformVarName)] .join ""
 	}
 }
 
