@@ -1,0 +1,25 @@
+#!/usr/local/bin/node
+
+trap call print
+
+array2generator := $array2xlist >> $xlist2generator
+
+trueAfterCalledTimes := [n]->{
+	getCounter := $counter.generator call
+	[]->{
+		getCounter call | > n
+	}
+}
+
+xlistHeadExec := [xl n fn]->{
+	xl | until (trueAfterCalledTimes call n)
+	xl | until > 10
+		| hook fn
+		| exec
+}
+
+N xlistHeadExec 10 [x]->{
+	x print
+}
+
+'end' print

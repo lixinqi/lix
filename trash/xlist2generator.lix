@@ -1,0 +1,34 @@
+#!/usr/local/bin/node
+
+trap call print
+
+xlist2generator := [xl end]->{
+	cont := null
+	[]->{
+		cc call [brk]->{
+			if (cont) {
+				brk cont
+			} else {
+				_brk := brk
+				xl | map [i]->{
+							_brk = cc call [next]->{
+								cont = next
+								i _brk
+							}
+						} 
+					| exec
+				end brk
+			}
+		}
+	}
+}
+
+next := N | xlist2generator
+
+N | until > 10
+	| map []->{
+			next | call | print
+		}
+	| exec
+
+'end' print

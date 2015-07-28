@@ -1,0 +1,74 @@
+N | $until > 10 | $map [x]->{x * x} | call print
+
+print call '============'
+
+N | $until > 10 | $filter % 2 | call print
+
+print call '============'
+
+$naturalNumbers | $until > 5 | call print
+
+print call '============'
+
+[3 2 1 4 5] | $array2xlist | until > 4 | call print
+
+print call '============'
+
+[1 2 3] | $array2xlist | call print
+
+print call '============'
+
+inc := + $__ 1
+inc | $__compose__ inc | &inc2
+
+3 inc2 | print
+
+print call '============'
+
+N | $until > 3 | bind [x]->{ N | $until > 3 } | call print
+
+print call '============'
+
+N | $until > 3 | $hook print | $map [x]->{x * x} | $hook print | $exec
+
+print call '============'
+
+add3 := + $__ 3
+mul3 := * $__ 3
+
+3 | (add3 $__compose__ mul3) | print
+3 | (add3 $__rcompose__ mul3) | print
+
+print call '============'
+seq := [x]->{ N | until > x }
+seqSquare := [x]->{ N | until > x | map [y]->{ y * y } }
+
+2 | (seq $__xcompose__ seqSquare) | call print
+print call '---'
+2 | (seq $__rxcompose__ seqSquare) | call print
+
+print call '============'
+
+square fn (x: Number) = x * x
+
+N | $until > 5 | $map square | $xlist2generator &end | &itt
+
+while (*itt | &i | != end) {
+	i print
+}
+
+print call '============'
+
+filter := [xl]->{
+	f := arguments $MinorArgs2Fn
+	[append]->{
+		xl call [x]->{
+			if (x f) {
+				x append
+			}
+		}
+	}
+}
+
+N | $until > 5 | $filter > 2 | call print
+

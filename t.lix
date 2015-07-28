@@ -1,23 +1,4 @@
-#!/usr/bin/env lix
+#!/usr/local/bin/node
 
-# inc1 := + $Partial 1
-# inc2 := + $Partial 2
-# inc3 := inc1 $Compose inc2
-# 1 inc3 | print
-
-# ReadFile := [filename options]->{
-# 	cc call [brk]->{
-# 		filename $fs.ReadFileAsync options [err data]->{
-# 			brk call data
-# 		}
-# 	}
-# }
-
-# ./t.lix | $fs.ReadFileAsync 'utf-8' [err data]->{
-# }
-
-# ./t.lix | ReadFile 'utf-8' | print
-
-/tmp/a $fs.RenameAsync /tmp/a-back [err]->{
-	err print
-}
+$a.nice = 'good'
+$("a").nice print

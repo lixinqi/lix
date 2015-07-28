@@ -1,0 +1,5 @@
+x := 0
+f := [a]->{x = a}
+
+f call 3
+x print

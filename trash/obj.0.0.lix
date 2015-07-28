@@ -1,0 +1,22 @@
+#!/usr/local/bin/node
+
+obj := {
+	.0 {
+		.0 []->{'hi obj.0.0' print}
+		.1 []->{'hi obj.0.1' print}
+	}
+}
+
+obj (.0 >> .0)
+obj (.0 >> .1)
+
+obj.0.0 call
+obj.0.1 call
+obj."0".1 call
+
+fn := [x y]->{
+	.(x) >> .(y)
+}
+
+obj (0 fn 0)
+

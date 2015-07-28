@@ -12,5 +12,3 @@ ret
 
 	((error :Error) handleError)->{ error raise }
 	filename $fs.ReadFile | handleError
-}
-

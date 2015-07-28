@@ -1,0 +1,56 @@
+#!/usr/local/bin/node
+
+wrappedInArray fn x -> { [x] }
+
+leaveXlist fn (Array) 	= array2xlist >>> leaveXlist
+leaveXlist fn _ 				= Identity
+
+[1 2 3 [4] [5 [6] [7 8 [9 [10 11]]]]] | leaveXlist | map \(_0 * _0) | call print
+
+flatten fn (Array) = leaveXlist >> xlist2array 
+flatten fn _ = wrappedInArray 
+
+[1 2 3 [4] [5 [6] [7 8 [9 [10 11]]]]] | flatten | print
+
+treeLeafXlist fn {.children (Array)}	= .children >> array2xlist >>> treeLeafXlist
+treeLeafXlist fn _										= Identity
+
+{
+	.node 0.5
+	.children [
+		{.node 1}
+		{.node 2}
+		{.node 3}
+		{.node 4}
+		{
+			.node 4.5
+			.children [
+				{.node 5}
+				{.node 6}
+				{.node 7}
+				{.node 8}
+			]
+		}
+	]
+} | &data
+
+prepend fn xl0 (xl1: !Function) -> {
+	xl0 prepend (xl1 Identity)
+}
+
+prepend fn xl0 xl1 -> {
+	\append->{
+		xl1 call append
+		xl0 call append
+	}
+}
+
+data | treeLeafXlist | map .node | xlist2array | print
+
+treeNodeXlist fn {.node x .children (Array)} = treeNodeXlist <<< (.children >> array2xlist >> prepend {.node x})
+
+treeNodeXlist fn _ = Identity << .node
+
+treeNodeArray fn _ = treeNodeXlist >> xlist2array
+
+data | treeNodeArray | print

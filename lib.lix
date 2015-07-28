@@ -70,17 +70,17 @@ generateIf := [expr env ctx]->{
 }
 
 operateFuncName := {
-	.("+") 				'__add__'
-	.("-") 				'__sub__'
-	.("*") 				'__mul__'
-	.("/") 				'__div__'
-	.("%") 				'__mod__'
-	.(">=") 			'__ge__'
-	.(">") 				'__gt__'
-	.("==") 			'__eq__'
-	.("!=") 			'__ne__'
-	.("<") 				'__lt__'
-	.("<=") 			'__le__'
+	."+" 				'__add__'
+	."-" 				'__sub__'
+	."*" 				'__mul__'
+	."/" 				'__div__'
+	."%" 				'__mod__'
+	.">=" 			'__ge__'
+	.">" 				'__gt__'
+	."==" 			'__eq__'
+	."!=" 			'__ne__'
+	."<" 				'__lt__'
+	."<=" 			'__le__'
 }
 
 generateAtomic := [expr env ctx]->{
@@ -263,26 +263,26 @@ generatePath := [expr env ctx]->{
 }
 
 generateOpTable := {
-	.('{start}') 							generateStart
-	.('{seq}') 								generateSeq
-	.('{mono}') 							generateMono
-	.('{atomic}')							generateAtomic
-	.('{.}') 									generateFieldAccess
-	.('{func}') 							generateFunc
-	.('{array}') 							generateArray
-	.('{object}') 						generateObjectLiteral
-	.('{method}') 						generateMethod
-	.('{empty}') 							generateEmpty
-	.('{path}') 							generatePath
-	.('{path_item}') 					generatePathItem
-	.('{path_arg_item}')			generatePathArgItem
-	.(':=')										generateDef
-	.('=') 										generateAssign
-	.('if')										generateIf
-	.('and')									generateAnd
-	.('or') 									generateOr
-	.('while')								generateWhile
-	.('break') 								generateBreak
+	.'{start}' 							generateStart
+	.'{seq}' 								generateSeq
+	.'{mono}' 							generateMono
+	.'{atomic}'							generateAtomic
+	.'{.}' 									generateFieldAccess
+	.'{func}' 							generateFunc
+	.'{array}' 							generateArray
+	.'{object}' 						generateObjectLiteral
+	.'{method}' 						generateMethod
+	.'{empty}' 							generateEmpty
+	.'{path}' 							generatePath
+	.'{path_item}' 					generatePathItem
+	.'{path_arg_item}'			generatePathArgItem
+	.':='										generateDef
+	.'=' 										generateAssign
+	.'if'										generateIf
+	.'and'									generateAnd
+	.'or' 									generateOr
+	.'while'								generateWhile
+	.'break' 								generateBreak
 }
 
 generateOp := [hint]->{
@@ -537,26 +537,26 @@ flattenStart := [expr define]->{
 }
 
 flattenOpTable := {
-	.('{start}') 							flattenStart
-	.('{seq}') 								flattenSeq
-	.('{mono}') 							flattenMono
-	.('{atomic}')							flattenAtomic
-	.('{.}') 									flattenFieldAccess
-	.('{func}') 							flattenFunc
-	.('{array}') 							flattenArray
-	.('{object}') 						flattenObjectLiteral
-	.('{method}') 						flattenMethod
-	.('{empty}') 							flattenEmpty
-	.('{path}') 							flattenPath
-	.('{path_item}') 					flattenPathItem
-	.('{path_arg_item}')			flattenPathArgItem
-	.(':=')										flattenDef
-	.('=') 										flattenAssign
-	.('if')										flattenIf
-	.('and')									flattenAnd
-	.('or') 									flattenOr
-	.('while')								flattenWhile
-	.('break') 								flattenBreak
+	.'{start}' 							flattenStart
+	.'{seq}' 								flattenSeq
+	.'{mono}' 							flattenMono
+	.'{atomic}'							flattenAtomic
+	.'{.}' 									flattenFieldAccess
+	.'{func}' 							flattenFunc
+	.'{array}' 							flattenArray
+	.'{object}' 						flattenObjectLiteral
+	.'{method}' 						flattenMethod
+	.'{empty}' 							flattenEmpty
+	.'{path}' 							flattenPath
+	.'{path_item}' 					flattenPathItem
+	.'{path_arg_item}'			flattenPathArgItem
+	.':='										flattenDef
+	.'=' 										flattenAssign
+	.'if'										flattenIf
+	.'and'									flattenAnd
+	.'or' 									flattenOr
+	.'while'								flattenWhile
+	.'break' 								flattenBreak
 }
 
 flattenOp := [hint]->{

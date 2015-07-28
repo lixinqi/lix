@@ -1,9 +1,873 @@
+var PREV = 0; 
+var F = 1; 
+var STEP = 2; 
+var RET = 3; 
+
+function identity(x) {
+	return x;
+}
 (function () {
+
+
+	function _LixCCException() {
+		this.message = 'cc call exception';
+	}
+
+	var _lixCCException = new _LixCCException();
+	this._lixCCException = _lixCCException;
+
+	require.lixCache = {}
+	require.lixLoadingCache = {}
+
+	this._require = function (__require) {
+		return function (name) {
+			var path = name;
+			try {
+				path = __require.resolve(name);
+			} catch (e) {
+				console.log(e);
+				return function () {
+					return null;
+				}
+			}
+
+			if (require.lixCache[path] === undefined) {
+				if (require.lixLoadingCache[path]) {
+					return function () {
+						return undefined;
+					}
+				}
+				require.lixLoadingCache[path] = true;
+				var f = __require(name);
+				return function (cb) {
+					require.lixCache[path] = f(function (ret) {
+						//async cache module
+						require.lixCache[path] = ret;
+						require.lixLoadingCache[path] = undefined;
+						cb(ret);
+					}, 0);
+					//sync cache module
+					require.lixLoadingCache[path] = undefined;
+					return require.lixCache[path];
+				}
+			}
+
+			//cached result
+			return function () {
+				return require.lixCache[path];
+			}
+		}
+	}
+
+	var global_trap = function () {
+		var Larguments = arguments;
+		var defer_stack = [];
+		;
+		function _2(_cb, _step, _cont, _ret, cb_defer) {
+			switch (_step) {
+
+				default:
+			}
+			thisDefer(defer_stack, false)(function () {
+				_cb(_ret);
+			}, 0);
+			if (_cont) {
+				_cb(_ret);
+			} else {
+				return _ret;
+			}
+		};
+		return _2;
+	}
+
+	//	this.Ltrap = function Ltrap(f) {
+	function Ltrap(f) {
+		var nargs = arguments.length;
+		return function () {
+			if (nargs == 0)	{
+				return global_trap;
+			} else {
+				global_trap = f;
+			}
+		}
+	}
+
+	this.thisDefer = function (LdeferList, isBreak) {
+		var Larguments = arguments;
+		var defer_stack = [];
+		var chain_defer = undefined;
+		var _ret, _0, _1;
+		function _5(_cb, _step, _cont, _ret, cb_defer) {
+			switch (_step) {
+				case 0:
+					_ret = LdeferList.Pop(LdeferList)(function (_ret) {
+						return _5(_cb, 1, true, _ret, chain_defer);
+					}, 0);
+				case 1:
+					_0 = _ret;
+					//					console.log('pop:');
+					//					console.log(_0.toString());
+				case 2:
+					_ret = Lcall(_0, isBreak)(function (_ret) {
+						return _5(_cb, 3, true, _ret, chain_defer);
+					}, 0);
+				case 3:
+					_1 = _ret
+				default:
+			}
+			if (_cont) {
+				_cb(_ret);
+			} else {
+				return _ret;
+			}
+		};
+		function _4(_cb, _step, _cont, _ret, cb_defer) {
+			switch (_step) {
+				case 0:
+					while (LdeferList.length) {
+						_5(function (_ret) {
+							return _4(_cb, 0, true, _ret, chain_defer);
+						}, 0)
+					};
+				case 1:
+					_ret = undefined
+				default:
+			}
+			if (_cont) {
+				_cb(_ret);
+			} else {
+				return _ret;
+			}
+		};
+		return _4;
+	}; 
+
+	this._defer = function (defer_stack) {
+		return function (cb) {
+			return function () {
+				defer_stack.push(cb);
+				//				console.log('push:');
+				//				console.log(cb.toString());
+			}
+		}
+	}
+
+	this.L__compose__ = (function (Lf0, Lf1) {
+		var Larguments = arguments;
+		;
+		function _4(_cb, _step, _cont, _ret) {
+			switch (_step) {
+				case 0:
+					_ret = (function (Li) {
+						var Larguments = arguments;
+						var _ret, _0, _1;
+						function _6(_cb, _step, _cont, _ret) {
+							switch (_step) {
+								case 0:
+									_ret = Lf0(Li)(function (_ret) {
+										return _6(_cb, 1, true, _ret);
+									}, 0);
+								case 1:
+									_0 = _ret;
+								case 2:
+									_ret = Lf1(_0)(function (_ret) {
+										return _6(_cb, 3, true, _ret);
+									}, 0);
+								case 3:
+									_1 = _ret
+								default:
+							}
+							if (_cont) {
+								_cb(_ret)
+							} else {
+								return _ret
+							}
+						};
+						return _6;
+					})
+				default:
+			}
+			if (_cont) {
+				_cb(_ret)
+			} else {
+				return _ret
+			}
+		};
+		return _4;
+	});
+
+	this.L__rcompose__ = (function (Lf1, Lf0) {
+		var Larguments = arguments;
+		;
+		function _4(_cb, _step, _cont, _ret) {
+			switch (_step) {
+				case 0:
+					_ret = (function (Li) {
+						var Larguments = arguments;
+						var _ret, _0, _1;
+						function _6(_cb, _step, _cont, _ret) {
+							switch (_step) {
+								case 0:
+									_ret = Lf0(Li)(function (_ret) {
+										return _6(_cb, 1, true, _ret);
+									}, 0);
+								case 1:
+									_0 = _ret;
+								case 2:
+									_ret = Lf1(_0)(function (_ret) {
+										return _6(_cb, 3, true, _ret);
+									}, 0);
+								case 3:
+									_1 = _ret
+								default:
+							}
+							if (_cont) {
+								_cb(_ret)
+							} else {
+								return _ret
+							}
+						};
+						return _6;
+					})
+				default:
+			}
+			if (_cont) {
+				_cb(_ret)
+			} else {
+				return _ret
+			}
+		};
+		return _4;
+	});
+
+	this.L__bind__ = (function (Lflist, Lf) {
+		var Larguments = arguments, defer_stack = [];
+		;
+		function _6(_cb, _step, _cont, _ret, cb_defer) {
+			try {
+				switch (_step) {
+					case 0:
+						_ret = (function (Lappend) {
+							var Larguments = arguments, defer_stack = [];
+							var _ret, _3;
+							function _8(_cb, _step, _cont, _ret, cb_defer) {
+								try {
+									switch (_step) {
+										case 0:
+											_ret = Lcall(Lflist, (function (Li) {
+												var Larguments = arguments, defer_stack = [];
+												var _ret, _0, _2;
+												function _10(_cb, _step, _cont, _ret, cb_defer) {
+													try {
+														switch (_step) {
+															case 0:
+																_ret = Lf(Li)(function (_ret) {
+																	return _10(_cb, 1, true, _ret, function () {
+																		thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																		cb_defer && cb_defer();
+																	}
+																	);
+																}, 0, false, undefined, function () {
+																	thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																	cb_defer && cb_defer();
+																}
+																);
+															case 1:
+																_0 = _ret;
+															case 2:
+																_ret = Lcall(_0, (function (Lj) {
+																	var Larguments = arguments, defer_stack = [];
+																	var _ret, _1;
+																	function _12(_cb, _step, _cont, _ret, cb_defer) {
+																		try {
+																			switch (_step) {
+																				case 0:
+																					_ret = Lappend(Lj)(function (_ret) {
+																						return _12(_cb, 1, true, _ret, function () {
+																							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																							cb_defer && cb_defer();
+																						}
+																						);
+																					}, 0, false, undefined, function () {
+																						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																						cb_defer && cb_defer();
+																					}
+																					);
+																				case 1:
+																					_1 = _ret
+																				default:
+																			}
+																			thisDefer(defer_stack, false)(function () {
+																				_cb(_ret);
+																			}, 0);
+																			if (_cont) {
+																				_cb(_ret);
+																			} else {
+																				return _ret;
+																			}
+																		} catch (e) {
+																			if (e == _lixCCException) {
+																				throw e;
+																			} else {
+																				Lraise(e)(function (x) {return x;}, 0);
+																			}
+																		}
+																	}
+																	;
+																	return _12;
+																}))(function (_ret) {
+																	return _10(_cb, 3, true, _ret, function () {
+																		thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																		cb_defer && cb_defer();
+																	}
+																	);
+																}, 0, false, undefined, function () {
+																	thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																	cb_defer && cb_defer();
+																}
+																);
+															case 3:
+																_2 = _ret
+															default:
+														}
+														thisDefer(defer_stack, false)(function () {
+															_cb(_ret);
+														}, 0);
+														if (_cont) {
+															_cb(_ret);
+														} else {
+															return _ret;
+														}
+													} catch (e) {
+														if (e == _lixCCException) {
+															throw e;
+														} else {
+															Lraise(e)(function (x) {return x;}, 0);
+														}
+													}
+												}
+												;
+												return _10;
+											}))(function (_ret) {
+												return _8(_cb, 1, true, _ret, function () {
+													thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+													cb_defer && cb_defer();
+												}
+												);
+											}, 0, false, undefined, function () {
+												thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+												cb_defer && cb_defer();
+											}
+											);
+										case 1:
+											_3 = _ret
+										default:
+									}
+									thisDefer(defer_stack, false)(function () {
+										_cb(_ret);
+									}, 0);
+									if (_cont) {
+										_cb(_ret);
+									} else {
+										return _ret;
+									}
+								} catch (e) {
+									if (e == _lixCCException) {
+										throw e;
+									} else {
+										Lraise(e)(function (x) {return x;}, 0);
+									}
+								}
+							}
+							;
+							return _8;
+						})
+					default:
+				}
+				thisDefer(defer_stack, false)(function () {
+					_cb(_ret);
+				}, 0);
+				if (_cont) {
+					_cb(_ret);
+				} else {
+					return _ret;
+				}
+			} catch (e) {
+				if (e == _lixCCException) {
+					throw e;
+				} else {
+					Lraise(e)(function (x) {return x;}, 0);
+				}
+			}
+		}
+		;
+		return _6;
+	});
+
+	this.L__ = (function (Lfn) {
+		var Larguments = arguments;
+		var _ret, _0, Largs;
+		function _4(_cb, _step, _cont, _ret) {
+			switch (_step) {
+				case 0:
+					_ret = LArray.Slice(Larguments, 0)(function (_ret) {
+						return _4(_cb, 1, true, _ret);
+					}, 0);
+				case 1:
+					_0 = _ret;
+				case 2:
+					_ret = Largs = _0;
+				case 3:
+					_ret = (function (Li) {
+						var Larguments = arguments;
+						var _ret, _1;
+						function _6(_cb, _step, _cont, _ret) {
+							switch (_step) {
+								case 0:
+									_ret = Largs[0] = Li;
+								case 1:
+									_ret = Lapply(Lfn, Largs)(function (_ret) {
+										return _6(_cb, 2, true, _ret);
+									}, 0);
+								case 2:
+									_1 = _ret
+								default:
+							}
+							if (_cont) {
+								_cb(_ret)
+							} else {
+								return _ret
+							}
+						};
+						return _6;
+					})
+				default:
+			}
+			if (_cont) {
+				_cb(_ret)
+			} else {
+				return _ret
+			}
+		};
+		return _4;
+	});
+
+	this.L__vcompose__ = (function (Ldf0, Ldf1) {
+		var Larguments = arguments, defer_stack = [];
+		;
+		function _7(_cb, _step, _cont, _ret, cb_defer) {
+			try {
+				switch (_step) {
+					case 0:
+						_ret = (function (Lx) {
+							var Larguments = arguments, defer_stack = [];
+							;
+							function _9(_cb, _step, _cont, _ret, cb_defer) {
+								try {
+									switch (_step) {
+										case 0:
+											_ret = (function (Lappend) {
+												var Larguments = arguments, defer_stack = [];
+												var _ret, _0, _4;
+												function _11(_cb, _step, _cont, _ret, cb_defer) {
+													try {
+														switch (_step) {
+															case 0:
+																_ret = Ldf0(Lx)(function (_ret) {
+																	return _11(_cb, 1, true, _ret, function () {
+																		thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																		cb_defer && cb_defer();
+																	}
+																	);
+																}, 0, false, undefined, function () {
+																	thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																	cb_defer && cb_defer();
+																}
+																);
+															case 1:
+																_0 = _ret;
+															case 2:
+																_ret = Lcall(_0, (function (Li) {
+																	var Larguments = arguments, defer_stack = [];
+																	var _ret, _1, _3;
+																	function _13(_cb, _step, _cont, _ret, cb_defer) {
+																		try {
+																			switch (_step) {
+																				case 0:
+																					_ret = Ldf1(Li)(function (_ret) {
+																						return _13(_cb, 1, true, _ret, function () {
+																							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																							cb_defer && cb_defer();
+																						}
+																						);
+																					}, 0, false, undefined, function () {
+																						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																						cb_defer && cb_defer();
+																					}
+																					);
+																				case 1:
+																					_1 = _ret;
+																				case 2:
+																					_ret = Lcall(_1, (function (Lj) {
+																						var Larguments = arguments, defer_stack = [];
+																						var _ret, _2;
+																						function _15(_cb, _step, _cont, _ret, cb_defer) {
+																							try {
+																								switch (_step) {
+																									case 0:
+																										_ret = Lappend(Lj)(function (_ret) {
+																											return _15(_cb, 1, true, _ret, function () {
+																												thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																												cb_defer && cb_defer();
+																											}
+																											);
+																										}, 0, false, undefined, function () {
+																											thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																											cb_defer && cb_defer();
+																										}
+																										);
+																									case 1:
+																										_2 = _ret
+																									default:
+																								}
+																								thisDefer(defer_stack, false)(function () {
+																									_cb(_ret);
+																								}, 0);
+																								if (_cont) {
+																									_cb(_ret);
+																								} else {
+																									return _ret;
+																								}
+																							} catch (e) {
+																								if (e == _lixCCException) {
+																									throw e;
+																								} else {
+																									Lraise(e)(function (x) {return x;}, 0);
+																								}
+																							}
+																						}
+																						;
+																						return _15;
+																					}))(function (_ret) {
+																						return _13(_cb, 3, true, _ret, function () {
+																							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																							cb_defer && cb_defer();
+																						}
+																						);
+																					}, 0, false, undefined, function () {
+																						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																						cb_defer && cb_defer();
+																					}
+																					);
+																				case 3:
+																					_3 = _ret
+																				default:
+																			}
+																			thisDefer(defer_stack, false)(function () {
+																				_cb(_ret);
+																			}, 0);
+																			if (_cont) {
+																				_cb(_ret);
+																			} else {
+																				return _ret;
+																			}
+																		} catch (e) {
+																			if (e == _lixCCException) {
+																				throw e;
+																			} else {
+																				Lraise(e)(function (x) {return x;}, 0);
+																			}
+																		}
+																	}
+																	;
+																	return _13;
+																}))(function (_ret) {
+																	return _11(_cb, 3, true, _ret, function () {
+																		thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																		cb_defer && cb_defer();
+																	}
+																	);
+																}, 0, false, undefined, function () {
+																	thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																	cb_defer && cb_defer();
+																}
+																);
+															case 3:
+																_4 = _ret
+															default:
+														}
+														thisDefer(defer_stack, false)(function () {
+															_cb(_ret);
+														}, 0);
+														if (_cont) {
+															_cb(_ret);
+														} else {
+															return _ret;
+														}
+													} catch (e) {
+														if (e == _lixCCException) {
+															throw e;
+														} else {
+															Lraise(e)(function (x) {return x;}, 0);
+														}
+													}
+												}
+												;
+												return _11;
+											})
+										default:
+									}
+									thisDefer(defer_stack, false)(function () {
+										_cb(_ret);
+									}, 0);
+									if (_cont) {
+										_cb(_ret);
+									} else {
+										return _ret;
+									}
+								} catch (e) {
+									if (e == _lixCCException) {
+										throw e;
+									} else {
+										Lraise(e)(function (x) {return x;}, 0);
+									}
+								}
+							}
+							;
+							return _9;
+						})
+					default:
+				}
+				thisDefer(defer_stack, false)(function () {
+					_cb(_ret);
+				}, 0);
+				if (_cont) {
+					_cb(_ret);
+				} else {
+					return _ret;
+				}
+			} catch (e) {
+				if (e == _lixCCException) {
+					throw e;
+				} else {
+					Lraise(e)(function (x) {return x;}, 0);
+				}
+			}
+		}
+		;
+		return _7;
+	}); 
+
+	this.L__rvcompose__ = (function (Ldf1, Ldf0) {
+		var Larguments = arguments, defer_stack = [];
+		;
+		function _7(_cb, _step, _cont, _ret, cb_defer) {
+			try {
+				switch (_step) {
+					case 0:
+						_ret = (function (Lx) {
+							var Larguments = arguments, defer_stack = [];
+							;
+							function _9(_cb, _step, _cont, _ret, cb_defer) {
+								try {
+									switch (_step) {
+										case 0:
+											_ret = (function (Lappend) {
+												var Larguments = arguments, defer_stack = [];
+												var _ret, _0, _4;
+												function _11(_cb, _step, _cont, _ret, cb_defer) {
+													try {
+														switch (_step) {
+															case 0:
+																_ret = Ldf0(Lx)(function (_ret) {
+																	return _11(_cb, 1, true, _ret, function () {
+																		thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																		cb_defer && cb_defer();
+																	}
+																	);
+																}, 0, false, undefined, function () {
+																	thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																	cb_defer && cb_defer();
+																}
+																);
+															case 1:
+																_0 = _ret;
+															case 2:
+																_ret = Lcall(_0, (function (Li) {
+																	var Larguments = arguments, defer_stack = [];
+																	var _ret, _1, _3;
+																	function _13(_cb, _step, _cont, _ret, cb_defer) {
+																		try {
+																			switch (_step) {
+																				case 0:
+																					_ret = Ldf1(Li)(function (_ret) {
+																						return _13(_cb, 1, true, _ret, function () {
+																							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																							cb_defer && cb_defer();
+																						}
+																						);
+																					}, 0, false, undefined, function () {
+																						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																						cb_defer && cb_defer();
+																					}
+																					);
+																				case 1:
+																					_1 = _ret;
+																				case 2:
+																					_ret = Lcall(_1, (function (Lj) {
+																						var Larguments = arguments, defer_stack = [];
+																						var _ret, _2;
+																						function _15(_cb, _step, _cont, _ret, cb_defer) {
+																							try {
+																								switch (_step) {
+																									case 0:
+																										_ret = Lappend(Lj)(function (_ret) {
+																											return _15(_cb, 1, true, _ret, function () {
+																												thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																												cb_defer && cb_defer();
+																											}
+																											);
+																										}, 0, false, undefined, function () {
+																											thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																											cb_defer && cb_defer();
+																										}
+																										);
+																									case 1:
+																										_2 = _ret
+																									default:
+																								}
+																								thisDefer(defer_stack, false)(function () {
+																									_cb(_ret);
+																								}, 0);
+																								if (_cont) {
+																									_cb(_ret);
+																								} else {
+																									return _ret;
+																								}
+																							} catch (e) {
+																								if (e == _lixCCException) {
+																									throw e;
+																								} else {
+																									Lraise(e)(function (x) {return x;}, 0);
+																								}
+																							}
+																						}
+																						;
+																						return _15;
+																					}))(function (_ret) {
+																						return _13(_cb, 3, true, _ret, function () {
+																							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																							cb_defer && cb_defer();
+																						}
+																						);
+																					}, 0, false, undefined, function () {
+																						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																						cb_defer && cb_defer();
+																					}
+																					);
+																				case 3:
+																					_3 = _ret
+																				default:
+																			}
+																			thisDefer(defer_stack, false)(function () {
+																				_cb(_ret);
+																			}, 0);
+																			if (_cont) {
+																				_cb(_ret);
+																			} else {
+																				return _ret;
+																			}
+																		} catch (e) {
+																			if (e == _lixCCException) {
+																				throw e;
+																			} else {
+																				Lraise(e)(function (x) {return x;}, 0);
+																			}
+																		}
+																	}
+																	;
+																	return _13;
+																}))(function (_ret) {
+																	return _11(_cb, 3, true, _ret, function () {
+																		thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																		cb_defer && cb_defer();
+																	}
+																	);
+																}, 0, false, undefined, function () {
+																	thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+																	cb_defer && cb_defer();
+																}
+																);
+															case 3:
+																_4 = _ret
+															default:
+														}
+														thisDefer(defer_stack, false)(function () {
+															_cb(_ret);
+														}, 0);
+														if (_cont) {
+															_cb(_ret);
+														} else {
+															return _ret;
+														}
+													} catch (e) {
+														if (e == _lixCCException) {
+															throw e;
+														} else {
+															Lraise(e)(function (x) {return x;}, 0);
+														}
+													}
+												}
+												;
+												return _11;
+											})
+										default:
+									}
+									thisDefer(defer_stack, false)(function () {
+										_cb(_ret);
+									}, 0);
+									if (_cont) {
+										_cb(_ret);
+									} else {
+										return _ret;
+									}
+								} catch (e) {
+									if (e == _lixCCException) {
+										throw e;
+									} else {
+										Lraise(e)(function (x) {return x;}, 0);
+									}
+								}
+							}
+							;
+							return _9;
+						})
+					default:
+				}
+				thisDefer(defer_stack, false)(function () {
+					_cb(_ret);
+				}, 0);
+				if (_cont) {
+					_cb(_ret);
+				} else {
+					return _ret;
+				}
+			} catch (e) {
+				if (e == _lixCCException) {
+					throw e;
+				} else {
+					Lraise(e)(function (x) {return x;}, 0);
+				}
+			}
+		}
+		;
+		return _7;
+	}); 
 
 	Function.prototype.unCurrying = function() {
 		return this.call.bind(this);
 	};
-	
+
 	this.Linstanceof = function (obj, type) {
 		return function () {
 			return Object.getPrototypeOf(obj) == type;
@@ -43,16 +907,18 @@
 		}
 	}
 	this.Lcc = function (ctx) {
-		function _self(cb, step, cont, a) {
+		function _self(cb, step, cont, a, cb_defer) {
 			var brk = function (ret) {
-				function _self(_cb, step, cont, a) {
+				function _self(_cb, step, cont, a, cb_defer) {
+					cb_defer && cb_defer();
 					setImmediate(function () {
 						try {
 							cb(ret);
 						} catch (e) {
+							//							console.log(e);
 						}
 					});
-					throw 0;
+					throw _lixCCException;
 				}
 				return _self;
 			};
@@ -61,9 +927,10 @@
 				try {
 					a = ctx(brk)(function (x) {return x;}, 0);
 				} catch (e) {
+					//					console.log(e);
 				}
 			});
-			throw 0;
+			throw _lixCCException;
 		}
 		return _self;
 	}
@@ -154,70 +1021,7 @@
 	};
 
 	this.Lcall = function (fn) {
-		return fn.apply(fn, array_slice(arguments, 1));
-	};
-
-	this.Lforeach = function (Larr, Lcb) {
-		var Li, _ret, _0, _1, _2, _3;
-		function _16(_cb, _step, _cont, _ret) {
-			switch (_step) {
-				case 0:
-					_ret = Lcb(Larr[Li], Li)(function (_ret) {
-						return _16(_cb, 1, true, _ret);
-					}, 0);
-				case 1:
-					_2 = _ret;
-				case 2:
-					_2;
-				case 3:
-					_ret = L__add__(Li, 1)(function (_ret) {
-						return _16(_cb, 4, true, _ret);
-					}, 0);
-				case 4:
-					_3 = _ret;
-				case 5:
-					Li = _3;
-				case 6:
-					_ret = L__lt__(Li, Larr.length)(function (_ret) {
-						return _16(_cb, 7, true, _ret);
-					}, 0);
-				case 7:
-					_1 = _ret
-				default:
-			}
-			if (_cont) {
-				_cb(_ret)
-			} else {
-				return _ret
-			}
-		};
-		function _15(_cb, _step, _cont, _ret) {
-			switch (_step) {
-				case 0:
-					Li = 0;
-				case 4:
-					_ret = L__lt__(Li, Larr.length)(function (_ret) {
-						return _15(_cb, 5, true, _ret);
-					}, 0);
-				case 5:
-					_1 = _ret;
-				case 6:
-					while (_1) {
-						_16(function (_ret) {
-							return _15(_cb, 6, true, _ret);
-						}, 0)
-					};
-				case 7:
-
-				default:
-			}
-			if (_cont) {
-				_cb(_ret)
-			} else {
-				return _ret
-			}
-		};
-		return _15;
+		return fn.apply(fn, arguments);
 	};
 
 	this.LArray = Array.prototype;
@@ -319,202 +1123,126 @@
 	this.LObject = Object.prototype;
 	Object.prototype.Keys = function (a) {
 		return function () {
-			try {
-				return Object.keys(a);
-			} catch (e) {
-				return e;
-			}
+			return Object.keys(a);
 		};
 	}
 
 	Object.prototype.GetPrototypeOf = function (a) {
 		return function () {
-			try {
-				return Object.getPrototypeOf(a);
-			} catch (e) {
-				return e;
-			}
+			return Object.getPrototypeOf(a);
 		};
 	}
 
 	Object.prototype.GetOwnPropertyDescriptor = function (o, p) {
 		return function () {
-			try {
-				return Object.getOwnPropertyDescriptor(o, p);
-			} catch (e) {
-				return e;
-			}
+			return Object.getOwnPropertyDescriptor(o, p);
 		};
 	}
 
 	Object.prototype.GetOwnPropertyNames = function (o) {
 		return function () {
-			try {
-				return Object.getOwnPropertyNames(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.getOwnPropertyNames(o);
 		};
 	}
 
 	Object.prototype.Create = function (o) {
 		return function () {
-			try {
-				return Object.create(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.create(o);
 		};
 	}
 
 	Object.prototype.DefineProperty = function (o, p, attribute) {
 		return function () {
-			try {
-				return Object.defineProperty(o, p, attribute);
-			} catch (e) {
-				return e;
-			}
+			return Object.defineProperty(o, p, attribute);
 		};
 	}
 
 	Object.prototype.DefineProperties = function (o, properties) {
 		return function () {
-			try {
-				return Object.defineProperties(o, properties);
-			} catch (e) {
-				return e;
-			}
+			return Object.defineProperties(o, properties);
 		};
 	}
 
 	Object.prototype.Seal = function (o) {
 		return function () {
-			try {
-				return Object.seal(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.seal(o);
 		};
 	}
 
 	Object.prototype.Freeze = function (o) {
 		return function () {
-			try {
-				return Object.freeze(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.freeze(o);
 		};
 	}
 
 	Object.prototype.PreventExtensions = function (o) {
 		return function () {
-			try {
-				return Object.preventExtensions(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.preventExtensions(o);
 		};
 	}
 
 	Object.prototype.IsSealed = function (o) {
 		return function () {
-			try {
-				return Object.isSealed(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.isSealed(o);
 		};
 	}
 
 	Object.prototype.IsFrozen = function (o) {
 		return function () {
-			try {
-				return Object.isFrozen(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.isFrozen(o);
 		};
 	}
 
 	Object.prototype.IsExtensible = function (o) {
 		return function () {
-			try {
-				return Object.isExtensible(o);
-			} catch (e) {
-				return e;
-			}
+			return Object.isExtensible(o);
 		};
 	}
 
 	Object.prototype.ToString = function (o) {
 		return function () {
-			try {
-				return o.toString();
-			} catch (e) {
-				return e;
-			}
+			return o.toString();
 		};
 	}
 
 	Object.prototype.ToLocaleString = function (o) {
 		return function () {
-			try {
-				return o.toLocaleString();
-			} catch (e) {
-				return e;
-			}
+			return o.toLocaleString();
 		};
 	}
 
 	Object.prototype.ValueOf = function (o) {
 		return function () {
-			try {
-				return o.valueOf();
-			} catch (e) {
-				return e;
-			}
+			return o.valueOf();
 		};
 	}
 
 	Object.prototype.HasOwnProperty = function (o, v) {
 		return function () {
-			try {
-				return o.hasOwnProperty(v);
-			} catch (e) {
-				return e;
-			}
+			return o.hasOwnProperty(v);
 		};
 	}
 
 	Object.prototype.IsPrototypeOf = function (o, v) {
 		return function () {
-			try {
-				return o.isPrototypeOf(v);
-			} catch (e) {
-				return e;
-			}
+			return o.isPrototypeOf(v);
 		};
 	}
 
 	Object.prototype.PropertyIsEnumerable = function (o, v) {
 		return function () {
-			try {
-				return o.propertyIsEnumerable(v);
-			} catch (e) {
-				return e;
-			}
+			return o.propertyIsEnumerable(v);
 		};
 	}
 
 	this.LString = String.prototype
 
-	String.prototype.FromCharCode = function () {
-		var args = array_slice(arguments);
-		return function () {
-			return String.fromCharCode.apply(null, args);
+		String.prototype.FromCharCode = function () {
+			var args = array_slice(arguments);
+			return function () {
+				return String.fromCharCode.apply(null, args);
+			};
 		};
-	};
 
 	String.prototype.ToString = function (a) {
 		return function () {
@@ -613,6 +1341,12 @@
 		}
 	}
 
+	String.prototype.IsString = function (str) {
+		return function () {
+			return typeof str == 'string';
+		}
+	}
+
 	String.prototype.ToUpperCase = function (str) {
 		return function () {
 			return str.toUpperCase();
@@ -650,17 +1384,17 @@
 	}
 
 	this.LNumber = Number.prototype;
-  Number.prototype.MAX_VALUE = Number.MAX_VALUE
-  Number.prototype.MIN_VALUE = Number.MIN_VALUE
-  Number.prototype.NaN = Number.NaN
-  Number.prototype.NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY
-  Number.prototype.POSITIVE_INFINITY = Number.POSITIVE_INFINITY
+	Number.prototype.MAX_VALUE = Number.MAX_VALUE
+		Number.prototype.MIN_VALUE = Number.MIN_VALUE
+		Number.prototype.NaN = Number.NaN
+		Number.prototype.NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY
+		Number.prototype.POSITIVE_INFINITY = Number.POSITIVE_INFINITY
 
-	Number.prototype.ToString = function (v) {
-		return function () {
-			return v.toString();
+		Number.prototype.ToString = function (v) {
+			return function () {
+				return v.toString();
+			}
 		}
-	}
 
 	Number.prototype.ToLocaleString = function (v) {
 		return function () {
@@ -1140,11 +1874,11 @@
 
 	this.LRegExp = RegExp.prototype
 
-	RegExp.prototype.Exec = function (r, str) {
-		return function () {
-			return r.exec(str);
+		RegExp.prototype.Exec = function (r, str) {
+			return function () {
+				return r.exec(str);
+			}
 		}
-	}
 
 	RegExp.prototype.Test = function (r, str) {
 		return function () {
@@ -1179,12 +1913,12 @@
 	this.LURIError = URIError.prototype;
 
 	this.LJSON = JSON
-	JSON.Parse = function () {
-		var args = array_slice(arguments);
-		return function () {
-			return JSON.parse.apply(null, args);
+		JSON.Parse = function () {
+			var args = array_slice(arguments);
+			return function () {
+				return JSON.parse.apply(null, args);
+			}
 		}
-	}
 
 	JSON.Stringify = function () {
 		var args = array_slice(arguments);
@@ -1193,5 +1927,459 @@
 		}
 	}
 
+	this.LFunction = Function.prototype;
+
+	this.Ltry = function (LtryBlock, LcatchBlock) {
+		var Larguments = arguments;
+		var defer_stack = [];
+		var _ret, _5, LoldTrapFn, _11, _12;
+		function _18(_cb, _step, _cont, _ret, cb_defer) {
+			switch (_step) {
+				case 0:
+					_ret = Lcall(Ltrap)(function (_ret) {
+						return _18(_cb, 1, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {
+								cb_defer && cb_defer();
+							}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {
+							cb_defer && cb_defer();
+						}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 1:
+					_5 = _ret;
+				case 2:
+					_ret = LoldTrapFn = _5;
+				case 3:
+					_ret = Lcall(Lcc, (function (Lbreak) {
+						var Larguments = arguments;
+						var defer_stack = [];
+						var _ret, _8, _9, _10;
+						function _20(_cb, _step, _cont, _ret, cb_defer) {
+							switch (_step) {
+								case 0:
+									_ret = Lcall(Ltrap, (function (Le) {
+										var Larguments = arguments;
+										var defer_stack = [];
+										var _ret, _6, _7;
+										function _22(_cb, _step, _cont, _ret, cb_defer) {
+											switch (_step) {
+												case 0:
+													_ret = Lcall(LcatchBlock, Le)(function (_ret) {
+														return _22(_cb, 1, true, _ret, function () {
+															thisDefer(defer_stack, true)(function () {
+																cb_defer && cb_defer();
+															}, 0);
+															cb_defer && cb_defer();
+														}
+														);
+													}, 0, false, undefined, function () {
+														thisDefer(defer_stack, true)(function () {
+															cb_defer && cb_defer();
+														}, 0);
+														cb_defer && cb_defer();
+													}
+													);
+												case 1:
+													_6 = _ret;
+												case 2:
+													_ret = Lcall(Lbreak)(function (_ret) {
+														return _22(_cb, 3, true, _ret, function () {
+															thisDefer(defer_stack, true)(function () {
+																cb_defer && cb_defer();
+															}, 0);
+															cb_defer && cb_defer();
+														}
+														);
+													}, 0, false, undefined, function () {
+														thisDefer(defer_stack, true)(function () {
+															cb_defer && cb_defer();
+														}, 0);
+														cb_defer && cb_defer();
+													}
+													);
+												case 3:
+													_7 = _ret
+												default:
+											}
+											thisDefer(defer_stack, false)(function () {
+												_cb(_ret);
+											}, 0);
+											if (_cont) {
+												_cb(_ret);
+											} else {
+												return _ret;
+											}
+										};
+										return _22;
+									}))(function (_ret) {
+										return _20(_cb, 1, true, _ret, function () {
+											thisDefer(defer_stack, true)(function () {
+												cb_defer && cb_defer();
+											}, 0);
+											cb_defer && cb_defer();
+										}
+										);
+									}, 0, false, undefined, function () {
+										thisDefer(defer_stack, true)(function () {
+											cb_defer && cb_defer();
+										}, 0);
+										cb_defer && cb_defer();
+									}
+									);
+								case 1:
+									_8 = _ret;
+								case 2:
+									_ret = Lcall(LtryBlock)(function (_ret) {
+										return _20(_cb, 3, true, _ret, function () {
+											thisDefer(defer_stack, true)(function () {
+												cb_defer && cb_defer();
+											}, 0);
+											cb_defer && cb_defer();
+										}
+										);
+									}, 0, false, undefined, function () {
+										thisDefer(defer_stack, true)(function () {
+											cb_defer && cb_defer();
+										}, 0);
+										cb_defer && cb_defer();
+									}
+									);
+								case 3:
+									_9 = _ret;
+								case 4:
+									_ret = Lcall(Lbreak)(function (_ret) {
+										return _20(_cb, 5, true, _ret, function () {
+											thisDefer(defer_stack, true)(function () {
+												cb_defer && cb_defer();
+											}, 0);
+											cb_defer && cb_defer();
+										}
+										);
+									}, 0, false, undefined, function () {
+										thisDefer(defer_stack, true)(function () {
+											cb_defer && cb_defer();
+										}, 0);
+										cb_defer && cb_defer();
+									}
+									);
+								case 5:
+									_10 = _ret
+								default:
+							}
+							thisDefer(defer_stack, false)(function () {
+								_cb(_ret);
+							}, 0);
+							if (_cont) {
+								_cb(_ret);
+							} else {
+								return _ret;
+							}
+						};
+						return _20;
+					}))(function (_ret) {
+						return _18(_cb, 4, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {
+								cb_defer && cb_defer();
+							}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {
+							cb_defer && cb_defer();
+						}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 4:
+					_11 = _ret;
+				case 5:
+					_ret = Lcall(Ltrap, LoldTrapFn)(function (_ret) {
+						return _18(_cb, 6, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {
+								cb_defer && cb_defer();
+							}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {
+							cb_defer && cb_defer();
+						}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 6:
+					_12 = _ret
+				default:
+			}
+			thisDefer(defer_stack, false)(function () {
+				_cb(_ret);
+			}, 0);
+			if (_cont) {
+				_cb(_ret);
+			} else {
+				return _ret;
+			}
+		};
+		return _18;
+	};
+	this.Lraise = function (Le) {
+		var Larguments = arguments;
+		var defer_stack = [];
+		var _ret, _13, _14;
+		function _24(_cb, _step, _cont, _ret, cb_defer) {
+			switch (_step) {
+				case 0:
+					_ret = Lcall(Ltrap)(function (_ret) {
+						return _24(_cb, 1, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {
+								cb_defer && cb_defer();
+							}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {
+							cb_defer && cb_defer();
+						}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 1:
+					_13 = _ret;
+				case 2:
+					_ret = Lcall(_13, Le)(function (_ret) {
+						return _24(_cb, 3, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {
+								cb_defer && cb_defer();
+							}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {
+							cb_defer && cb_defer();
+						}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 3:
+					_14 = _ret
+				default:
+			}
+			thisDefer(defer_stack, false)(function () {
+				_cb(_ret);
+			}, 0);
+			if (_cont) {
+				_cb(_ret);
+			} else {
+				return _ret;
+			}
+		};
+		return _24;
+	};
+	this.Lsubclass = (function (Lbase, Lconfig) {
+		var Larguments = arguments, defer_stack = [];
+		var _ret, _0, Lclass, _1, _2, _3;
+		function _12(_cb, _step, _cont, _ret, cb_defer) {
+			switch (_step) {
+				case 0:
+					_1 = false;
+				case 1:
+					_ret = Lconfig(Lclass)(function (_ret) {
+						return _12(_cb, 2, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 2:
+					_3 = _ret;
+				case 3:
+					_ret = _2 = _3
+				default:
+			}
+			thisDefer(defer_stack, false)(function () {
+				_cb(_ret);
+			}, 0);
+			if (_cont) {
+				_cb(_ret);
+			} else {
+				return _ret;
+			}
+		};
+		function _11(_cb, _step, _cont, _ret, cb_defer) {
+			switch (_step) {
+				case 0:
+					_ret = LObject.Create(Lbase)(function (_ret) {
+						return _11(_cb, 1, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 1:
+					_0 = _ret;
+				case 2:
+					_ret = Lclass = _0;
+				case 3:
+					_ret = true;
+				case 4:
+					_1 = _ret;
+				case 5:
+					_ret = null;
+				case 6:
+					_2 = _ret;
+				case 7:
+					if ((_1 && Lconfig)) {
+						_12(function (_ret) {
+							return _11(_cb, 8, true, _ret, function () {
+								thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+								cb_defer && cb_defer();
+							}
+							);
+						}, 0, false, undefined, function () {
+							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+							cb_defer && cb_defer();
+						}
+						)
+					};
+				case 8:
+					_ret = Lclass
+				default:
+			}
+			thisDefer(defer_stack, false)(function () {
+				_cb(_ret);
+			}, 0);
+			if (_cont) {
+				_cb(_ret);
+			} else {
+				return _ret;
+			}
+		};
+		return _11;
+	});
+	this.Lnew = (function (Lclass) {
+		var Larguments = arguments, defer_stack = [];
+		var _ret, _4, Lobj, _5, Largs, _6, _7, _8;
+		function _15(_cb, _step, _cont, _ret, cb_defer) {
+			switch (_step) {
+				case 0:
+					_6 = false;
+				case 1:
+					_ret = Lapply(Lclass.__init__, Largs)(function (_ret) {
+						return _15(_cb, 2, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 2:
+					_8 = _ret;
+				case 3:
+					_ret = _7 = _8
+				default:
+			}
+			thisDefer(defer_stack, false)(function () {
+				_cb(_ret);
+			}, 0);
+			if (_cont) {
+				_cb(_ret);
+			} else {
+				return _ret;
+			}
+		};
+		function _14(_cb, _step, _cont, _ret, cb_defer) {
+			switch (_step) {
+				case 0:
+					_ret = LObject.Create(Lclass)(function (_ret) {
+						return _14(_cb, 1, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 1:
+					_4 = _ret;
+				case 2:
+					_ret = Lobj = _4;
+				case 3:
+					_ret = LArray.Slice(Larguments)(function (_ret) {
+						return _14(_cb, 4, true, _ret, function () {
+							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+							cb_defer && cb_defer();
+						}
+						);
+					}, 0, false, undefined, function () {
+						thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+						cb_defer && cb_defer();
+					}
+					);
+				case 4:
+					_5 = _ret;
+				case 5:
+					_ret = Largs = _5;
+				case 6:
+					_ret = Largs[0] = Lobj;
+				case 7:
+					_ret = true;
+				case 8:
+					_6 = _ret;
+				case 9:
+					_ret = null;
+				case 10:
+					_7 = _ret;
+				case 11:
+					if ((_6 && Lclass.__init__)) {
+						_15(function (_ret) {
+							return _14(_cb, 12, true, _ret, function () {
+								thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+								cb_defer && cb_defer();
+							}
+							);
+						}, 0, false, undefined, function () {
+							thisDefer(defer_stack, true)(function () {cb_defer && cb_defer();}, 0);
+							cb_defer && cb_defer();
+						}
+						)
+					};
+				case 12:
+					_ret = Lobj
+				default:
+			}
+			thisDefer(defer_stack, false)(function () {
+				_cb(_ret);
+			}, 0);
+			if (_cont) {
+				_cb(_ret);
+			} else {
+				return _ret;
+			}
+		};
+		return _14;
+	});
 })();
 

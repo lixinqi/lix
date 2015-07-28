@@ -1,0 +1,21 @@
+#!/usr/local/bin/node
+
+Y = [f]->{
+	[x]->{
+		[n]->{
+			n | (x x)
+		} | f
+	} | [x]->{
+		x x
+	}
+}
+
+[f]->{
+	[n]->{
+		if (n == 0) {
+			n
+		} else {
+			n - 1 | f | + 2
+		}
+	}
+} Y | call 3 | print

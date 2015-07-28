@@ -1,0 +1,14 @@
+#!/usr/local/bin/node
+
+obj := {
+	.hi []->{'hi' print}
+	.0 'good'
+}
+
+
+method := 'h' + 'i'
+
+obj .hi
+obj.(method) call
+obj .('hi' + '')
+obj .('h' + 'i')

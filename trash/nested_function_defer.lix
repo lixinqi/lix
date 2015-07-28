@@ -1,0 +1,28 @@
+#!/usr/local/bin/node
+
+t1 := [fn]->{
+	defer call []->{'good1' print}
+	fn call
+	'end1' print
+}
+
+t0 := [fn]->{
+	defer call []->{'good0' print}
+	t1 call fn
+	'end0' print
+}
+
+test := [fn]->{
+	defer call []->{'good' print}
+	t0 call fn
+	'end' print
+}
+
+cc call [brk]->{
+	test call [x]->{
+		brk call
+	}
+}
+
+'program end' print
+

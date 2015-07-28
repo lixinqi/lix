@@ -1,0 +1,13 @@
+#!/usr/bin/env lix
+
+( N
+	| until > 8
+	| bind [x]->{ N | until >= x }
+	| map * 2
+	| map / 2
+	| hook print
+	| reduce + 0
+	| hook []->{ '--------------' print }
+	| hook print
+	| call $i
+)

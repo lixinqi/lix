@@ -1,0 +1,29 @@
+#!/usr/local/bin/node
+
+pair fn (x: Number) (y: Number) => { [x y] }
+
+pair fn [(x: Number) (y: Number)] => { [x y] }
+
+pair fn {.fst (x: Number) .snd (y: Number)} => { [x y] }
+
+pair call 3 4 | print
+pair call [3 4] | print
+pair call {.fst 3 .snd 4} | print
+
+f fn {.data [(x: Number) (y: Number)]} => { [x y] }
+f call {.data [3 4]} | print
+
+p fn (x: Array) => { x }
+p fn (x: Object) => { x }
+p fn ... => { "error" }
+
+p call [] | print
+
+p call (Object.Create call {}) | print
+
+f0 fn (x: String & {.length 5..*}) => {x}
+f0 fn ... => { 'error' }
+'good nice' | f0 | print
+'good' | f0 | print
+[] | f0 | print
+
