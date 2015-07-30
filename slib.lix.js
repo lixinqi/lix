@@ -366,6 +366,7 @@ return _uniq_var_51;
 generateIf;
 generateIf;
 var operateFuncName = {
+"<>": 'call',
 "+": '__add__',
 "-": '__sub__',
 "*": '__mul__',

@@ -1,4 +1,4 @@
-#!/usr/local/bin/node
+#!/usr/bin/env node
 
 var parser = require('./grammer.js');
 var lib = require('./lib.lix.js');

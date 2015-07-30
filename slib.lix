@@ -111,6 +111,7 @@ generateIf := [expr env ctx def]->{
 }
 
 operateFuncName := {
+	."<>" 				'call'
 	."+" 				'__add__'
 	."-" 				'__sub__'
 	."*" 				'__mul__'

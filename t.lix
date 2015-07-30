@@ -1,4 +1,6 @@
 #!/usr/local/bin/node
 
-$a.nice = 'good'
-$("a").nice print
+N | until > 10
+  | <> \i->{
+	  print <> i
+  }

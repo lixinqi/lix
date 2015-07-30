@@ -163,6 +163,7 @@
 '$'[\u4e00-\u9fa5_a-zA-Z][\u4e00-\u9fa5_a-zA-Z0-9]*
 															{ return 'DOLLAR_STR'; }
 
+"<>"													{ return '<>'; }
 "+"														{ return '+'; }
 "*"														{ return '*'; }
 "-"														{ return '-'; }
@@ -207,6 +208,7 @@ Operator
 	| "!="
 	| "<="
 	| "<"	
+	| "<>"	
 	;
 
 VAR
