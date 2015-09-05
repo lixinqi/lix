@@ -59,7 +59,7 @@ a.lix:
     'end' print
 
 
-Both of above do the same thing. Which code is more simple and more maintenable?
+Both of the above do the same thing. Which code is simpler and more maintainable?
 
 Lix is a new language whose code is compiled into javascript. 
 
